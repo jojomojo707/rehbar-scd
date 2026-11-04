@@ -1,0 +1,24 @@
+# Docker Hub images. The committed tag is a placeholder: cd.yml runs
+# `kustomize edit set image ...:${GITHUB_SHA}`, so a deploy is always by commit SHA, never :latest.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+images:
+  - name: rahbar-api
+    newName: docker.io/majnoon57/rahbar-api
+    newTag: set-by-cd
+  - name: rahbar-ui
+    newName: docker.io/majnoon57/rahbar-ui
+    newTag: set-by-cd
+  - name: rahbar-indexer
+    newName: docker.io/majnoon57/rahbar-indexer
+    newTag: set-by-cd
+patches:
+  - target:
+      kind: ConfigMap
+      name: rahbar-config
+    patch: |-
+      - op: replace
+        path: /data/IMAGE_TAG
+        value: set-by-cd
