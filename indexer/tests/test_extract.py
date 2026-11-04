@@ -57,7 +57,7 @@ def test_extract_html_main_and_table(tmp_path: Path) -> None:
     assert "ignore" not in text
 
 
-@pytest.mark.skipif(not (__import__("shutil").which("tesseract") or Path("C:/Program Files/Tesseract-OCR/tesseract.exe").is_file()), reason="Tesseract is not installed")
+@pytest.mark.skipif(not __import__("shutil").which("tesseract"), reason="Tesseract is not installed")
 def test_ocr_page_detected(tmp_path: Path) -> None:
     file = tmp_path / "image.pdf"
     pdf(file, [""])
@@ -70,3 +70,29 @@ def test_ocr_disabled_does_not_call_ocr(tmp_path: Path, monkeypatch: pytest.Monk
     pdf(file, [""])
     monkeypatch.setenv("OCR_ENABLED", "false")
     assert extract(str(file), "2026", False).pages[0].ocr is False
+
+
+def test_ocr_disabled_logs_the_empty_pages(tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+                                          capsys: pytest.CaptureFixture[str]) -> None:
+    file = tmp_path / "image.pdf"
+    pdf(file, ["", ""])
+    monkeypatch.setenv("OCR_ENABLED", "false")
+    extract(str(file), "2026", False)
+    out = capsys.readouterr().out
+    assert "OCR is disabled" in out and '"pages": 2' in out
+
+
+def test_ocr_failure_is_logged_not_silent(tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+                                          capsys: pytest.CaptureFixture[str]) -> None:
+    import pdf2image
+
+    def boom(*args: object, **kwargs: object) -> None:
+        raise RuntimeError("tesseract missing")
+
+    monkeypatch.setattr(pdf2image, "convert_from_path", boom)
+    file = tmp_path / "image.pdf"
+    pdf(file, [""])
+    page = extract(str(file), "2026", False).pages[0]
+    assert page.text == "" and page.ocr is False
+    out = capsys.readouterr().out
+    assert "ocr failed" in out and "tesseract missing" in out
