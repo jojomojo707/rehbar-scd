@@ -2,3 +2,5 @@
 pytest==8.3.5
 ruff==0.11.8
 mypy==1.15.0
+# Builds the small PDFs used by indexer/tests/test_extract.py.
+reportlab==5.1.0
