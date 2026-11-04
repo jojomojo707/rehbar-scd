@@ -17,6 +17,7 @@ import argparse
 import json
 import sys
 import time
+import unicodedata
 from pathlib import Path
 
 import httpx
@@ -48,28 +49,87 @@ def ask(client: httpx.Client, api: str, question: str) -> dict:
 def recall_at_k(relevant: list[dict], retrieved: list[dict], k: int) -> float | None:
     """Fraction of the relevant (source, section) pairs found in the top k retrieved.
     Return None when the question has no relevant passages (must-abstain questions)."""
-    # STARTER-TODO(5.2): implement. Decide how you match sections and say so in PIPELINE.md.
-    raise NotImplementedError("recall_at_k: see STARTER-TODO(5.2)")
+    if not relevant:
+        return None
+    def norm(value: object) -> str:
+        return " ".join(unicodedata.normalize("NFKC", str(value)).casefold().split()).rstrip(" .:")
+    found = set()
+    for item in retrieved[:k]:
+        source, section = norm(item.get("source", "")), norm(item.get("section", ""))
+        for gold in relevant:
+            gs, sec = norm(gold.get("source", "")), norm(gold.get("section", ""))
+            if source == gs and (section == sec or section.startswith(sec + " ") or section.startswith(sec + ".") or section.startswith(sec + ")")):
+                found.add((gs, sec))
+    expected = {(norm(x.get("source", "")), norm(x.get("section", ""))) for x in relevant}
+    return len(found & expected) / len(expected) if expected else None
 
 
 def citation_validity(response: dict) -> float | None:
     """Fraction of the response's citations that match a passage in response['retrieved'].
     Return None when there are no citations."""
-    # STARTER-TODO(5.3): implement.
-    raise NotImplementedError("citation_validity: see STARTER-TODO(5.3)")
+    citations = response.get("citations") or []
+    if not citations:
+        return None
+    retrieved = response.get("retrieved") or []
+    def norm(value: object) -> str:
+        return " ".join(unicodedata.normalize("NFKC", str(value)).casefold().split()).rstrip(" .:")
+    valid = 0
+    for citation in citations:
+        for passage in retrieved:
+            if norm(citation.get("source")) != norm(passage.get("source")) or norm(citation.get("section")) != norm(passage.get("section")):
+                continue
+            cp, pp = citation.get("page"), passage.get("page")
+            if cp is None or cp == pp:
+                valid += 1
+                break
+    return valid / len(citations)
 
 
 def summarise(rows: list[dict]) -> dict:
     """Overall recall@3, recall@5, citation validity and abstention correctness, plus
     recall@5 broken down by question type. This dict becomes results.json."""
-    # STARTER-TODO(5.2, 5.3): implement.
-    raise NotImplementedError("summarise: see STARTER-TODO(5.2, 5.3)")
+    def mean(key: str, selected: list[dict]) -> float | None:
+        values = [r[key] for r in selected if r.get(key) is not None]
+        return sum(values) / len(values) if values else None
+    for row in rows:
+        response = row.get("response") or {}
+        row["recall@3"] = recall_at_k(row.get("relevant") or [], response.get("retrieved") or [], 3)
+        row["recall@5"] = recall_at_k(row.get("relevant") or [], response.get("retrieved") or [], 5)
+        row["citation_validity"] = citation_validity(response)
+        row["abstention_correct"] = (not bool(response.get("answered_from_context", True))) if row.get("must_abstain") else None
+    r3, r5 = mean("recall@3", rows), mean("recall@5", rows)
+    citation_total = sum(len((r.get("response") or {}).get("citations") or []) for r in rows)
+    valid_total = round(sum((r["citation_validity"] or 0) * len((r.get("response") or {}).get("citations") or []) for r in rows))
+    abstain = [r["abstention_correct"] for r in rows if r["abstention_correct"] is not None]
+    by_type = {}
+    for kind in sorted({r.get("type", "ordinary") for r in rows}):
+        subset = [r for r in rows if r.get("type", "ordinary") == kind]
+        by_type[kind] = {"questions": len(subset), "recall@3": mean("recall@3", subset), "recall@5": mean("recall@5", subset)}
+    return {"overall": {"questions": len(rows), "recall@3": r3, "recall@5": r5,
+                         "citation_validity": valid_total / citation_total if citation_total else None,
+                         "citation_count": citation_total, "valid_citation_count": valid_total,
+                         "abstention_correctness": sum(abstain) / len(abstain) if abstain else None,
+                         "must_abstain_count": len(abstain)}, "by_type": by_type, "rows": rows}
 
 
-def gate(results: dict, baseline: dict | None) -> list[str]:
+def gate(results: dict, baseline: dict | None, *, allow_missing_baseline: bool = False) -> list[str]:
     """Return one message per failed gate (section 5.4); an empty list means pass."""
-    # STARTER-TODO(5.4): implement, using the three constants at the top of this file.
-    raise NotImplementedError("gate: see STARTER-TODO(5.4)")
+    failures = []
+    overall = results.get("overall", results)
+    recall = overall.get("recall@5")
+    if baseline is None and not allow_missing_baseline:
+        failures.append("baseline is missing")
+    elif baseline is not None:
+        base = baseline.get("overall", baseline).get("recall@5")
+        if recall is None or base is None or recall < base - MAX_RECALL5_DROP - 1e-12:
+            failures.append(f"recall@5 dropped more than {MAX_RECALL5_DROP:.0%} below baseline")
+    abstain = overall.get("abstention_correctness")
+    if overall.get("must_abstain_count", 0) and (abstain is None or abstain < REQUIRED_ABSTENTION):
+        failures.append("must-abstain questions were answered from context")
+    validity = overall.get("citation_validity")
+    if validity is not None and validity < MIN_CITATION_VALIDITY:
+        failures.append(f"citation validity below {MIN_CITATION_VALIDITY:.0%}")
+    return failures
 
 
 def main() -> int:
@@ -103,7 +163,7 @@ def main() -> int:
     try:
         results = summarise(rows)
         baseline = json.loads(args.baseline.read_text()) if args.baseline.exists() else None
-        failures = gate(results, baseline)
+        failures = gate(results, baseline, allow_missing_baseline=args.update_baseline)
     except NotImplementedError as exc:
         print(f"\nnot implemented yet: {exc}")
         return 2
@@ -112,7 +172,7 @@ def main() -> int:
     results["questions"] = len(rows)
     args.out.write_text(json.dumps(results, indent=2), encoding="utf-8")
     print(f"\nresults written to {args.out}")
-    if args.update_baseline:
+    if args.update_baseline and not failures:
         args.baseline.write_text(json.dumps(results, indent=2), encoding="utf-8")
         print(f"baseline updated: {args.baseline}")
 
