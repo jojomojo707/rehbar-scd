@@ -36,13 +36,14 @@ dev: ## run the API with stubs on http://localhost:8000, serving the chat UI too
 	cd api && SERVE_UI_DIR=../ui RETRIEVER=stub LLM_PROVIDER=stub $(BIN)/uvicorn app.main:app --reload --port 8000
 
 cluster: ## start minikube with Calico, then enable metrics-server and ingress
-	minikube start --driver=docker --cni=calico --memory=6144 --cpus=4
+	minikube start --driver=docker --cni=calico --memory=8192 --cpus=4
 	minikube addons enable metrics-server
 	minikube addons enable ingress
 
 images: ## build the three images and load them into minikube (needs yours: Dockerfiles)
 	docker build -t rahbar-api:$(TAG) api
-	docker build -t rahbar-indexer:$(TAG) indexer
+	docker build --build-context corpus=corpus --build-context fixtures=eval/fixtures \
+	  -t rahbar-indexer:$(TAG) indexer
 	docker build -t rahbar-ui:$(TAG) ui
 	minikube image load rahbar-api:$(TAG)
 	minikube image load rahbar-indexer:$(TAG)
