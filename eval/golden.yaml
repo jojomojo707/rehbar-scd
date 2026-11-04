@@ -33,14 +33,14 @@ questions:
     relevant: [{source: academic-rules-handbook-jun-2026.pdf, section: "4.23"}]
   - id: V01
     type: version
-    question: In the 2019-20 annual report, how many applicants did the CFD campus record in the discipline-wise statistics?
-    relevant: [{source: annual-report-2019-20.pdf, section: "Applications Statistics (Discipline Wise)"}]
-    expect: "693"
+    question: Under clause 1.17 of the August 2023 rules, how is the normal semester course load determined?
+    relevant: [{source: undergraduate-academic-rules-aug-2023.pdf, section: "1.17"}]
+    expect: "university study plan"
   - id: V02
     type: version
-    question: How many international students from Azerbaijan University of Languages completed the Spring 2024 Computational Linguistics course?
-    relevant: [{source: annual-report-2023-24.pdf, section: "International Student Enrollment"}]
-    expect: "eleven"
+    question: What is the normal undergraduate course load under section 4.3 of the June 2026 rules?
+    relevant: [{source: academic-rules-handbook-jun-2026.pdf, section: "4.3"}]
+    expect: "5 courses"
   - id: V03
     type: version
     question: How many summer internship applications were received in the 2023-24 annual report?
