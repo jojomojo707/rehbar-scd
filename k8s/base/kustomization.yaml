@@ -14,4 +14,7 @@ resources:
   - api.yaml
   - ui.yaml
   - services.yaml
+  - chroma-statefulset.yaml
+  - redis.yaml
+  - corpus-pvc.yaml
   - ingress.yaml
