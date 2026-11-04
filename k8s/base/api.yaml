@@ -23,6 +23,9 @@ spec:
         app.kubernetes.io/name: api
         app.kubernetes.io/part-of: rahbar
     spec:
+      # Do not inject Service env vars (CHROMA_PORT=tcp://..., REDIS_PORT=...): they clash with the
+      # ConfigMap keys of the same names. Service discovery uses DNS names (chroma, redis).
+      enableServiceLinks: false
       serviceAccountName: rahbar-api
       automountServiceAccountToken: false
       # preStop 10 s + uvicorn graceful shutdown 45 s + margin (deployment.md § Rollout settings)
