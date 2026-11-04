@@ -1,0 +1,21 @@
+# minikube: the images built locally by `make images` and loaded with `minikube image load`.
+# IfNotPresent, so the kubelet never tries to pull rahbar-*:dev from a registry.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+images:
+  - name: rahbar-api
+    newTag: dev
+  - name: rahbar-ui
+    newTag: dev
+  - name: rahbar-indexer
+    newTag: dev
+patches:
+  - target:
+      kind: Deployment
+      name: "api|ui"
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/imagePullPolicy
+        value: IfNotPresent
