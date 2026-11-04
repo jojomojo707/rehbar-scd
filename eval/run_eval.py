@@ -7,8 +7,8 @@
 
 Exit code 0 when every gate passes, 1 when any fails. CI relies on that exit code.
 
-Given: talking to the API, reading the golden set, writing results.json, the exit
-code. Yours: the four functions marked STARTER-TODO. They are the evaluation.
+Results and baseline use the flat shape in docs/architecture/data-models.md
+(§ Evaluation files); the matching rules are in the same file (§ Matching rules).
 """
 
 from __future__ import annotations
@@ -85,50 +85,95 @@ def citation_validity(response: dict) -> float | None:
     return valid / len(citations)
 
 
+# The canned fallback answer starts like this (validation-and-errors.md § Retry and fallback).
+FALLBACK_MARKER = "reliable, cited answer"
+
+
+def _is_fallback(response: dict) -> bool:
+    return FALLBACK_MARKER in str(response.get("answer", "")) and not response.get("citations")
+
+
+def _mean(values: list[float | None]) -> float | None:
+    present = [v for v in values if v is not None]
+    return sum(present) / len(present) if present else None
+
+
 def summarise(rows: list[dict]) -> dict:
     """Overall recall@3, recall@5, citation validity and abstention correctness, plus
-    recall@5 broken down by question type. This dict becomes results.json."""
-    def mean(key: str, selected: list[dict]) -> float | None:
-        values = [r[key] for r in selected if r.get(key) is not None]
-        return sum(values) / len(values) if values else None
+    recall by question type. This dict becomes results.json (data-models.md § Evaluation
+    files): the gate reads the top-level keys, and `rows` keeps one slim line per question."""
+    slim = []
+    citations_total = citations_valid = 0.0
     for row in rows:
         response = row.get("response") or {}
-        row["recall@3"] = recall_at_k(row.get("relevant") or [], response.get("retrieved") or [], 3)
-        row["recall@5"] = recall_at_k(row.get("relevant") or [], response.get("retrieved") or [], 5)
-        row["citation_validity"] = citation_validity(response)
-        row["abstention_correct"] = (not bool(response.get("answered_from_context", True))) if row.get("must_abstain") else None
-    r3, r5 = mean("recall@3", rows), mean("recall@5", rows)
-    citation_total = sum(len((r.get("response") or {}).get("citations") or []) for r in rows)
-    valid_total = round(sum((r["citation_validity"] or 0) * len((r.get("response") or {}).get("citations") or []) for r in rows))
-    abstain = [r["abstention_correct"] for r in rows if r["abstention_correct"] is not None]
+        retrieved = response.get("retrieved") or []
+        relevant = row.get("relevant") or []
+        validity = citation_validity(response)
+        n_citations = len(response.get("citations") or [])
+        if validity is not None:
+            citations_total += n_citations
+            citations_valid += validity * n_citations
+        slim.append({
+            "id": row.get("id"),
+            "type": row.get("type", "ordinary"),
+            "must_abstain": bool(row.get("must_abstain", False)),
+            "recall@3": recall_at_k(relevant, retrieved, 3),
+            "recall@5": recall_at_k(relevant, retrieved, 5),
+            "top_score": max((float(r.get("score", 0.0)) for r in retrieved), default=None),
+            "citation_validity": validity,
+            "answered_from_context": bool(response.get("answered_from_context", False)),
+            "cached": bool(response.get("cached", False)),
+            "fallback": _is_fallback(response),
+            "seconds": row.get("seconds"),
+        })
+    abstain = [not r["answered_from_context"] for r in slim if r["must_abstain"]]
     by_type = {}
-    for kind in sorted({r.get("type", "ordinary") for r in rows}):
-        subset = [r for r in rows if r.get("type", "ordinary") == kind]
-        by_type[kind] = {"questions": len(subset), "recall@3": mean("recall@3", subset), "recall@5": mean("recall@5", subset)}
-    return {"overall": {"questions": len(rows), "recall@3": r3, "recall@5": r5,
-                         "citation_validity": valid_total / citation_total if citation_total else None,
-                         "citation_count": citation_total, "valid_citation_count": valid_total,
-                         "abstention_correctness": sum(abstain) / len(abstain) if abstain else None,
-                         "must_abstain_count": len(abstain)}, "by_type": by_type, "rows": rows}
+    for kind in sorted({r["type"] for r in slim}):
+        subset = [r for r in slim if r["type"] == kind]
+        by_type[kind] = {"n": len(subset),
+                         "recall@3": _mean([r["recall@3"] for r in subset]),
+                         "recall@5": _mean([r["recall@5"] for r in subset])}
+    return {
+        "recall@3": _mean([r["recall@3"] for r in slim]),
+        "recall@5": _mean([r["recall@5"] for r in slim]),
+        "citation_validity": citations_valid / citations_total if citations_total else None,
+        "abstention_correctness": sum(abstain) / len(abstain) if abstain else None,
+        "by_type": by_type,
+        "cache_hits": sum(r["cached"] for r in slim),
+        "fallbacks": sum(r["fallback"] for r in slim),
+        "rows": slim,
+    }
 
 
 def gate(results: dict, baseline: dict | None, *, allow_missing_baseline: bool = False) -> list[str]:
-    """Return one message per failed gate (section 5.4); an empty list means pass."""
+    """Return one message per failed gate (section 5.4); an empty list means pass.
+
+    Fails when: recall@5 is more than MAX_RECALL5_DROP below the baseline; abstention
+    correctness is below REQUIRED_ABSTENTION or the golden set has no must-abstain question;
+    citation validity is below MIN_CITATION_VALIDITY; or the baseline is missing (unless
+    allow_missing_baseline, used with --update-baseline). No citations at all is a warning."""
     failures = []
-    overall = results.get("overall", results)
-    recall = overall.get("recall@5")
-    if baseline is None and not allow_missing_baseline:
-        failures.append("baseline is missing")
-    elif baseline is not None:
-        base = baseline.get("overall", baseline).get("recall@5")
-        if recall is None or base is None or recall < base - MAX_RECALL5_DROP - 1e-12:
-            failures.append(f"recall@5 dropped more than {MAX_RECALL5_DROP:.0%} below baseline")
-    abstain = overall.get("abstention_correctness")
-    if overall.get("must_abstain_count", 0) and (abstain is None or abstain < REQUIRED_ABSTENTION):
-        failures.append("must-abstain questions were answered from context")
-    validity = overall.get("citation_validity")
-    if validity is not None and validity < MIN_CITATION_VALIDITY:
-        failures.append(f"citation validity below {MIN_CITATION_VALIDITY:.0%}")
+    if baseline is None:
+        if not allow_missing_baseline:
+            failures.append("baseline file is missing (run once with --update-baseline)")
+    else:
+        recall, base = results.get("recall@5"), baseline.get("recall@5")
+        if recall is None or base is None:
+            failures.append("recall@5 could not be compared with the baseline")
+        elif recall < base - MAX_RECALL5_DROP - 1e-9:
+            failures.append(f"recall@5 {recall:.3f} is more than {MAX_RECALL5_DROP:.0%} "
+                            f"below the baseline {base:.3f}")
+    abstention = results.get("abstention_correctness")
+    if abstention is None:
+        failures.append("the golden set has no must-abstain question")
+    elif abstention < REQUIRED_ABSTENTION:
+        failures.append(f"abstention correctness {abstention:.0%} is below "
+                        f"{REQUIRED_ABSTENTION:.0%}: a must-abstain question was answered")
+    validity = results.get("citation_validity")
+    if validity is None:
+        print("warning: no answer carried a citation, so citation validity was not measured")
+    elif validity < MIN_CITATION_VALIDITY:
+        failures.append(f"citation validity {validity:.1%} is below {MIN_CITATION_VALIDITY:.0%}")
     return failures
 
 
