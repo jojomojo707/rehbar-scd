@@ -29,19 +29,20 @@ def _pdf(path: Path, version: str, superseded: bool) -> Document:
     pages = []
     with pdfplumber.open(path) as pdf:
         for number, page in enumerate(pdf.pages, 1):
-            tables = page.find_tables()
+            tables = sorted(page.find_tables(), key=lambda table: table.bbox[1])
             pieces = []
+            cursor = 0.0
             for table in tables:
-                bbox = table.bbox
-                body = page.crop((0, 0, page.width, bbox[1])).extract_text() or ""
+                top = min(page.height, max(cursor, table.bbox[1]))
+                body = page.crop((0, cursor, page.width, top)).extract_text() or "" if top > cursor else ""
                 if body.strip():
                     pieces.append(body)
                 rendered = _table_md(table.extract())
                 if rendered:
                     pieces.append(rendered)
+                cursor = min(page.height, max(cursor, table.bbox[3]))
             if tables:
-                last = max(t.bbox[3] for t in tables)
-                tail = page.crop((0, last, page.width, page.height)).extract_text() or ""
+                tail = page.crop((0, cursor, page.width, page.height)).extract_text() or "" if cursor < page.height else ""
                 if tail.strip():
                     pieces.append(tail)
                 text = "\n\n".join(pieces)

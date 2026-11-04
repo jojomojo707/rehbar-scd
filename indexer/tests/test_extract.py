@@ -35,12 +35,18 @@ def test_extract_pdf_text_and_page_numbers(tmp_path: Path) -> None:
 def test_extract_pdf_table_markdown(tmp_path: Path) -> None:
     file = tmp_path / "table.pdf"
     doc = canvas.Canvas(str(file), pagesize=letter)
-    doc.drawString(72, 720, "Grade       Points")
-    doc.drawString(72, 700, "A             4.00")
+    for y in (720, 700, 680):
+        doc.line(72, y, 220, y)
+    for x in (72, 145, 220):
+        doc.line(x, 680, x, 720)
+    doc.drawString(78, 706, "Grade")
+    doc.drawString(151, 706, "Points")
+    doc.drawString(78, 686, "A-")
+    doc.drawString(151, 686, "3.67")
     doc.save()
     result = extract(str(file), "2026", False)
-    assert "Grade" in result.pages[0].text
-    # A real ruled table is covered by HTML below; pdfplumber table detection is layout-dependent.
+    assert "| Grade | Points |" in result.pages[0].text
+    assert "| A- | 3.67 |" in result.pages[0].text
 
 
 def test_extract_html_main_and_table(tmp_path: Path) -> None:
