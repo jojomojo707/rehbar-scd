@@ -33,6 +33,7 @@ spec:
         app.kubernetes.io/name: redis
         app.kubernetes.io/part-of: rahbar
     spec:
+      enableServiceLinks: false   # no REDIS_PORT=tcp://... env var clashing with the ConfigMap
       serviceAccountName: rahbar-redis
       automountServiceAccountToken: false
       securityContext:

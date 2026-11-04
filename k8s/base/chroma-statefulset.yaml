@@ -20,6 +20,9 @@ spec:
         app.kubernetes.io/name: chroma
         app.kubernetes.io/part-of: rahbar
     spec:
+      # The Service named chroma would inject CHROMA_PORT=tcp://..., which Chroma reads as its own
+      # config and panics on (expected u16). Found on Day 1; fixed by turning service links off.
+      enableServiceLinks: false
       serviceAccountName: rahbar-chroma
       automountServiceAccountToken: false
       # Verified on Day 1: chromadb/chroma:1.0.12 runs as uid 1000 with a read-only root
