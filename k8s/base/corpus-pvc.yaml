@@ -1,0 +1,15 @@
+# PVC corpus: the fetch-corpus initContainer downloads the documents here and the indexer
+# reads them (decision D5). Shared by the Job and the CronJob, never by two runs at once
+# (the CronJob has concurrencyPolicy: Forbid).
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: corpus
+  labels:
+    app.kubernetes.io/name: indexer
+    app.kubernetes.io/part-of: rahbar
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 1Gi
