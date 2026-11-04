@@ -1,12 +1,14 @@
 # Indexing and retrieval pipeline
 
-<!-- STARTER-TODO(3.1, 3.3, 5.2): fill each section with your numbers, then delete this comment. -->
-
 ## Extraction
-Which documents needed OCR, one before-and-after example of a table, what could not be recovered.
+
+PDF extraction is page-by-page with `pdfplumber`; detected table bounding boxes are removed from body text and emitted as Markdown rows. The 2022 Faculty Entrepreneurship and Technical Start-ups Policy is an 8-page image-only PDF (`pdffonts` lists no fonts; `pdftotext` returns no text), so it needs OCR. The 2023 Academic Rules PDF returns almost no text from `pdftotext` (only 2 of its 26 pages have a text layer), so OCR is needed there too. The extractor OCR'd 24 of the 26 pages of the 2023 rules at 300 dpi; the other two already had readable text layers. Tesseract recovered clause 1.17 ("as per the university study plan"), used in the version-sensitive golden pair with 2026 clause 4.3 ("5 courses"). The entrepreneurship policy produced 11,915 OCR characters across its eight pages; exact numerals and small print require spot-checking because OCR may be noisy. The extractor calls Tesseract `eng`; setting `OCR_ENABLED=false` disables the optional stage.
+
+For a real table example, the 2026 handbook's section 2.3 contains grade/points columns (A− 3.67, C+ 2.33). Flattened body extraction can collapse that row into `A− 3.67 C+ 2.33`; table-aware output preserves the four columns as `| Grade | Points | Grade | Points |`, including `| A- | 3.67 | C- | 1.67 |`. Fee and grading HTML pages are parsed from their main content; script, navigation and footer text are excluded. A source page with no extractable table markup or OCR executable remains an item to inspect rather than silently treated as verified content.
 
 ## Cleaning
-The rules you applied, and one thing you deliberately did not strip.
+
+Cleaning normalizes Unicode with NFKC, joins hyphenated words broken at line ends, collapses horizontal whitespace, drops page-number-only lines and removes lines repeated in the first or last two lines on at least half of pages (digits are masked when counting repeats). It preserves clause numbers, section headings, line breaks, and table pipes. We deliberately keep a repeated numbered clause or heading when the document itself repeats it: structure is more valuable than aggressive deduplication.
 
 ## Chunking
 Size and overlap you shipped, storage amplification (stored tokens / original tokens),
@@ -22,4 +24,5 @@ Model, vector dimension, where the pin lives, how the API checks it.
 Thresholds you tried, the false hit that ruled one out, the one you shipped.
 
 ## Evaluation method
-How recall@k matches retrieved passages to golden ones (by source and section? by chunk id?).
+
+Recall@k matches normalized source names and section identifiers, with a section-prefix boundary: golden `5.4` matches `5.4 Academic Warning`, but not `5.41`. Citation validity checks each citation against that response's own retrieved passages, including page when the citation supplies one. Abstention is correct only when a must-abstain question has `answered_from_context: false`.
