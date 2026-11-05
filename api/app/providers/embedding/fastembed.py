@@ -11,7 +11,7 @@ class FastEmbedder:
         self.dimension = 384 if "bge-small-en-v1.5" in model_name else 0
 
     def embed_query(self, text: str) -> list[float]:
-        vector = next(self._model.query_embed(text))
+        vector = next(iter(self._model.query_embed(text)))
         values = [float(value) for value in vector.tolist()]
         if self.dimension == 0:
             self.dimension = len(values)

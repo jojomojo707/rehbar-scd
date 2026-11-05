@@ -17,24 +17,42 @@ class QueryIntent:
 
 
 _YEAR = re.compile(r"\b(19|20)\d{2}\b")
-_QUOTED = re.compile(r"[\"“”']([^\"“”']{2,80})[\"“”']")
-_HISTORICAL_CUES = re.compile(r"\b(old|older|previous|former|superseded|historical|before|prior|last year)\b", re.I)
+_HISTORICAL_CUES = re.compile(
+    r"\b(old|older|previous|earlier|former|superseded|outdated|repealed|last year)\b", re.I
+)
+_EXACT_TERM = re.compile(
+    r"\b\d+(?:\.\d+)+\b|\b[A-Z]{2,4}-?\d{3,4}\b|"
+    r"\b\d{1,3}(?:,\d{3})+\b|\b\d{1,3}\s?%(?!\w)"
+)
 
 
-def classify_query(text: str) -> QueryIntent:
+def classify_query(text: str, superseded_versions: list[str] | None = None) -> QueryIntent:
     year = _YEAR.search(text)
-    quoted = [value.strip() for value in _QUOTED.findall(text) if value.strip()]
-    acronyms = re.findall(r"\b[A-Z]{2,}(?:-[A-Z0-9]+)*\b", text)
-    terms = list(dict.fromkeys([*quoted, *acronyms]))
+    superseded_years = {
+        match.group(0)
+        for version in superseded_versions or []
+        for match in _YEAR.finditer(version)
+    }
+    requested_year = year.group(0) if year else None
+    terms = list(dict.fromkeys(match.group(0) for match in _EXACT_TERM.finditer(text)))[:3]
     return QueryIntent(
-        include_superseded=bool(year or _HISTORICAL_CUES.search(text)),
-        requested_year=year.group(0) if year else None,
+        include_superseded=bool(
+            _HISTORICAL_CUES.search(text)
+            or (requested_year and requested_year in superseded_years)
+        ),
+        requested_year=requested_year,
         exact_terms=terms,
     )
 
 
-def make_retrieval_query(text: str, k: int, collection: str, embedder: Embedder) -> RetrievalQuery:
-    intent = classify_query(text)
+def make_retrieval_query(
+    text: str,
+    k: int,
+    collection: str,
+    embedder: Embedder,
+    superseded_versions: list[str] | None = None,
+) -> RetrievalQuery:
+    intent = classify_query(text, superseded_versions)
     return RetrievalQuery(
         text=text,
         vector=embedder.embed_query(text),

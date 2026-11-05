@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import time
 from typing import Any, cast
 
 from ..config import Settings
@@ -50,11 +51,11 @@ class ChromaRetriever:
             from ..routes.metrics import EMBEDDING
 
             state = self.index_state.current()
-            import time
-
+            versions = str(state.metadata.get("superseded_versions", "")).split(",")
+            versions = [version.strip() for version in versions if version.strip()]
             started = time.perf_counter()
             query = make_retrieval_query(
-                query, k or self.settings.top_k, state.active or "", self.embedder
+                query, k or self.settings.top_k, state.active or "", self.embedder, versions
             )
             EMBEDDING.observe(time.perf_counter() - started)
         status = self.index_state.current()
