@@ -1,0 +1,35 @@
+# CI overlay (D8): the prod overlay with configuration changes only, used by ci.yml e2e-eval
+# (Day 3) and cd.yml deploy on a throwaway kind cluster.
+# - Stub LLM with real embeddings, so recall@5 and abstention are real and deterministic and
+#   CI needs no Groq key.
+# - The fixture corpus baked into the indexer image (/app/fixtures), so CI never contacts
+#   nu.edu.pk: the fetch-corpus initContainer is removed from the Job AND the CronJob, which
+#   keeps them identical (scripts/check_manifests.py).
+# imagePullPolicy: IfNotPresent (images come from `kind load`) is set in ci.yml, not here.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../prod
+patches:
+  - target:
+      kind: ConfigMap
+      name: rahbar-config
+    patch: |-
+      - op: replace
+        path: /data/LLM_PROVIDER
+        value: stub
+      - op: replace
+        path: /data/CORPUS_DIR
+        value: /app/fixtures
+  - target:
+      kind: Job
+      name: indexer
+    patch: |-
+      - op: remove
+        path: /spec/template/spec/initContainers
+  - target:
+      kind: CronJob
+      name: reindex
+    patch: |-
+      - op: remove
+        path: /spec/jobTemplate/spec/template/spec/initContainers

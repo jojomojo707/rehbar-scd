@@ -77,6 +77,8 @@ jobs:
         run: kustomize build k8s/overlays/prod | kubeconform -strict -summary
       - name: kubeconform the dev overlay
         run: kustomize build k8s/overlays/dev | kubeconform -strict -summary
+      - name: kubeconform the ci overlay
+        run: kustomize build k8s/overlays/ci | kubeconform -strict -summary
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -87,3 +89,4 @@ jobs:
           python scripts/check_manifests.py k8s/base/indexer-job.yaml k8s/base/reindex-cronjob.yaml
           kustomize build k8s/overlays/prod | python scripts/check_manifests.py -
           kustomize build k8s/overlays/dev | python scripts/check_manifests.py -
+          kustomize build k8s/overlays/ci | python scripts/check_manifests.py -
