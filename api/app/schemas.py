@@ -10,11 +10,18 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, StringConstraints
+from typing import Annotated
+
+
+class HistoryTurn(BaseModel):
+    question: Annotated[str, StringConstraints(strip_whitespace=True, min_length=3, max_length=500)]
+    answer: Annotated[str, StringConstraints(strip_whitespace=True, max_length=2000)]
 
 
 class AskRequest(BaseModel):
     question: str = Field(min_length=3, max_length=500)
+    history: list[HistoryTurn] = Field(default_factory=list, max_length=10)
 
 
 class Passage(BaseModel):
@@ -62,3 +69,4 @@ class AskResponse(BaseModel):
     confidence: Literal["high", "medium", "low"]
     retrieved: list[RetrievedRef]
     provider: str
+    cached: bool = False

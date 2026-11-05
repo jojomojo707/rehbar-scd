@@ -61,3 +61,33 @@ def test_metrics_count_requests_by_route(client: TestClient) -> None:
     client.post("/api/ask", json={"question": "Count this request"})
     text = client.get("/metrics").text
     assert 'rahbar_requests_total{path="/api/ask",status="200"}' in text
+
+
+def test_metrics_expose_day_two_pipeline_instruments(client: TestClient) -> None:
+    client.post("/api/ask", json={"question": "Count pipeline metrics"})
+    text = client.get("/metrics").text
+    for name in (
+        "rahbar_retrieval_seconds",
+        "rahbar_generation_seconds",
+        "rahbar_embedding_seconds",
+        "rahbar_cache_lookups_total",
+        "rahbar_cache_hit_ratio",
+        "rahbar_abstentions_total",
+        "rahbar_fallbacks_total",
+        "rahbar_llm_tokens_total",
+        "rahbar_llm_tokens_per_request",
+        "rahbar_citations_dropped_total",
+        "rahbar_dependency_errors_total",
+        "rahbar_inflight_requests",
+        "rahbar_index_info",
+    ):
+        assert name in text
+
+
+def test_ask_accepts_bounded_conversation_history(client: TestClient) -> None:
+    response = client.post("/api/ask", json={
+        "question": "What about the next semester?",
+        "history": [{"question": "What is the rule?", "answer": "The rule is stated."}],
+    })
+    assert response.status_code == 200
+    assert response.json()["cached"] is False

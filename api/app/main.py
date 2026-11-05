@@ -30,6 +30,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     settings = get_settings()
     configure_logging(settings.log_level)
     app.state.settings = settings
+    metrics.INDEX_INFO.labels(index_version="unknown", embed_model=settings.embed_model).set(1)
     app.state.retriever = get_retriever(settings)
     app.state.provider = get_provider(settings)
     # STARTER-TODO(4.4): compare the collection's embedding-model metadata with
