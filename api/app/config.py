@@ -26,12 +26,14 @@ class Settings:
     llm_provider: str = "stub"       # LLM_PROVIDER: stub | ollama-host | ollama-incluster | hosted
 
     # The embedding pin (section 4.4). The indexer reads the same ConfigMap key.
-    embed_model: str = "nomic-embed-text"
+    embed_model: str = "BAAI/bge-small-en-v1.5"
+    embed_cache_dir: str = "/models"
 
     # Vector store
     chroma_host: str = "chroma"
     chroma_port: int = 8000
     collection: str = "rahbar"
+    index_refresh_seconds: int = 10
 
     # Retrieval and generation
     top_k: int = 5
@@ -48,10 +50,12 @@ def get_settings() -> Settings:
     return Settings(
         retriever=os.environ.get("RETRIEVER", "stub"),
         llm_provider=os.environ.get("LLM_PROVIDER", "stub"),
-        embed_model=os.environ.get("EMBED_MODEL", "nomic-embed-text"),
+        embed_model=os.environ.get("EMBED_MODEL", "BAAI/bge-small-en-v1.5"),
+        embed_cache_dir=os.environ.get("EMBED_CACHE_DIR", "/models"),
         chroma_host=os.environ.get("CHROMA_HOST", "chroma"),
         chroma_port=_int("CHROMA_PORT", 8000),
         collection=os.environ.get("CHROMA_COLLECTION", "rahbar"),
+        index_refresh_seconds=_int("INDEX_REFRESH_SECONDS", 10),
         top_k=_int("TOP_K", 5),
         temperature=_float("TEMPERATURE", 0.2),
         llm_model=os.environ.get("LLM_MODEL", "llama3.2:3b"),
