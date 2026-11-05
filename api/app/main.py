@@ -22,7 +22,8 @@ from .providers.llm import get_provider
 from .retrieval import get_retriever
 from .routes import ask, health, metrics
 from .services.index_state import IndexState
-from .services.readiness import LazyChromaClient, Readiness, UnavailableEmbedder, load_embedder
+from .services.readiness import (STARTUP_INDEX_TIMEOUT_SECONDS, LazyChromaClient, Readiness,
+                                 UnavailableEmbedder, load_embedder)
 
 log = logging.getLogger("rahbar.api")
 
@@ -65,7 +66,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # call is time-limited, so this adds at most a few seconds). A mismatch is logged at
     # ERROR with both models and both dimensions, and /readyz then answers 503 on every
     # probe. This process only reads the index; the indexer Job writes it.
-    result = app.state.readiness.check()
+    result = app.state.readiness.check(index_timeout=STARTUP_INDEX_TIMEOUT_SECONDS)
     log.info("startup readiness", extra=dict(result.body))
     log.info(
         "api started",

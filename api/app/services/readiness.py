@@ -30,6 +30,9 @@ log = logging.getLogger("rahbar.api")
 CHECK_ORDER = ("chroma", "index_pointer", "collection", "embedding_pin", "embedding_model",
                "redis")
 INDEX_TIMEOUT_SECONDS = 1.5   # three Chroma calls; the readiness probe gives up after 3 s
+# The one check at start-up also imports chromadb and opens the first connection, which
+# takes longer than a probe allows; the startup probe gives the pod a minute anyway.
+STARTUP_INDEX_TIMEOUT_SECONDS = 10.0
 REDIS_TIMEOUT_SECONDS = 1.0
 
 
@@ -116,7 +119,7 @@ class Readiness:
     def _bounded(self, future: Future[Any], seconds: float) -> Any:
         return future.result(timeout=seconds)
 
-    def check(self) -> ReadinessResult:
+    def check(self, index_timeout: float = INDEX_TIMEOUT_SECONDS) -> ReadinessResult:
         checks: dict[str, str] = {}
         details: dict[str, str] = {}
         active: str | None = None
@@ -124,15 +127,14 @@ class Readiness:
 
         # 1-3: chroma, index_pointer, collection (re-read on every probe)
         try:
-            status = self._bounded(self._pool.submit(self.index_state.refresh),
-                                   INDEX_TIMEOUT_SECONDS)
+            status = self._bounded(self._pool.submit(self.index_state.refresh), index_timeout)
             checks.update({name: status.checks.get(name, "error")
                            for name in ("chroma", "index_pointer", "collection")})
             details.update(status.details)
             active, metadata = status.active, dict(status.metadata)
         except FutureTimeout:
             checks.update(chroma="timeout", index_pointer="skipped", collection="skipped")
-            details["chroma"] = f"no answer within {INDEX_TIMEOUT_SECONDS}s"
+            details["chroma"] = f"no answer within {index_timeout}s"
         except Exception as exc:  # noqa: BLE001
             checks.update(chroma="error", index_pointer="skipped", collection="skipped")
             details["chroma"] = str(exc)

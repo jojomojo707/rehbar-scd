@@ -151,6 +151,18 @@ def test_pin_mismatch_logs_conflict_once(caplog: pytest.LogCaptureFixture) -> No
         "was built with dummy-768 (768 dimensions)")
 
 
+def test_startup_check_waits_longer_than_a_probe(caplog: pytest.LogCaptureFixture) -> None:
+    """The first check imports chromadb and connects; it must still see the pin conflict."""
+    slow = FakeIndexState(model="dummy-768", dimension=768,
+                          delay=readiness_mod.INDEX_TIMEOUT_SECONDS + 0.5)
+    readiness = make(index=slow, embedder=FakeEmbedder("BAAI/bge-small-en-v1.5", 384),
+                     embed_model="BAAI/bge-small-en-v1.5")
+    with caplog.at_level(logging.ERROR, logger="rahbar.api"):
+        result = readiness.check(index_timeout=readiness_mod.STARTUP_INDEX_TIMEOUT_SECONDS)
+    assert result.body["failed"] == "embedding_pin"
+    assert any(r.getMessage() == "embedding pin mismatch" for r in caplog.records)
+
+
 def test_lazy_chroma_client_does_not_connect_until_used() -> None:
     lazy = LazyChromaClient(Settings(chroma_host="localhost", chroma_port=1))
     with pytest.raises(Exception):            # noqa: B017 - connection refused, at use time
