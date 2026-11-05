@@ -12,10 +12,10 @@ resources:
   - serviceaccounts.yaml
   - configmap.yaml
   - api.yaml
+  - hpa.yaml
   - ui.yaml
   - services.yaml
   - chroma-statefulset.yaml
   - redis.yaml
   - corpus-pvc.yaml
   - ingress.yaml
-  - hpa.yaml
