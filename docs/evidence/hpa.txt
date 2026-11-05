@@ -1,0 +1,11 @@
+$ kubectl get hpa -n rahbar
+NAME   REFERENCE        TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+api    Deployment/api   cpu: 0%/70%   3         8         3          9m4s
+
+$ kubectl top pods -n rahbar
+NAME                  CPU(cores)   MEMORY(bytes)   
+api-7679fcc6c-jr26h   2m           37Mi            
+api-7679fcc6c-ncgh7   2m           36Mi            
+api-7679fcc6c-r6j6k   2m           36Mi            
+chroma-0              1m           213Mi           
+ui-788d6965c4-wpsxb   1m           2Mi             

@@ -24,6 +24,7 @@ def get_client(settings: IndexerSettings) -> Any:
 def store(
     chunks: list[Chunk], vectors: list[list[float]], settings: IndexerSettings,
     client: Any | None = None,
+    original_tokens: int | None = None,
 ) -> int:
     """Write every chunk with its vector and metadata, and record the embedding model
     and vector dimension in the collection metadata (section 4.4). Return the count."""
@@ -62,7 +63,7 @@ def store(
         "chunk_size": settings.chunk_size,
         "chunk_overlap": settings.chunk_overlap,
         "chunk_strategy": settings.chunk_strategy,
-        "original_tokens": sum(max(0, token - settings.chunk_overlap) for token in tokens),
+        "original_tokens": original_tokens if original_tokens is not None else sum(tokens),
         "stored_tokens": sum(tokens),
         "superseded_versions": ",".join(superseded_versions),
         "corpus_digest": _corpus_digest(settings.corpus_dir, chunks),
@@ -84,8 +85,11 @@ def store(
     if written != len(chunks):
         raise RuntimeError(f"new index has {written} chunks; expected {len(chunks)}")
 
-    complete_metadata = {**metadata, "status": "complete"}
-    collection.modify(metadata=complete_metadata)
+    # modify() replaces the whole metadata dictionary, so send every key again, but never the
+    # hnsw:* keys: the distance function is fixed at creation and chromadb-client refuses a
+    # modify() that carries hnsw:space. The collection stays cosine.
+    complete_metadata = {k: v for k, v in metadata.items() if not k.startswith("hnsw:")}
+    collection.modify(metadata={**complete_metadata, "status": "complete"})
 
     previous = ""
     if pointer_name in existing:

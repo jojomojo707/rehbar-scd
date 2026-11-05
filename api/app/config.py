@@ -19,6 +19,11 @@ def _float(name: str, default: float) -> float:
     return float(os.environ.get(name, default))
 
 
+def _bool(name: str, default: bool) -> bool:
+    value = os.environ.get(name)
+    return default if value is None else value.strip().lower() in {"1", "true", "yes", "on"}
+
+
 @dataclass(frozen=True)
 class Settings:
     # Which implementations to load. "stub" needs no cluster, no model, no network.
@@ -34,6 +39,7 @@ class Settings:
     chroma_port: int = 8000
     collection: str = "rahbar"
     index_refresh_seconds: int = 10
+    superseded_filter: bool = True
 
     # Redis (readiness now; the semantic cache and turn log on Day 3)
     redis_host: str = "redis"
@@ -60,6 +66,7 @@ def get_settings() -> Settings:
         chroma_port=_int("CHROMA_PORT", 8000),
         collection=os.environ.get("CHROMA_COLLECTION", "rahbar"),
         index_refresh_seconds=_int("INDEX_REFRESH_SECONDS", 10),
+        superseded_filter=_bool("SUPERSEDED_FILTER", True),
         redis_host=os.environ.get("REDIS_HOST", "redis"),
         redis_port=_int("REDIS_PORT", 6379),
         top_k=_int("TOP_K", 5),

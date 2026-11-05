@@ -186,13 +186,17 @@ def main() -> int:
     parser.add_argument("--out", type=Path, default=HERE / "results.json")
     parser.add_argument("--update-baseline", action="store_true",
                         help="write these results as the new baseline")
+    parser.add_argument("--pause", type=float, default=0.0, metavar="SECONDS",
+                        help="wait between questions (useful when measuring uncached retrieval)")
     args = parser.parse_args()
+    if args.pause < 0:
+        parser.error("--pause must be non-negative")
 
     questions = load_golden(args.golden)
     rows = []
     headers = {"Host": args.host} if args.host else {}
     with httpx.Client(timeout=120.0, headers=headers) as client:
-        for q in questions:
+        for index, q in enumerate(questions):
             started = time.perf_counter()
             response = ask(client, args.api, q["question"])
             rows.append({
@@ -204,6 +208,8 @@ def main() -> int:
                 "seconds": round(time.perf_counter() - started, 2),
             })
             print(f"  {q['id']:<5} {rows[-1]['seconds']:>6.2f}s  {q['question'][:60]}")
+            if args.pause and index < len(questions) - 1:
+                time.sleep(args.pause)
 
     try:
         results = summarise(rows)

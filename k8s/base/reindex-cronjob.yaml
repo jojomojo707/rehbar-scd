@@ -1,0 +1,100 @@
+# CronJob reindex: the weekly re-index (section 4.1), Sunday 03:00 Pakistan time (P7).
+# jobTemplate.spec is a copy of Job indexer's spec: same image, same arguments.
+# scripts/check_manifests.py fails CI if the two drift apart (AMB-14).
+# Run it now, without waiting for Sunday: make index
+#   (kubectl create job --from=cronjob/reindex reindex-<time> -n rahbar)
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: reindex
+  labels:
+    app.kubernetes.io/name: indexer
+    app.kubernetes.io/part-of: rahbar
+spec:
+  schedule: "0 3 * * 0"
+  timeZone: Asia/Karachi
+  concurrencyPolicy: Forbid        # never two runs on the corpus PVC and Chroma at once
+  startingDeadlineSeconds: 3600    # a run missed by more than an hour is skipped, not stacked
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    metadata:
+      labels:
+        app.kubernetes.io/name: indexer
+        app.kubernetes.io/part-of: rahbar
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 3600
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: indexer
+            app.kubernetes.io/part-of: rahbar
+        spec:
+          restartPolicy: OnFailure
+          serviceAccountName: rahbar-indexer
+          automountServiceAccountToken: false
+          # No CHROMA_PORT=tcp://... Service variables: they break the ConfigMap key of that name.
+          enableServiceLinks: false
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            fsGroup: 10001         # the corpus PVC is writable by the image's user
+            seccompProfile:
+              type: RuntimeDefault
+          initContainers:
+            # D5: download the corpus onto the PVC (files already there are reused), then exit 1
+            # if any file differs from the committed MANIFEST.md baked into the image.
+            - name: fetch-corpus
+              image: rahbar-indexer
+              command: ["python", "/app/corpus/fetch.py", "--out", "/corpus", "--strict"]
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  cpu: 200m
+                  memory: 256Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              volumeMounts:
+                - name: corpus
+                  mountPath: /corpus
+          containers:
+            - name: indexer
+              image: rahbar-indexer
+              args: []             # the image's entry point runs the real pipeline
+              envFrom:
+                - configMapRef:
+                    name: rahbar-config
+              # OCR at 300 dpi and embedding batches are the memory peak of the system.
+              # Starting points; replaced with kubectl top numbers from a real run (section 4.5).
+              resources:
+                requests:
+                  cpu: 500m
+                  memory: 1Gi
+                limits:
+                  cpu: "2"
+                  memory: 2Gi
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              volumeMounts:
+                - name: corpus
+                  mountPath: /corpus
+                  readOnly: true   # only fetch-corpus writes the corpus
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: corpus
+              persistentVolumeClaim:
+                claimName: corpus
+            - name: tmp
+              emptyDir:
+                sizeLimit: 1Gi
