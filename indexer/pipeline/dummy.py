@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import hashlib
 import math
+from dataclasses import replace
 from typing import Any
 
 from .config import IndexerSettings
@@ -43,19 +44,9 @@ def fake_vector(text: str, dim: int = DUMMY_DIM) -> list[float]:
 
 
 def write_dummy_index(settings: IndexerSettings, client: Any) -> int:
-    """Rebuild the collection with the three dummy chunks. Safe to run twice."""
-    try:
-        client.delete_collection(settings.collection)
-    except Exception:  # the collection did not exist yet
-        pass
-    collection = client.create_collection(
-        name=settings.collection,
-        metadata={"hnsw:space": "cosine", "embed_model": DUMMY_MODEL, "dimension": DUMMY_DIM},
-    )
-    collection.add(
-        ids=[c.id for c in DUMMY_CHUNKS],
-        documents=[c.text for c in DUMMY_CHUNKS],
-        embeddings=[fake_vector(c.text) for c in DUMMY_CHUNKS],
-        metadatas=[c.metadata() for c in DUMMY_CHUNKS],
-    )
-    return int(collection.count())
+    """Build a tiny deterministic index using the same pointer as a real build."""
+    from .store import store
+
+    dummy_settings = replace(settings, embed_model=DUMMY_MODEL)
+    vectors = [fake_vector(chunk.text) for chunk in DUMMY_CHUNKS]
+    return store(DUMMY_CHUNKS, vectors, dummy_settings, client=client)
