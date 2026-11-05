@@ -49,8 +49,10 @@ class ChromaRetriever:
             from ..services.query_intent import make_retrieval_query
 
             state = self.index_state.current()
+            versions = str(state.metadata.get("superseded_versions", "")).split(",")
+            versions = [version.strip() for version in versions if version.strip()]
             query = make_retrieval_query(
-                query, k or self.settings.top_k, state.active or "", self.embedder
+                query, k or self.settings.top_k, state.active or "", self.embedder, versions
             )
         status = self.index_state.current()
         if not status.ready or not status.active:

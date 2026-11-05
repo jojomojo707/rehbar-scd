@@ -38,7 +38,9 @@ class FakeClient:
 class FakeIndexState:
     def current(self):
         return IndexStatus(active="rahbar-v1", previous=None,
-                           metadata={"embed_model": "dummy-768"}, checks={"collection": "ok"})
+                           metadata={"embed_model": "dummy-768",
+                                     "superseded_versions": "2023-08"},
+                           checks={"collection": "ok"})
 
 
 def test_retriever_excludes_superseded_and_converts_distance() -> None:
@@ -62,3 +64,25 @@ def test_explicit_year_returns_matching_superseded_version() -> None:
     results = retriever.retrieve(query)
     assert client.collection.kwargs["where"] is None
     assert len(results) == 1 and results[0].chunk_id == "old"
+
+
+def test_v01_question_enables_superseded_search_from_index_metadata() -> None:
+    client = FakeClient()
+    retriever = ChromaRetriever(
+        Settings(embed_model="dummy-768"), client, DummyEmbedder(), FakeIndexState()
+    )
+    results = retriever.retrieve(
+        "Under clause 1.17 of the August 2023 rules, how is the normal semester course load determined?"
+    )
+    assert client.collection.kwargs["where"] is None
+    assert [item.chunk_id for item in results] == ["old"]
+
+
+def test_v02_current_year_question_keeps_superseded_filter_enabled() -> None:
+    client = FakeClient()
+    retriever = ChromaRetriever(
+        Settings(embed_model="dummy-768"), client, DummyEmbedder(), FakeIndexState()
+    )
+    results = retriever.retrieve("What do the June 2026 rules say?")
+    assert client.collection.kwargs["where"] == {"superseded": False}
+    assert [item.chunk_id for item in results] == ["new"]
