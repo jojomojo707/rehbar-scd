@@ -1,0 +1,1 @@
+"""Pinned query embedding implementations."""
