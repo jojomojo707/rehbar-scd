@@ -85,8 +85,11 @@ def store(
     if written != len(chunks):
         raise RuntimeError(f"new index has {written} chunks; expected {len(chunks)}")
 
-    complete_metadata = {**metadata, "status": "complete"}
-    collection.modify(metadata=complete_metadata)
+    # modify() replaces the whole metadata dictionary, so send every key again, but never the
+    # hnsw:* keys: the distance function is fixed at creation and chromadb-client refuses a
+    # modify() that carries hnsw:space. The collection stays cosine.
+    complete_metadata = {k: v for k, v in metadata.items() if not k.startswith("hnsw:")}
+    collection.modify(metadata={**complete_metadata, "status": "complete"})
 
     previous = ""
     if pointer_name in existing:
