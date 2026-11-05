@@ -21,6 +21,9 @@ from .logjson import configure_logging, request_id_var
 from .providers.llm import get_provider
 from .retrieval import get_retriever
 from .routes import ask, health, metrics
+from .services.index_state import IndexState
+from .services.readiness import (STARTUP_INDEX_TIMEOUT_SECONDS, LazyChromaClient, Readiness,
+                                 UnavailableEmbedder, load_embedder)
 
 log = logging.getLogger("rahbar.api")
 
@@ -30,11 +33,41 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     settings = get_settings()
     configure_logging(settings.log_level)
     app.state.settings = settings
-    app.state.retriever = get_retriever(settings)
+
+    # Load the pinned embedding model. A failure keeps the pod alive but not ready
+    # (/readyz check `embedding_model`); it never crashes the process.
+    embedder, embed_error = load_embedder(settings)
+    if embed_error:
+        log.error("embedding model not loaded", extra={
+            "embed_model": settings.embed_model, "cache_dir": settings.embed_cache_dir,
+            "error": embed_error})
+
+    # One lazy Chroma client and one IndexState, shared by retrieval and /readyz.
+    chroma = LazyChromaClient(settings)
+    index_state = IndexState(settings, client=chroma)
+    if settings.retriever == "chroma":
+        from .retrieval.chroma import ChromaRetriever
+
+        app.state.retriever = ChromaRetriever(
+            settings, client=chroma, index_state=index_state,
+            embedder=embedder or UnavailableEmbedder(settings.embed_model, embed_error or ""))
+    else:
+        app.state.retriever = get_retriever(settings)
     app.state.provider = get_provider(settings)
-    # STARTER-TODO(4.4): compare the collection's embedding-model metadata with
-    # settings.embed_model here, and make /readyz fail on a mismatch.
-    # This process only reads the index. The indexer Job writes it.
+
+    import redis
+
+    app.state.readiness = Readiness(
+        settings, index_state, embedder, embed_error,
+        redis.Redis(host=settings.redis_host, port=settings.redis_port,
+                    socket_connect_timeout=1, socket_timeout=1))
+
+    # The embedding pin (section 4.4): check once now and log the result (each dependency
+    # call is time-limited, so this adds at most a few seconds). A mismatch is logged at
+    # ERROR with both models and both dimensions, and /readyz then answers 503 on every
+    # probe. This process only reads the index; the indexer Job writes it.
+    result = app.state.readiness.check(index_timeout=STARTUP_INDEX_TIMEOUT_SECONDS)
+    log.info("startup readiness", extra=dict(result.body))
     log.info(
         "api started",
         extra={"retriever": settings.retriever, "llm_provider": settings.llm_provider,
