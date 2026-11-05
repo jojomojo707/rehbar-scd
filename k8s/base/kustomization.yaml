@@ -18,3 +18,4 @@ resources:
   - redis.yaml
   - corpus-pvc.yaml
   - ingress.yaml
+  - hpa.yaml
