@@ -67,17 +67,25 @@ def _validated_completion(
     history: list[HistoryTurn],
     provider: LLMProvider,
     temperature: float,
-) -> tuple[Answer, str | None]:
-    """Generate and validate at most twice, then return a fallback reason on failure."""
+) -> tuple[Answer, str | None, int, int, str, int]:
+    """Generate and validate at most twice, retaining aggregate provider usage."""
     messages = build_prompt(question, passages, history)
     schema = Answer.model_json_schema()
     failure_reason = "unknown"
+    tokens_in = 0
+    tokens_out = 0
+    model = ""
     for attempt in range(2):
         try:
             completion = provider.complete(messages, schema, temperature)
             raw_text = completion.text
+            tokens_in += max(0, completion.tokens_in)
+            tokens_out += max(0, completion.tokens_out)
+            model = completion.model
         except ProviderError as exc:
             failure_reason = "provider"
+            dependency = "groq" if provider.name == "hosted" else provider.name
+            metrics.DEPENDENCY_ERRORS.labels(dependency=dependency).inc()
             if exc.kind in {"auth", "not_configured"}:
                 break
             if attempt == 1:
@@ -97,7 +105,14 @@ def _validated_completion(
             break
 
         try:
-            return validate_answer(raw_text, passages), None
+            return (
+                validate_answer(raw_text, passages),
+                None,
+                tokens_in,
+                tokens_out,
+                model,
+                attempt + 1,
+            )
         except AnswerValidationError as exc:
             failure_reason = "validation"
             if attempt == 1:
@@ -111,7 +126,14 @@ def _validated_completion(
                     "with JSON matching the schema, citing only the evidence headers above.",
                 },
             ]
-    return safe_fallback(None, provider.name), failure_reason
+    return (
+        safe_fallback(None, provider.name),
+        failure_reason,
+        tokens_in,
+        tokens_out,
+        model,
+        attempt + 1,
+    )
 
 
 def answer_question(
@@ -156,12 +178,23 @@ def answer_question(
         # 6. Relevance floor (no-op today), then 7. augment, generate, validate, and fallback.
         should_abstain = _check_relevance_floor(passages)
         fallback_reason = None
+        tokens_in = 0
+        tokens_out = 0
+        generation_model = ""
+        generation_attempts = 0
         if should_abstain:
             metrics.ABSTENTIONS.labels(reason="relevance_floor").inc()
             answer = safe_fallback(None, provider.name)
         else:
             generation_started = time.perf_counter()
-            answer, fallback_reason = _validated_completion(
+            (
+                answer,
+                fallback_reason,
+                tokens_in,
+                tokens_out,
+                generation_model,
+                generation_attempts,
+            ) = _validated_completion(
                 question,
                 passages,
                 history if follow_up else [],
@@ -171,6 +204,9 @@ def answer_question(
             metrics.GENERATION.observe(time.perf_counter() - generation_started)
             if fallback_reason is not None:
                 metrics.FALLBACKS.labels(reason=fallback_reason).inc()
+        for direction, count in (("in", tokens_in), ("out", tokens_out)):
+            metrics.LLM_TOKENS.labels(direction=direction).inc(count)
+            metrics.LLM_TOKENS_PER_REQUEST.labels(direction=direction).observe(count)
         if fallback_reason is None and not should_abstain and not answer.answered_from_context:
             metrics.ABSTENTIONS.labels(reason="model").inc()
 
@@ -207,6 +243,7 @@ def answer_question(
             extra={
                 "retriever": retriever.name,
                 "provider": provider.name,
+                "model": generation_model or settings.llm_model,
                 "top_k": settings.top_k,
                 "chunk_ids": [passage.chunk_id for passage in passages],
                 "scores": [round(passage.score, 4) for passage in passages],
@@ -219,6 +256,9 @@ def answer_question(
                 "exact_terms": len(intent.exact_terms),
                 "cached": False,
                 "cache_score": None,
+                "generation_attempts": generation_attempts,
+                "tokens_in": tokens_in,
+                "tokens_out": tokens_out,
                 "index_version": index_version,
                 "question_sha256": question_hash,
                 "question_chars": len(question),

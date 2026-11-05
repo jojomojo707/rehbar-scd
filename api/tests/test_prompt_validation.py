@@ -133,10 +133,13 @@ def test_generation_retries_invalid_json_with_correction_turn() -> None:
             return Completion(text=text, tokens_in=1, tokens_out=1, model="fake")
 
     provider = RetryingProvider()
-    answer, failure = _validated_completion("question", [passage()], [], provider, 0.2)
+    answer, failure, tokens_in, tokens_out, model, attempts = _validated_completion(
+        "question", [passage()], [], provider, 0.2
+    )
 
     assert failure is None
     assert answer.answered_from_context is True
+    assert (tokens_in, tokens_out, model, attempts) == (2, 2, "fake", 2)
     assert len(provider.messages) == 2
     assert provider.messages[1][-2] == {"role": "assistant", "content": "not json"}
     assert "invalid_json" in provider.messages[1][-1]["content"]

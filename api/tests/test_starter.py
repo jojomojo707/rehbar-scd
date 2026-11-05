@@ -6,8 +6,14 @@ network. Keep them passing, and add your own next to them (section 6).
 
 from __future__ import annotations
 
+import json
+import logging
+import re
+
 import pytest
 from fastapi.testclient import TestClient
+
+from app.logjson import JsonFormatter, request_id_var
 
 
 @pytest.fixture()
@@ -49,6 +55,64 @@ def test_request_id_is_echoed(client: TestClient) -> None:
                     headers={"X-Request-ID": "test-123"})
     assert r.headers["X-Request-ID"] == "test-123"
     assert r.json()["request_id"] == "test-123"
+
+
+def test_bad_request_id_is_replaced(client: TestClient) -> None:
+    r = client.post(
+        "/api/ask",
+        json={"question": "Replace the invalid request id"},
+        headers={"X-Request-ID": "bad id/with spaces"},
+    )
+    request_id = r.headers["X-Request-ID"]
+
+    assert request_id != "bad id/with spaces"
+    assert re.fullmatch(r"[A-Za-z0-9._-]{1,64}", request_id)
+    assert r.json()["request_id"] == request_id
+
+
+def test_request_log_line_has_safe_observability_fields(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from app.services import answer as answer_service
+
+    captured: list[dict[str, object]] = []
+    monkeypatch.setattr(
+        answer_service.log,
+        "info",
+        lambda message, extra: captured.append(extra),
+    )
+    raw_question = "What does the rule say?"
+    response = client.post("/api/ask", json={"question": raw_question})
+    request_id = response.json()["request_id"]
+    fields = captured[-1]
+
+    assert {
+        "top_k",
+        "chunk_ids",
+        "scores",
+        "abstained",
+        "question_sha256",
+        "question_chars",
+        "tokens_in",
+        "tokens_out",
+    } <= fields.keys()
+    assert "question" not in fields
+    assert "reasoning" not in fields
+
+    record = logging.LogRecord("rahbar.answer", logging.INFO, __file__, 1, "answered", (), None)
+    for key, value in fields.items():
+        setattr(record, key, value)
+    token = request_id_var.set(request_id)
+    try:
+        line = JsonFormatter().format(record)
+    finally:
+        request_id_var.reset(token)
+    payload = json.loads(line)
+
+    assert payload["request_id"] == request_id
+    assert payload["top_k"] == 5
+    assert payload["abstained"] is False
+    assert raw_question not in line
 
 
 @pytest.mark.parametrize("question", ["hi", "x" * 501])
