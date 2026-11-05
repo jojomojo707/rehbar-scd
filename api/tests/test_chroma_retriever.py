@@ -86,3 +86,12 @@ def test_v02_current_year_question_keeps_superseded_filter_enabled() -> None:
     results = retriever.retrieve("What do the June 2026 rules say?")
     assert client.collection.kwargs["where"] == {"superseded": False}
     assert [item.chunk_id for item in results] == ["new"]
+
+
+def test_superseded_filter_can_be_disabled_by_config() -> None:
+    client = FakeClient()
+    settings = Settings(embed_model="dummy-768", superseded_filter=False)
+    retriever = ChromaRetriever(settings, client, DummyEmbedder(), FakeIndexState())
+    results = retriever.retrieve(RetrievalQuery("all versions", [0.0] * 768, 2))
+    assert client.collection.kwargs["where"] is None
+    assert [item.chunk_id for item in results] == ["new", "old"]

@@ -69,7 +69,11 @@ class ChromaRetriever:
             )
         vector = query.vector or self.embedder.embed_query(query.text)
         collection = self.client.get_collection(name=status.active, embedding_function=None)
-        where = None if query.include_superseded else {"superseded": False}
+        where = (
+            None
+            if query.include_superseded or not self.settings.superseded_filter
+            else {"superseded": False}
+        )
         result = collection.query(
             query_embeddings=cast(Any, [vector]),
             n_results=max(query.k, query.k * 5 if query.requested_year else query.k),
@@ -86,7 +90,11 @@ class ChromaRetriever:
             version = str(meta.get("doc_version", ""))
             if query.requested_year and query.requested_year not in version:
                 continue
-            if not query.include_superseded and bool(meta.get("superseded", False)):
+            if (
+                self.settings.superseded_filter
+                and not query.include_superseded
+                and bool(meta.get("superseded", False))
+            ):
                 continue
             passages.append(Passage(
                 chunk_id=str(chunk_id),
