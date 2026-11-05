@@ -33,6 +33,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     settings = get_settings()
     configure_logging(settings.log_level)
     app.state.settings = settings
+    metrics.INDEX_INFO.labels(index_version="unknown", embed_model=settings.embed_model).set(1)
 
     # Load the pinned embedding model. A failure keeps the pod alive but not ready
     # (/readyz check `embedding_model`); it never crashes the process.

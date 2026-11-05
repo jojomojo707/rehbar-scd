@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import time
 from typing import Any, cast
 
 from ..config import Settings
@@ -47,13 +48,16 @@ class ChromaRetriever:
     def retrieve(self, query: RetrievalQuery | str, k: int | None = None) -> list[Passage]:
         if isinstance(query, str):
             from ..services.query_intent import make_retrieval_query
+            from ..routes.metrics import EMBEDDING
 
             state = self.index_state.current()
             versions = str(state.metadata.get("superseded_versions", "")).split(",")
             versions = [version.strip() for version in versions if version.strip()]
+            started = time.perf_counter()
             query = make_retrieval_query(
                 query, k or self.settings.top_k, state.active or "", self.embedder, versions
             )
+            EMBEDDING.observe(time.perf_counter() - started)
         status = self.index_state.current()
         if not status.ready or not status.active:
             raise RuntimeError(f"active index is not ready: {status.failed or status.checks}")
