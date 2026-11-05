@@ -1,0 +1,86 @@
+# Job indexer: builds the index once and exits; the only writer to Chroma (sections 4.1, 4.2,
+# ADR 0001). The API never indexes. Re-index later with `make index` (from CronJob reindex).
+# spec must stay identical to the CronJob's jobTemplate.spec: scripts/check_manifests.py checks.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: indexer
+  labels:
+    app.kubernetes.io/name: indexer
+    app.kubernetes.io/part-of: rahbar
+spec:
+  backoffLimit: 2
+  activeDeadlineSeconds: 3600
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: indexer
+        app.kubernetes.io/part-of: rahbar
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: rahbar-indexer
+      automountServiceAccountToken: false
+      # No CHROMA_PORT=tcp://... Service variables: they break the ConfigMap key of that name.
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001         # the corpus PVC is writable by the image's user
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        # D5: download the corpus onto the PVC (files already there are reused), then exit 1
+        # if any file differs from the committed MANIFEST.md baked into the image.
+        - name: fetch-corpus
+          image: rahbar-indexer
+          command: ["python", "/app/corpus/fetch.py", "--out", "/corpus", "--strict"]
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: corpus
+              mountPath: /corpus
+      containers:
+        - name: indexer
+          image: rahbar-indexer
+          args: []             # the image's entry point runs the real pipeline
+          envFrom:
+            - configMapRef:
+                name: rahbar-config
+          # OCR at 300 dpi and embedding batches are the memory peak of the system.
+          # Starting points; replaced with kubectl top numbers from a real run (section 4.5).
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: corpus
+              mountPath: /corpus
+              readOnly: true   # only fetch-corpus writes the corpus
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: corpus
+          persistentVolumeClaim:
+            claimName: corpus
+        - name: tmp
+          emptyDir:
+            sizeLimit: 1Gi

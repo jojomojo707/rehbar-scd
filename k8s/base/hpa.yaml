@@ -1,0 +1,27 @@
+# HorizontalPodAutoscaler api: 3 to 8 pods on CPU (sections 4.1, 4.5).
+# It divides each pod's CPU use by its requests.cpu (250m in api.yaml): without requests, or
+# without metrics-server (`minikube addons enable metrics-server`), it reads <unknown>/70%.
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: api
+  labels:
+    app.kubernetes.io/name: api
+    app.kubernetes.io/part-of: rahbar
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: api
+  minReplicas: 3
+  maxReplicas: 8
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300   # wait 5 minutes of low load before removing pods
