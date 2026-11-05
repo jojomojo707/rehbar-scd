@@ -35,6 +35,10 @@ class Settings:
     collection: str = "rahbar"
     index_refresh_seconds: int = 10
 
+    # Redis (readiness now; the semantic cache and turn log on Day 3)
+    redis_host: str = "redis"
+    redis_port: int = 6379
+
     # Retrieval and generation
     top_k: int = 5
     temperature: float = 0.2
@@ -56,6 +60,8 @@ def get_settings() -> Settings:
         chroma_port=_int("CHROMA_PORT", 8000),
         collection=os.environ.get("CHROMA_COLLECTION", "rahbar"),
         index_refresh_seconds=_int("INDEX_REFRESH_SECONDS", 10),
+        redis_host=os.environ.get("REDIS_HOST", "redis"),
+        redis_port=_int("REDIS_PORT", 6379),
         top_k=_int("TOP_K", 5),
         temperature=_float("TEMPERATURE", 0.2),
         llm_model=os.environ.get("LLM_MODEL", "llama3.2:3b"),
