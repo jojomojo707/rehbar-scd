@@ -47,6 +47,7 @@ class Settings:
 
     # Retrieval and generation
     top_k: int = 5
+    hybrid_retrieval: bool = False
     relevance_floor: float = 0.60
     temperature: float = 0.2
     llm_model: str = "llama3.2:3b"
@@ -74,6 +75,7 @@ def get_settings() -> Settings:
         redis_host=os.environ.get("REDIS_HOST", "redis"),
         redis_port=_int("REDIS_PORT", 6379),
         top_k=_int("TOP_K", 5),
+        hybrid_retrieval=_bool("HYBRID_RETRIEVAL", False),
         relevance_floor=_float("RELEVANCE_FLOOR", 0.60),
         temperature=_float("TEMPERATURE", 0.2),
         llm_model=os.environ.get("LLM_MODEL", "llama3.2:3b"),
