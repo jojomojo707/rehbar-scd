@@ -1,5 +1,5 @@
 # CI (section 6): runs on every pull request into main or dev, and on every push to dev.
-# Part 1 (Day 1): lint, test, manifests. build, scan and e2e-eval are added on Days 2 and 3.
+# lint, test, manifests (Day 1); build and scan (Day 2); e2e-eval is added on Day 3.
 name: ci
 
 on:
@@ -90,3 +90,63 @@ jobs:
           kustomize build k8s/overlays/prod | python scripts/check_manifests.py -
           kustomize build k8s/overlays/dev | python scripts/check_manifests.py -
           kustomize build k8s/overlays/ci | python scripts/check_manifests.py -
+
+  # Section 6: build all three images on every PR, never push them. Each image is exported
+  # as a tar and uploaded, so scan (and e2e-eval on Day 3) use exactly these bytes.
+  build:
+    needs: [lint, test]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [api, ui, indexer]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build rahbar-${{ matrix.image }} (no push)
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.image }}
+          # The indexer image needs the fetch script, the committed manifest and the CI
+          # fixture corpus from outside indexer/ (decision P1). Ignored by the other two.
+          build-contexts: |
+            corpus=corpus
+            fixtures=eval/fixtures
+          tags: docker.io/majnoon57/rahbar-${{ matrix.image }}:${{ github.sha }}
+          push: false
+          outputs: type=docker,dest=/tmp/rahbar-${{ matrix.image }}.tar
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: image-${{ matrix.image }}
+          path: /tmp/rahbar-${{ matrix.image }}.tar
+          retention-days: 3
+
+  # Fail on any HIGH or CRITICAL vulnerability that has a fix available. A .trivyignore
+  # entry needs a written reason next to it.
+  scan:
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [api, ui, indexer]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: image-${{ matrix.image }}
+          path: /tmp
+      - name: Trivy scan rahbar-${{ matrix.image }}
+        # v0.36.0, pinned by commit: several older tags of this action were re-published
+        # in March 2026, so a tag alone is not trustworthy.
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
+        with:
+          input: /tmp/rahbar-${{ matrix.image }}.tar
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+          format: table
