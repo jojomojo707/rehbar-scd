@@ -20,3 +20,4 @@ resources:
   - indexer-job.yaml
   - reindex-cronjob.yaml
   - ingress.yaml
+  - networkpolicy.yaml
