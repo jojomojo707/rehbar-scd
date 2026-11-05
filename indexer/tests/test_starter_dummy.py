@@ -26,6 +26,11 @@ class FakeCollection:
         return len(self.rows)
 
     def modify(self, metadata) -> None:
+        # Same rule as chromadb-client 1.0.12 (CollectionCommon): the distance function is
+        # fixed at creation, and modify() refuses any metadata that still carries hnsw:space.
+        if "hnsw:space" in metadata:
+            raise ValueError("Changing the distance function of a collection once it is "
+                             "created is not supported currently.")
         self.metadata = metadata
 
 
