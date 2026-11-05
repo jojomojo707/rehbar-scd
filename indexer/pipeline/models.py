@@ -32,6 +32,9 @@ class Chunk:
     page: int
     doc_version: str
     superseded: bool
+    ocr: bool = False
+    chunk_index: int = 0
+    tokens: int = 0
 
     def metadata(self) -> dict[str, str | int | bool]:
         """Chroma metadata values must be str, int, float or bool."""
@@ -41,4 +44,7 @@ class Chunk:
             "page": self.page,
             "doc_version": self.doc_version,
             "superseded": self.superseded,
+            "ocr": self.ocr,
+            "chunk_index": self.chunk_index,
+            "tokens": self.tokens,
         }

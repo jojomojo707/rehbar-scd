@@ -10,7 +10,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1
 
 # OCR for scanned pages (corpus property 3): Tesseract and the poppler PDF tools.
+# `apt-get upgrade` takes Debian security fixes newer than the base image (Trivy, section 6).
 RUN apt-get update \
+ && apt-get upgrade -y --no-install-recommends \
  && apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-eng poppler-utils \
  && rm -rf /var/lib/apt/lists/*
 

@@ -11,7 +11,15 @@ from .models import Document
 
 def _key(line: str) -> str:
     value = unicodedata.normalize("NFKC", line).casefold()
-    return re.sub(r"\d+", "#", " ".join(value.split()))
+    value = re.sub(r"\|+", " ", value)
+    value = re.sub(r"(?<!\w)[ivxlcdm]+(?!\w)", "#", value, flags=re.I)
+    value = re.sub(r"\d+", "#", value)
+    return " ".join(value.split())
+
+
+def _is_heading(line: str) -> bool:
+    value = line.strip()
+    return value.startswith("#") or bool(re.match(r"^\d+(?:\.\d+)*\.?\s+\S", value))
 
 
 def clean(doc: Document) -> Document:
@@ -23,7 +31,7 @@ def clean(doc: Document) -> Document:
         lines = [unicodedata.normalize("NFKC", line).rstrip() for line in page.text.splitlines()]
         lines_by_page.append(lines)
         for line in lines[:2] + (lines[-2:] if len(lines) > 2 else []):
-            if line.strip():
+            if line.strip() and not _is_heading(line):
                 edge_pages[_key(line)].add(page.page)
     threshold = max(2, (len(doc.pages) + 1) // 2)
     repeated = {key for key, pages in edge_pages.items() if len(pages) >= threshold}
@@ -32,7 +40,7 @@ def clean(doc: Document) -> Document:
         for line in lines:
             if re.fullmatch(r"\s*(?:page\s+)?\d+(?:\s+of\s+\d+)?\s*", line, re.I):
                 continue
-            if line.strip() and _key(line) in repeated:
+            if line.strip() and not _is_heading(line) and _key(line) in repeated:
                 continue
             kept.append(re.sub(r"[\t\u00a0 ]+", " ", line).strip())
         text = "\n".join(kept)
