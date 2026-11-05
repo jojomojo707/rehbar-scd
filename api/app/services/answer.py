@@ -12,16 +12,16 @@ import time
 
 from ..config import Settings
 from ..logjson import request_id_var
-from ..providers.llm.base import LLMProvider
+from ..providers.llm.base import LLMProvider, ProviderError
 from ..retrieval.base import RetrievalQuery, Retriever
 from ..routes import metrics
-from ..schemas import AskResponse, HistoryTurn, Passage, RetrievedRef
+from ..schemas import Answer, AskResponse, HistoryTurn, Passage, RetrievedRef
 from .cache import NullSemanticCache
 from .fallback import safe_fallback
 from .prompt import build_prompt
 from .query_intent import QueryIntent, classify_query, make_retrieval_query
 from .turns import NullTurnLog, Turn
-from .validate import validate_answer
+from .validate import AnswerValidationError, validate_answer
 
 log = logging.getLogger("rahbar.answer")
 
@@ -59,6 +59,63 @@ def _retrieval_query(
 def _check_relevance_floor(passages: list[Passage]) -> bool:
     """Day 2 placeholder: leave relevance-floor decisions to the later answer task."""
     return False
+
+
+def _validated_completion(
+    question: str,
+    passages: list[Passage],
+    history: list[HistoryTurn],
+    provider: LLMProvider,
+    temperature: float,
+) -> tuple[Answer, str | None]:
+    """Generate and validate at most twice, then return a fallback reason on failure."""
+    messages = build_prompt(question, passages, history)
+    schema = Answer.model_json_schema()
+    failure_reason = "unknown"
+    for attempt in range(2):
+        try:
+            complete = getattr(provider, "complete", None)
+            if callable(complete):
+                completion = complete(messages, schema, temperature)
+                raw_text = completion.text
+            else:
+                raw_text = provider.generate(question, passages).model_dump_json()
+        except ProviderError as exc:
+            failure_reason = "provider"
+            if exc.kind in {"auth", "not_configured"}:
+                break
+            if attempt == 1:
+                break
+            if exc.kind in {"timeout", "rate_limited", "server"}:
+                time.sleep(1)
+            elif exc.kind == "bad_request":
+                messages = [*messages, {
+                    "role": "user",
+                    "content": "Your request was rejected. Reply with JSON matching the schema "
+                    "and cite only the evidence headers above.",
+                }]
+            continue
+        except Exception as exc:
+            log.error("provider call failed", extra={"error_type": type(exc).__name__})
+            failure_reason = "provider"
+            break
+
+        try:
+            return validate_answer(raw_text, passages), None
+        except AnswerValidationError as exc:
+            failure_reason = "validation"
+            if attempt == 1:
+                break
+            messages = [
+                *messages,
+                {"role": "assistant", "content": raw_text},
+                {
+                    "role": "user",
+                    "content": f"Your previous reply was rejected: {exc.reason}. Reply again "
+                    "with JSON matching the schema, citing only the evidence headers above.",
+                },
+            ]
+    return safe_fallback(None, provider.name), failure_reason
 
 
 def answer_question(
@@ -102,17 +159,23 @@ def answer_question(
 
         # 6. Relevance floor (no-op today), then 7. augment, generate, validate, and fallback.
         should_abstain = _check_relevance_floor(passages)
+        fallback_reason = None
         if should_abstain:
             metrics.ABSTENTIONS.labels(reason="relevance_floor").inc()
             answer = safe_fallback(None, provider.name)
         else:
-            build_prompt(question, passages, history if follow_up else [])
             generation_started = time.perf_counter()
-            raw_answer = provider.generate(question, passages)
+            answer, fallback_reason = _validated_completion(
+                question,
+                passages,
+                history if follow_up else [],
+                provider,
+                settings.temperature,
+            )
             metrics.GENERATION.observe(time.perf_counter() - generation_started)
-            answer = validate_answer(raw_answer, passages)
-            answer = safe_fallback(answer, provider.name)
-        if not answer.answered_from_context:
+            if fallback_reason is not None:
+                metrics.FALLBACKS.labels(reason=fallback_reason).inc()
+        if fallback_reason is None and not should_abstain and not answer.answered_from_context:
             metrics.ABSTENTIONS.labels(reason="model").inc()
 
         # 8. Store turn and cache result (both no-op scaffolds on Day 2).
