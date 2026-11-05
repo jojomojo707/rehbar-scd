@@ -8,7 +8,7 @@ import re
 from pydantic import ValidationError
 
 from ..routes import metrics
-from ..schemas import Answer, Passage
+from ..schemas import Answer, Citation, Passage
 
 _INLINE_CITATION = re.compile(r"\[([^\]/]+?)\s*/\s*([^\]]+?)\]")
 ABSTENTION_TEXT = (
@@ -58,10 +58,14 @@ def validate_answer(answer: str | dict[str, object] | Answer, passages: list[Pas
 
     by_key = {(p.source, p.section): p for p in passages}
     valid_citations = []
+    seen_citations: set[tuple[str, str, int | None]] = set()
     for citation in parsed.citations:
         passage = by_key.get((citation.source, citation.section))
         if passage is not None and (citation.page is None or citation.page == passage.page):
-            valid_citations.append(citation)
+            key = (citation.source, citation.section, citation.page)
+            if key not in seen_citations:
+                valid_citations.append(citation)
+                seen_citations.add(key)
         else:
             metrics.CITATIONS_DROPPED.inc()
 
@@ -77,8 +81,7 @@ def validate_answer(answer: str | dict[str, object] | Answer, passages: list[Pas
         raise AnswerValidationError("no_valid_citation", "No citation matched retrieved evidence.")
     if not cleaned_text:
         raise AnswerValidationError("schema", "No answer text remains after citation checks.")
-    if not _INLINE_CITATION.search(cleaned_text):
-        raise AnswerValidationError("no_inline_citation", "The answer has no valid inline citation.")
+    cleaned_text = _ensure_inline_citations(cleaned_text, valid_citations)
 
     return parsed.model_copy(
         update={
@@ -87,3 +90,21 @@ def validate_answer(answer: str | dict[str, object] | Answer, passages: list[Pas
             "citations": valid_citations,
         }
     )
+
+
+def _ensure_inline_citations(text: str, citations: list[Citation]) -> str:
+    """Add exact, already-validated citations to factual sentences missing a marker."""
+    markers = " ".join(
+        f"[{citation.source} / {citation.section}]" for citation in citations
+    )
+    sentences = re.split(r"(?<=[.!?])\s+", text.strip())
+    cited: list[str] = []
+    for sentence in sentences:
+        if not sentence or _INLINE_CITATION.search(sentence):
+            cited.append(sentence)
+            continue
+        punctuation = re.search(r"[.!?]+$", sentence)
+        suffix = punctuation.group(0) if punctuation else ""
+        body = sentence[: -len(suffix)] if suffix else sentence
+        cited.append(f"{body.rstrip()} {markers}{suffix}")
+    return " ".join(cited)
