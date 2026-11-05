@@ -25,7 +25,7 @@ class SemanticCache(Protocol):
 class NullSemanticCache:
     """Disabled cache used until Redis wiring is implemented."""
 
-    def lookup(self, namespace: str, vector: list[float]) -> None:
+    def lookup(self, namespace: str, vector: list[float]) -> CacheHit | None:
         return None
 
     def store(self, namespace: str, vector: list[float], question: str, response: AskResponse) -> None:
