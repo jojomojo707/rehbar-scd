@@ -19,3 +19,17 @@ def test_clean_joins_hyphenation_but_preserves_lines_and_table_pipes() -> None:
     text = clean(doc).pages[0].text
     assert "international" in text
     assert "| A | B |" in text
+
+
+def test_clean_strips_alternating_student_handbook_headers() -> None:
+    headers = [
+        "| II | Student Handbook 2026 | |",
+        "| | | Student Handbook 2026 | III |",
+    ]
+    pages = [
+        Page("student-handbook.pdf", number, f"{headers[(number - 1) % 2]}\n1.{number} Section {number}\nBody text.")
+        for number in range(1, 7)
+    ]
+    cleaned = clean(Document("student-handbook.pdf", "2026", False, pages))
+    assert all("Student Handbook 2026" not in page.text for page in cleaned.pages)
+    assert all(f"1.{number} Section {number}" in cleaned.pages[number - 1].text for number in range(1, 7))

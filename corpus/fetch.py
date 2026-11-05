@@ -5,11 +5,17 @@
     python corpus/fetch.py --force               # download everything again
     python corpus/fetch.py --verify              # re-hash local files against MANIFEST.md
     python corpus/fetch.py --list URL            # list the documents linked from an index page
+    python corpus/fetch.py --out /corpus --strict  # the indexer Job's fetch-corpus initContainer
 
 Writes:
     corpus/raw/<file>         the documents (gitignored: never commit someone else's PDFs)
     corpus/raw/_index.json    file -> doc_version, superseded; the indexer reads this
     corpus/MANIFEST.md        URL, size and SHA-256 per document (commit this)
+
+With --out DIR (any folder other than corpus/raw), the documents and _index.json go into
+DIR and the manifest is written to DIR/MANIFEST.generated.md: the committed MANIFEST.md is
+never touched. With --strict, every file is then checked against the committed
+MANIFEST.md, and the script exits 1 if one is missing, changed, or not listed there.
 
 Rules this script follows so 40 teams do not hammer one university website:
 one request at a time, a pause between requests, a clear User-Agent, each file
@@ -92,19 +98,24 @@ def load_sources() -> list[dict]:
     return docs
 
 
-def fetch(force: bool) -> int:
+def fetch(force: bool, out: Path | None = None, strict: bool = False,
+          transport: httpx.BaseTransport | None = None) -> int:
+    """Download what is missing into `out` (default corpus/raw). `transport` lets tests
+    replace the network with httpx.MockTransport."""
+    out = out or RAW
+    is_default = out.resolve() == RAW.resolve()
     docs = load_sources()
-    RAW.mkdir(exist_ok=True)
-    index_path = RAW / "_index.json"
+    out.mkdir(parents=True, exist_ok=True)
+    index_path = out / "_index.json"
     previous = {e["name"]: e for e in json.loads(index_path.read_text())} \
         if index_path.exists() else {}
     entries, failures = [], []
     with httpx.Client(headers={"User-Agent": USER_AGENT}, follow_redirects=True,
-                      timeout=httpx.Timeout(60.0, connect=15.0)) as client:
+                      timeout=httpx.Timeout(60.0, connect=15.0), transport=transport) as client:
         for doc in docs:
             name, url = doc["name"], normalise(doc["url"])
             old = previous.get(name)
-            if old and not force and (RAW / old["file"]).exists() and old["url"] == url:
+            if old and not force and (out / old["file"]).exists() and old["url"] == url:
                 print(f"  have    {old['file']}")
                 entries.append({**old, "doc_version": doc.get("doc_version", "unknown"),
                                 "superseded": bool(doc.get("superseded", False))})
@@ -119,7 +130,7 @@ def fetch(force: bool) -> int:
                     raise RuntimeError("Google Drive returned a web page, not the file "
                                        "(too large for direct download, or not shared publicly)")
                 file = slug(name) + guess_extension(url, content_type)
-                (RAW / file).write_bytes(response.content)
+                (out / file).write_bytes(response.content)
                 entries.append({
                     "name": name, "url": url, "file": file, "bytes": len(response.content),
                     "sha256": hashlib.sha256(response.content).hexdigest(),
@@ -135,17 +146,21 @@ def fetch(force: bool) -> int:
             time.sleep(PAUSE_SECONDS)
 
     index_path.write_text(json.dumps(entries, indent=2), encoding="utf-8")
-    write_manifest(entries)
-    print(f"\n{len(entries)} documents in corpus/raw, manifest written to corpus/MANIFEST.md")
+    manifest = MANIFEST if is_default else out / "MANIFEST.generated.md"
+    write_manifest(entries, manifest)
+    print(f"\n{len(entries)} documents in {out}, manifest written to {manifest}")
     if failures:
         print(f"{len(failures)} failed; fix their URLs in sources.yaml and run again:")
         for name, reason in failures:
             print(f"  - {name}: {reason}")
         return 1
+    if strict:
+        print(f"\nstrict: checking {out} against the committed {MANIFEST.name}")
+        return 1 if check_against_manifest(out, [e["file"] for e in entries]) else 0
     return 0
 
 
-def write_manifest(entries: list[dict]) -> None:
+def write_manifest(entries: list[dict], path: Path) -> None:
     lines = [
         "# Corpus manifest",
         "",
@@ -159,16 +174,19 @@ def write_manifest(entries: list[dict]) -> None:
     for e in entries:
         lines.append(f"| {e['name']} | {e['doc_version']} | {'yes' if e['superseded'] else 'no'} "
                      f"| `{e['file']}` | {e['bytes']:,} | `{e['sha256']}` | <{e['url']}> |")
-    MANIFEST.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def verify() -> int:
+def check_against_manifest(folder: Path, fetched: list[str] | None = None) -> int:
+    """Hash every file the committed MANIFEST.md lists and compare. Files in `fetched`
+    that the manifest does not list also count as bad, so the folder holds exactly the
+    committed corpus. Returns the number of bad files."""
     if not MANIFEST.exists():
-        sys.exit("no corpus/MANIFEST.md yet; run fetch first")
+        sys.exit(f"no {MANIFEST} yet; run fetch first")
     rows = re.findall(r"\| `([^`]+)` \| [\d,]+ \| `([0-9a-f]{64})` \|", MANIFEST.read_text())
     bad = 0
     for file, expected in rows:
-        path = RAW / file
+        path = folder / file
         if not path.exists():
             print(f"  missing   {file}")
             bad += 1
@@ -177,8 +195,18 @@ def verify() -> int:
             bad += 1
         else:
             print(f"  ok        {file}")
-    print(f"\n{len(rows) - bad} of {len(rows)} match the manifest")
-    return 1 if bad else 0
+    listed = {file for file, _ in rows}
+    unlisted = sorted(set(fetched or []) - listed)
+    for file in unlisted:
+        print(f"  unlisted  {file}  (in sources.yaml but not in the committed manifest)")
+    bad += len(unlisted)
+    total = len(listed) + len(unlisted)
+    print(f"\n{total - bad} of {total} match the manifest")
+    return bad
+
+
+def verify(folder: Path | None = None) -> int:
+    return 1 if check_against_manifest(folder or RAW) else 0
 
 
 class _Links(HTMLParser):
@@ -229,12 +257,18 @@ def main() -> int:
     group.add_argument("--force", action="store_true", help="download everything again")
     group.add_argument("--verify", action="store_true", help="check local files against MANIFEST.md")
     group.add_argument("--list", metavar="URL", help="list document links on an index page")
+    parser.add_argument("--out", metavar="DIR", type=Path, default=RAW,
+                        help="download into DIR (default corpus/raw); a folder other than "
+                             "the default gets MANIFEST.generated.md, never MANIFEST.md")
+    parser.add_argument("--strict", action="store_true",
+                        help="after fetching, exit 1 if any file is missing, changed, or not "
+                             "listed in the committed MANIFEST.md")
     args = parser.parse_args()
     if args.verify:
-        return verify()
+        return verify(args.out)
     if args.list:
         return list_documents(args.list)
-    return fetch(force=args.force)
+    return fetch(force=args.force, out=args.out, strict=args.strict)
 
 
 if __name__ == "__main__":

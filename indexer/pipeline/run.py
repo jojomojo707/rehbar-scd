@@ -18,6 +18,7 @@ from pathlib import Path
 
 from .config import IndexerSettings, get_settings
 from .models import Chunk
+from .tokens import get_tokenizer
 
 
 def log(msg: str, **fields: object) -> None:
@@ -63,7 +64,7 @@ def discover(corpus_dir: str) -> list[tuple[Path, str, bool]]:
     return found
 
 
-def run_pipeline(settings: IndexerSettings) -> int:
+def run_pipeline(settings: IndexerSettings) -> dict[str, int | float | str]:
     from .chunk import chunk
     from .clean import clean
     from .embed import embed
@@ -74,13 +75,39 @@ def run_pipeline(settings: IndexerSettings) -> int:
     if not documents:
         raise SystemExit(f"no documents found in {settings.corpus_dir}")
     all_chunks: list[Chunk] = []
+    tokenizer = get_tokenizer(settings.embed_model, settings.embed_cache_dir)
+    original_tokens = 0
+    skipped = 0
     for path, doc_version, superseded in documents:
         doc = clean(extract(str(path), doc_version, superseded))
-        pieces = chunk(doc, settings.chunk_size, settings.chunk_overlap)
+        original_tokens += sum(tokenizer.count(page.text) for page in doc.pages)
+        pieces = chunk(doc, settings.chunk_size, settings.chunk_overlap, tokenizer, settings.chunk_strategy)
         log("chunked", source=path.name, chunks=len(pieces))
+        skipped += int(not pieces)
         all_chunks.extend(pieces)
+    if not all_chunks:
+        raise ValueError("no indexable text remained after extraction and cleaning")
     vectors = embed([c.text for c in all_chunks], settings)
-    return store(all_chunks, vectors, settings)
+    stored = store(all_chunks, vectors, settings, original_tokens=original_tokens)
+    stored_tokens = sum(item.tokens for item in all_chunks)
+    pointer = f"{settings.collection}-active"
+    collection = settings.collection
+    try:
+        from .store import get_client
+
+        metadata = get_client(settings).get_collection(name=pointer, embedding_function=None).metadata or {}
+        collection = str(metadata.get("active", collection))
+    except Exception:
+        pass
+    return {
+        "collection": collection,
+        "chunks": stored,
+        "documents": len(documents),
+        "skipped": skipped,
+        "original_tokens": original_tokens,
+        "stored_tokens": stored_tokens,
+        "amplification": round(stored_tokens / original_tokens, 3) if original_tokens else 0.0,
+    }
 
 
 def main() -> int:
@@ -99,7 +126,9 @@ def main() -> int:
 
             count = write_dummy_index(settings, get_client(settings))
         else:
-            count = run_pipeline(settings)
+            summary = run_pipeline(settings)
+            log("indexer finished", **summary, seconds=round(time.perf_counter() - started, 1))
+            return 0
     except NotImplementedError as exc:
         log("indexer stage not implemented yet", error=str(exc))
         return 2

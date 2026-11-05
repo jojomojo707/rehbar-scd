@@ -5,8 +5,10 @@ posthog==5.4.0
 httpx==0.28.1
 pyyaml==6.0.2
 # Extraction. OCR also needs system packages in your Dockerfile: tesseract-ocr, poppler-utils.
-pdfplumber==0.11.6
-pypdf==5.4.0
+# Bumped for CVE fixes (Trivy): pdfplumber 0.11.10 brings pdfminer.six 20260107 (two HIGH
+# findings in 20250327); pypdf 5.4.0 had twenty HIGH findings, fixed by 6.17.0.
+pdfplumber==0.11.10
+pypdf==6.21.4
 pytesseract==0.3.13
 pdf2image==1.17.0
 beautifulsoup4==4.15.0
