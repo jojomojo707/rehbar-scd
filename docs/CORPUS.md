@@ -13,3 +13,11 @@ The retrieval corpus uses official public material from the National University 
 | 7 | Exact terms | Academic Rules Handbook 2026; Fee Structure and Grading pages | Exact lookups include clause 1.25 (minimum graduation CGPA 2.00), clause 2.3 (A− 3.67), clause 6.11 (minimum TEN (10) students for a summer course), and published fee amounts. Clause numbers and thresholds are kept in the extracted text. |
 
 The 2023 academic-rule PDF has 24 pages OCR'd by Tesseract in this environment; its historical clause 1.17 is used in the golden set and compared with 2026 clause 4.3. The entrepreneurship policy's eight pages were also OCR'd (11,915 characters); OCR noise remains a human-review risk for fine print. For table quality, a flattened grade row such as `A+ 4.00 C+ 2.33` loses which value belongs to which grade, while Markdown columns preserve that association. We deliberately omit hostel policy content so the benchmark can test grounding and abstention rather than reward an unsupported answer.
+
+The actual `pdffonts` output for the scanned entrepreneurship policy was collected from the
+indexer image:
+
+```text
+name                                 type              encoding         emb sub uni object ID
+------------------------------------ ----------------- ---------------- --- --- --- ---------
+```
