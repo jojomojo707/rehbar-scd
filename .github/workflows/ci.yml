@@ -211,7 +211,7 @@ jobs:
           python eval/run_eval.py --api http://localhost --host rahbar.local \
             --golden eval/fixtures/golden.fixture.yaml \
             --baseline eval/fixtures/baseline.fixture.json \
-            --out /tmp/results.fixture.json --update-baseline
+            --out /tmp/results.fixture.json
       - name: Upload the eval results
         if: always()
         uses: actions/upload-artifact@v4
