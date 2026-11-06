@@ -30,10 +30,15 @@ class _Section:
     units: list[_Unit] = field(default_factory=list)
 
 
-def _heading(line: str) -> str | None:
+def _heading(line: str, markdown: bool = False) -> str | None:
     value = line.strip()
     if value.startswith("#"):
         return value.lstrip("# ").strip() or None
+    # Markdown marks its headings with '#'. A numbered line there is a clause of body text
+    # ("1.1 A student must attend ..."); treating it as a heading left its section empty, and
+    # empty sections are dropped, so the clause was lost. PDFs and HTML keep the rules below.
+    if markdown:
+        return None
     if _NUMBERED.match(value):
         return value
     letters = [char for char in value if char.isalpha()]
@@ -115,6 +120,7 @@ def _atoms(unit: _Unit, limit: int, counter: TokenCounter) -> list[_Unit]:
 
 def _sections(doc: Document) -> list[_Section]:
     fallback = Path(doc.source).stem.replace("_", " ") or doc.source
+    markdown = Path(doc.source).suffix.lower() in {".md", ".markdown"}
     sections = [_Section(fallback, doc.pages[0].page if doc.pages else 1)]
     paragraph: list[str] = []
     paragraph_page = sections[0].page
@@ -143,7 +149,7 @@ def _sections(doc: Document) -> list[_Section]:
                 flush_paragraph()
                 flush_table()
                 continue
-            title = _heading(line)
+            title = _heading(line, markdown)
             if title:
                 flush_paragraph()
                 flush_table()
