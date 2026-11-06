@@ -11,11 +11,25 @@ For a real table example, the 2026 handbook's section 2.3 contains grade/points 
 Cleaning normalizes Unicode with NFKC, joins hyphenated words broken at line ends, collapses horizontal whitespace, drops page-number-only lines and removes lines repeated in the first or last two lines on at least half of pages (digits are masked when counting repeats). It preserves clause numbers, section headings, line breaks, and table pipes. We deliberately keep a repeated numbered clause or heading when the document itself repeats it: structure is more valuable than aggressive deduplication.
 
 ## Chunking
-Size and overlap you shipped, storage amplification (stored tokens / original tokens),
-and the three configurations you measured:
+Size and overlap, storage amplification (stored tokens / original tokens), and
+retrieval recall@5 measured with the three Day 2 configurations. Each index used
+the same 9-document corpus (86,144 original tokens) and `BAAI/bge-small-en-v1.5`.
+The selected 480/64 configuration gives the same recall as the other runs while
+storing the fewest chunks and tokens. Its run was OOM-killed (exit 137) at the
+original 2 GiB limit and completed at 3 GiB; the committed Job and CronJob now use
+a 3 GiB limit with a 1500 MiB request.
 
-| Size (tokens) | Overlap (tokens) | recall@5 | Chunks stored |
-| --- | --- | --- | --- |
+| Size (tokens) | Overlap (tokens) | recall@5 | Chunks | Amplification |
+| ---: | ---: | ---: | ---: | ---: |
+| 256 | 32 | 0.8125 | 948 | 1.340 |
+| 384 | 48 | 0.8125 | 806 | 1.265 |
+| 480 | 64 | 0.8125 | 764 | 1.257 |
+
+The evaluator reported citation validity of 1.0 for all three runs. It exited
+non-zero because no approved baseline file exists and the stub LLM answered both
+must-abstain (hostel) questions (abstention correctness 0%). Those generation
+and baseline gates are separate from retrieval recall; no baseline was created
+from this measurement.
 
 ## Embedding
 Model, vector dimension, where the pin lives, how the API checks it.
