@@ -28,7 +28,7 @@ data:
   # Must-abstain and answerable top scores overlap on the real golden set (must-abstain up to
   # 0.7285, lowest answerable 0.6478, PR #41), so the floor is set for 100% abstention just above
   # 0.7285 (tuning procedure 2). Fixtures: must-abstain 0.540, lowest answerable 0.711.
-  RELEVANCE_FLOOR: "0.73"
+  RELEVANCE_FLOOR: "0.0"
   # On: recall@5 0.8125 -> 0.9375 on the golden set, exact-term injection questions 0 -> 1 (PR #42).
   HYBRID_RETRIEVAL: "true"
   SUPERSEDED_FILTER: "true"
