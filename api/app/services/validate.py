@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import re
+from dataclasses import dataclass
 
 from pydantic import ValidationError
 
@@ -16,6 +17,19 @@ ABSTENTION_TEXT = (
 )
 
 
+@dataclass
+class ValidationReport:
+    """What validation removed from the accepted answer. An answer that lost a citation or an
+    inline marker is never cached (validation-and-errors.md § Cacheability, rule 4)."""
+
+    dropped_citations: int = 0
+    dropped_markers: int = 0
+
+    @property
+    def dropped(self) -> int:
+        return self.dropped_citations + self.dropped_markers
+
+
 class AnswerValidationError(ValueError):
     """A model reply that should be retried once with a correction prompt."""
 
@@ -24,7 +38,11 @@ class AnswerValidationError(ValueError):
         self.reason = reason
 
 
-def validate_answer(answer: str | dict[str, object] | Answer, passages: list[Passage]) -> Answer:
+def validate_answer(
+    answer: str | dict[str, object] | Answer,
+    passages: list[Passage],
+    report: ValidationReport | None = None,
+) -> Answer:
     """Validate JSON, normalize abstentions, and remove unsupported citations."""
     if isinstance(answer, Answer):
         candidate: object = answer.model_dump()
@@ -58,6 +76,8 @@ def validate_answer(answer: str | dict[str, object] | Answer, passages: list[Pas
 
     by_key = {(p.source, p.section): p for p in passages}
     valid_citations = []
+    dropped_citations = 0
+    dropped_markers = 0
     seen_citations: set[tuple[str, str, int | None]] = set()
     for citation in parsed.citations:
         passage = by_key.get((citation.source, citation.section))
@@ -68,12 +88,17 @@ def validate_answer(answer: str | dict[str, object] | Answer, passages: list[Pas
                 seen_citations.add(key)
         else:
             metrics.CITATIONS_DROPPED.inc()
+            dropped_citations += 1
 
     valid_keys = {(citation.source, citation.section) for citation in valid_citations}
 
     def keep_inline(match: re.Match[str]) -> str:
+        nonlocal dropped_markers
         key = (match.group(1).strip(), match.group(2).strip())
-        return match.group(0) if key in valid_keys else ""
+        if key in valid_keys:
+            return match.group(0)
+        dropped_markers += 1
+        return ""
 
     cleaned_text = _INLINE_CITATION.sub(keep_inline, text)
     cleaned_text = re.sub(r"[ \t]{2,}", " ", cleaned_text).strip()
@@ -82,6 +107,9 @@ def validate_answer(answer: str | dict[str, object] | Answer, passages: list[Pas
     if not cleaned_text:
         raise AnswerValidationError("schema", "No answer text remains after citation checks.")
     cleaned_text = _ensure_inline_citations(cleaned_text, valid_citations)
+    if report is not None:
+        report.dropped_citations = dropped_citations
+        report.dropped_markers = dropped_markers
 
     return parsed.model_copy(
         update={
