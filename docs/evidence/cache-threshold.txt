@@ -1,0 +1,40 @@
+# 3A3 cache threshold tuning, 2026-11-06T15:28Z, commit 43030cf
+# python eval/tune_cache.py --pairs eval/cache_pairs.yaml --thresholds 0.88 0.92 0.95 0.96
+
+model BAAI/bge-small-en-v1.5; 11 paraphrase pairs, 11 near misses
+
+All pairs, highest similarity first:
+id    label       cosine  question a  |  question b
+p07   paraphrase  0.9734  How many teaching weeks are in a regular semester?  |  How long is a regular semester in teaching weeks?
+p04   paraphrase  0.9668  Who must approve withdrawal from a course?  |  Whose approval do I need to withdraw from a course?
+n05   near-miss   0.9533  What is the minimum CGPA required for an undergraduate degree?  |  What is the minimum CGPA required for a graduate degree?
+n06   near-miss   0.9476  How many courses is the normal undergraduate course load?  |  How many courses is the maximum undergraduate course load?
+n04   near-miss   0.9454  Which grade point is assigned to A-minus?  |  Which grade point is assigned to B-minus?
+n07   near-miss   0.9442  How many summer internship applications were received in the 2023-24 annual report?  |  How many summer internship applications were received in the 2019-20 annual report?
+n08   near-miss   0.9334  Who must approve withdrawal from a course?  |  Who must approve withdrawal from a semester?
+n09   near-miss   0.9318  What happens if a student's CGPA falls below 2.00?  |  What happens if a student's CGPA falls below 1.50?
+p01   paraphrase  0.9299  What is the minimum attendance required to sit the final exam?  |  How much attendance do I need to be allowed into the final examination?
+p10   paraphrase  0.9280  What is the tuition fee per credit hour for BS programmes?  |  How much does one credit hour cost for a BS student?
+p11   paraphrase  0.9245  When is a student placed on academic warning?  |  What puts a student on academic warning?
+n01   near-miss   0.9241  What does clause 1.21 of the academic rules say?  |  What does clause 1.12 of the academic rules say?
+n11   near-miss   0.9024  Can a student repeat a course in which they got a D grade?  |  Can a student repeat a course in which they got an F grade?
+p09   paraphrase  0.9010  What minimum number of students must register for a summer course to be offered?  |  How many students have to enrol before a summer course is offered?
+p03   paraphrase  0.9004  How many courses is the normal undergraduate course load?  |  How many courses does an undergraduate normally take in a semester?
+n03   near-miss   0.8899  What was the minimum attendance requirement in 2023?  |  What is the minimum attendance requirement?
+p02   paraphrase  0.8858  What is the minimum CGPA required for an undergraduate degree?  |  What CGPA do I need to graduate with a bachelor's degree?
+p05   paraphrase  0.8851  How are repeated courses treated in the CGPA calculation?  |  If I repeat a course, which grade counts towards my CGPA?
+n02   near-miss   0.8736  What is the tuition fee per credit hour for BS programmes?  |  What is the tuition fee per credit hour for MS programmes?
+n10   near-miss   0.7915  What is the admission fee for BS programmes?  |  What is the security deposit for BS programmes?
+p08   paraphrase  0.7859  Which grade point is assigned to A-minus?  |  How many grade points is an A- worth?
+p06   paraphrase  0.6611  What language is used for instruction at FAST?  |  What is the medium of instruction at the university?
+
+| Threshold | True hits (paraphrases served) | False hits (wrong answer served) |
+| --- | --- | --- |
+| 0.88 | 9/11 | 9/11: n01 (0.9241), n03 (0.8899), n04 (0.9454), n05 (0.9533), n06 (0.9476), n07 (0.9442), n08 (0.9334), n09 (0.9318), n11 (0.9024) |
+| 0.92 | 5/11 | 7/11: n01 (0.9241), n04 (0.9454), n05 (0.9533), n06 (0.9476), n07 (0.9442), n08 (0.9334), n09 (0.9318) |
+| 0.95 | 2/11 | 1/11: n05 (0.9533) |
+| 0.96 | 2/11 | 0/11: none |
+
+Highest near miss: n05 at 0.9533: "What is the minimum CGPA required for an undergraduate degree?" vs "What is the minimum CGPA required for a graduate degree?"
+Lowest threshold with zero false hits: 0.96
+exit code: 0

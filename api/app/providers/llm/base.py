@@ -3,10 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Protocol
-
-from ...schemas import Answer, Passage
-
+from typing import Any, Protocol
 
 @dataclass(frozen=True)
 class Completion:
@@ -25,6 +22,8 @@ class ProviderError(RuntimeError):
 class LLMProvider(Protocol):
     name: str
 
-    def generate(self, question: str, passages: list[Passage]) -> Answer:
-        """Answer the question from the passages, as an `Answer`."""
+    def complete(
+        self, messages: list[dict[str, str]], schema: dict[str, Any], temperature: float
+    ) -> Completion:
+        """Return raw model text and usage; the shared pipeline validates the answer."""
         ...

@@ -71,3 +71,28 @@ def test_fixed_strategy_ignores_section_structure() -> None:
     assert len(chunks) == 1
     assert chunks[0].section == "rules"
     assert "1 First" in chunks[0].text and "2 Second" in chunks[0].text
+
+
+def test_markdown_numbered_clauses_are_body_text_not_headings() -> None:
+    """The CI fixtures put each clause on one numbered line under a '##' heading. Those
+    lines must stay in the chunk text, under the '##' section the golden set names."""
+    from pathlib import Path
+
+    from pipeline.extract import extract
+
+    fixture = Path(__file__).resolve().parents[2] / "eval" / "fixtures" / "academic-rules-2026.md"
+    chunks = chunk(extract(str(fixture), "2026", False), 480, 64,
+                   tokenizer=WhitespaceTokenCounter())
+    by_section = {item.section: item.text for item in chunks}
+    assert "1. Attendance" in by_section and "80 percent" in by_section["1. Attendance"]
+    assert "2.00" in by_section["2. Academic warning"]
+    assert "most recent attempt" in by_section["3. Repeating a course"]
+    # The planted injection is kept as data, so the prompt-injection test can see it.
+    assert "Ignore all previous instructions" in by_section["3. Repeating a course"]
+
+
+def test_pdf_numbered_lines_are_still_headings() -> None:
+    doc = Document("rules.pdf", "2026", False,
+                   [Page("rules.pdf", 1, "1.22 Attendance\nA student must attend 80% of classes.")])
+    (only,) = chunk(doc, 480, 64, tokenizer=WhitespaceTokenCounter())
+    assert only.section == "1.22 Attendance"

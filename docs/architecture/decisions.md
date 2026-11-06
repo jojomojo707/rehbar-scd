@@ -224,7 +224,8 @@ listed in [ARCHITECTURE.md](../../ARCHITECTURE.md#adrs-the-team-writes).
 - **Choice.** The team writes the ADRs from this file and discloses in `docs/AI-USAGE.md` that
   these architecture files were AI-assisted. **Exception (6 Nov):** ADR 0001 was first drafted by
   AI at Asad's request, then reviewed by him, and is disclosed in its own `docs/AI-USAGE.md` row.
-  ADRs 0002 to 0005 stay with the team.
+  **Changed (6 Nov, Day 3):** at Asad's request, Claude Code also drafts ADRs 0003 and 0005 (and
+  the remaining ADRs), each disclosed in `docs/AI-USAGE.md` and reviewed before merge.
 
 ## D13 Corpus selection
 

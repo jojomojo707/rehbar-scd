@@ -5,7 +5,8 @@
 # Day 2 values (PL14: values proved on the live cluster are committed here the same day):
 # the real index and retriever (RETRIEVER=chroma, EMBED_MODEL=BAAI/bge-small-en-v1.5) with the
 # chunk configuration measured on 5 Nov (docs/PIPELINE.md): 480 tokens, 64 overlap.
-# LLM_PROVIDER stays "stub" until Day 3 switches to Groq.
+# Day 3 values (3A8): Groq in hosted mode (the ci overlay patches LLM_PROVIDER back to "stub"),
+# the measured relevance floor, and hybrid retrieval on.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -15,7 +16,7 @@ metadata:
 data:
   # --- Retrieval and generation (api) ---
   RETRIEVER: "chroma"
-  LLM_PROVIDER: "stub"
+  LLM_PROVIDER: "hosted"   # Groq, decision D6; key from the Secret rahbar-secret
   LLM_MODEL: "openai/gpt-oss-20b"
   HOSTED_BASE_URL: "https://api.groq.com/openai/v1"
   LLM_TIMEOUT_SECONDS: "20"
@@ -24,8 +25,12 @@ data:
   # 0.2: factual extraction into strict JSON; low variance without fully greedy decoding; it does not fix missing knowledge.
   TEMPERATURE: "0.2"
   TOP_K: "5"
-  RELEVANCE_FLOOR: "0.60"
-  HYBRID_RETRIEVAL: "false"   # off, as in the chunk-size measurements; Day 3 decides
+  # Must-abstain and answerable top scores overlap on the real golden set (must-abstain up to
+  # 0.7285, lowest answerable 0.6478, PR #41), so the floor is set for 100% abstention just above
+  # 0.7285 (tuning procedure 2). Fixtures: must-abstain 0.540, lowest answerable 0.711.
+  RELEVANCE_FLOOR: "0.73"
+  # On: recall@5 0.8125 -> 0.9375 on the golden set, exact-term injection questions 0 -> 1 (PR #42).
+  HYBRID_RETRIEVAL: "true"
   SUPERSEDED_FILTER: "true"
 
   # --- The embedding pin (api AND indexer, section 4.4) ---
@@ -42,7 +47,10 @@ data:
   # --- Redis: semantic cache and turn log (api) ---
   REDIS_HOST: "redis"
   REDIS_PORT: "6379"
-  CACHE_THRESHOLD: "0.92"
+  # Lowest tested value with zero false hits on eval/cache_pairs.yaml (3A3): 0.95 served the
+  # wrong answer for "minimum CGPA for an undergraduate degree" vs "... graduate degree" (0.9533).
+  # See docs/evidence/cache-threshold.txt.
+  CACHE_THRESHOLD: "0.96"
   CACHE_TTL_SECONDS: "86400"
   CACHE_MAX_ENTRIES: "500"
   HISTORY_MAX_TURNS: "3"
