@@ -179,3 +179,40 @@ def test_valid_citation_is_added_to_each_uncited_sentence() -> None:
 
     marker = "[handbook.pdf / 5.4 Academic Warning]"
     assert answer.answer == f"First fact {marker}. Second fact {marker}!"
+
+
+def test_several_sources_without_inline_marker_are_retried_not_guessed() -> None:
+    raw = Answer(
+        reasoning="",
+        answer="Warning is below 2.00. Probation follows.",
+        citations=[
+            Citation(source="handbook.pdf", section="5.4 Academic Warning", page=31),
+            Citation(source="handbook.pdf", section="5.5 Probation", page=32),
+        ],
+        answered_from_context=True,
+        confidence="medium",
+    ).model_dump_json()
+    passages = [passage(), passage().model_copy(update={
+        "chunk_id": "handbook:00002", "section": "5.5 Probation", "page": 32})]
+
+    with pytest.raises(AnswerValidationError) as error:
+        validate_answer(raw, passages)
+    assert error.value.reason == "no_inline_citation"
+
+
+def test_several_sources_keep_the_models_own_markers() -> None:
+    text = "Warning is below 2.00 [handbook.pdf / 5.4 Academic Warning]. Probation follows."
+    raw = Answer(
+        reasoning="",
+        answer=text,
+        citations=[
+            Citation(source="handbook.pdf", section="5.4 Academic Warning", page=31),
+            Citation(source="handbook.pdf", section="5.5 Probation", page=32),
+        ],
+        answered_from_context=True,
+        confidence="medium",
+    ).model_dump_json()
+    passages = [passage(), passage().model_copy(update={
+        "chunk_id": "handbook:00002", "section": "5.5 Probation", "page": 32})]
+
+    assert validate_answer(raw, passages).answer == text

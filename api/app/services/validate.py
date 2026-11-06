@@ -93,10 +93,21 @@ def validate_answer(answer: str | dict[str, object] | Answer, passages: list[Pas
 
 
 def _ensure_inline_citations(text: str, citations: list[Citation]) -> str:
-    """Add exact, already-validated citations to factual sentences missing a marker."""
-    markers = " ".join(
-        f"[{citation.source} / {citation.section}]" for citation in citations
-    )
+    """Give uncited sentences an inline marker, but only when it is unambiguous.
+
+    With exactly one validated source, every claim in the answer can only come from it, so
+    adding its marker to an uncited sentence invents no attribution. With two or more
+    sources we cannot tell which one supports which sentence, so the answer must already
+    carry at least one valid marker (output-validation step 8) or it is retried.
+    """
+    sources = list(dict.fromkeys((citation.source, citation.section) for citation in citations))
+    if len(sources) != 1:
+        if not _INLINE_CITATION.search(text):
+            raise AnswerValidationError(
+                "no_inline_citation", "The answer has no valid inline citation."
+            )
+        return text
+    markers = f"[{sources[0][0]} / {sources[0][1]}]"
     sentences = re.split(r"(?<=[.!?])\s+", text.strip())
     cited: list[str] = []
     for sentence in sentences:
