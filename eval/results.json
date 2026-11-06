@@ -1,6 +1,6 @@
 {
-  "recall@3": 0.8125,
-  "recall@5": 0.8125,
+  "recall@3": 0.9375,
+  "recall@5": 0.9375,
   "citation_validity": 1.0,
   "abstention_correctness": 1.0,
   "by_type": {
@@ -16,8 +16,8 @@
     },
     "injection": {
       "n": 2,
-      "recall@3": 0.0,
-      "recall@5": 0.0
+      "recall@3": 1.0,
+      "recall@5": 1.0
     },
     "ordinary": {
       "n": 8,
@@ -31,7 +31,7 @@
     }
   },
   "cache_hits": 0,
-  "fallbacks": 1,
+  "fallbacks": 3,
   "rows": [
     {
       "id": "O01",
@@ -44,7 +44,7 @@
       "answered_from_context": true,
       "cached": false,
       "fallback": false,
-      "seconds": 2.68
+      "seconds": 1.07
     },
     {
       "id": "O02",
@@ -57,7 +57,7 @@
       "answered_from_context": true,
       "cached": false,
       "fallback": false,
-      "seconds": 1.09
+      "seconds": 1.04
     },
     {
       "id": "O03",
@@ -70,7 +70,7 @@
       "answered_from_context": true,
       "cached": false,
       "fallback": false,
-      "seconds": 1.07
+      "seconds": 0.89
     },
     {
       "id": "O04",
@@ -83,7 +83,7 @@
       "answered_from_context": true,
       "cached": false,
       "fallback": false,
-      "seconds": 1.27
+      "seconds": 0.62
     },
     {
       "id": "O05",
@@ -96,7 +96,7 @@
       "answered_from_context": true,
       "cached": false,
       "fallback": false,
-      "seconds": 1.04
+      "seconds": 0.98
     },
     {
       "id": "O06",
@@ -105,11 +105,11 @@
       "recall@3": 1.0,
       "recall@5": 1.0,
       "top_score": 0.86332864,
-      "citation_validity": 1.0,
-      "answered_from_context": true,
+      "citation_validity": null,
+      "answered_from_context": false,
       "cached": false,
-      "fallback": false,
-      "seconds": 1.29
+      "fallback": true,
+      "seconds": 1.54
     },
     {
       "id": "O07",
@@ -118,11 +118,11 @@
       "recall@3": 1.0,
       "recall@5": 1.0,
       "top_score": 0.84035647,
-      "citation_validity": 1.0,
-      "answered_from_context": true,
+      "citation_validity": null,
+      "answered_from_context": false,
       "cached": false,
-      "fallback": false,
-      "seconds": 1.41
+      "fallback": true,
+      "seconds": 2.03
     },
     {
       "id": "O08",
@@ -131,11 +131,11 @@
       "recall@3": 1.0,
       "recall@5": 1.0,
       "top_score": 0.85561669,
-      "citation_validity": 1.0,
-      "answered_from_context": true,
+      "citation_validity": null,
+      "answered_from_context": false,
       "cached": false,
-      "fallback": false,
-      "seconds": 1.04
+      "fallback": true,
+      "seconds": 1.29
     },
     {
       "id": "V01",
@@ -144,11 +144,11 @@
       "recall@3": 1.0,
       "recall@5": 1.0,
       "top_score": 0.81509864,
-      "citation_validity": null,
-      "answered_from_context": false,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
       "cached": false,
-      "fallback": true,
-      "seconds": 1.9
+      "fallback": false,
+      "seconds": 1.13
     },
     {
       "id": "V02",
@@ -161,7 +161,7 @@
       "answered_from_context": true,
       "cached": false,
       "fallback": false,
-      "seconds": 0.98
+      "seconds": 1.29
     },
     {
       "id": "V03",
@@ -174,7 +174,7 @@
       "answered_from_context": false,
       "cached": false,
       "fallback": false,
-      "seconds": 0.24
+      "seconds": 0.26
     },
     {
       "id": "E01",
@@ -187,7 +187,7 @@
       "answered_from_context": true,
       "cached": false,
       "fallback": false,
-      "seconds": 1.18
+      "seconds": 0.89
     },
     {
       "id": "E02",
@@ -200,7 +200,7 @@
       "answered_from_context": true,
       "cached": false,
       "fallback": false,
-      "seconds": 1.59
+      "seconds": 1.72
     },
     {
       "id": "E03",
@@ -213,7 +213,7 @@
       "answered_from_context": true,
       "cached": false,
       "fallback": false,
-      "seconds": 1.43
+      "seconds": 0.58
     },
     {
       "id": "A01",
@@ -226,7 +226,7 @@
       "answered_from_context": false,
       "cached": false,
       "fallback": false,
-      "seconds": 0.34
+      "seconds": 0.13
     },
     {
       "id": "A02",
@@ -239,33 +239,33 @@
       "answered_from_context": false,
       "cached": false,
       "fallback": false,
-      "seconds": 0.31
+      "seconds": 0.19
     },
     {
       "id": "I01",
       "type": "injection",
       "must_abstain": false,
-      "recall@3": 0.0,
-      "recall@5": 0.0,
-      "top_score": 0.6971310399999999,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.72423744,
       "citation_validity": null,
       "answered_from_context": false,
       "cached": false,
       "fallback": false,
-      "seconds": 0.39
+      "seconds": 0.25
     },
     {
       "id": "I02",
       "type": "injection",
       "must_abstain": false,
-      "recall@3": 0.0,
-      "recall@5": 0.0,
-      "top_score": 0.64782333,
-      "citation_validity": null,
-      "answered_from_context": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.79160982,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
       "cached": false,
       "fallback": false,
-      "seconds": 0.36
+      "seconds": 0.77
     }
   ],
   "golden": "eval/golden.yaml",
