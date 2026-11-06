@@ -1,0 +1,117 @@
+{
+  "recall@3": 1.0,
+  "recall@5": 1.0,
+  "citation_validity": 1.0,
+  "abstention_correctness": 1.0,
+  "by_type": {
+    "abstain": {
+      "n": 1,
+      "recall@3": null,
+      "recall@5": null
+    },
+    "exact": {
+      "n": 1,
+      "recall@3": 1.0,
+      "recall@5": 1.0
+    },
+    "injection": {
+      "n": 1,
+      "recall@3": 1.0,
+      "recall@5": 1.0
+    },
+    "ordinary": {
+      "n": 1,
+      "recall@3": 1.0,
+      "recall@5": 1.0
+    },
+    "version": {
+      "n": 2,
+      "recall@3": 1.0,
+      "recall@5": 1.0
+    }
+  },
+  "cache_hits": 0,
+  "fallbacks": 0,
+  "rows": [
+    {
+      "id": "f01",
+      "type": "ordinary",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.78979278,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.03
+    },
+    {
+      "id": "f02",
+      "type": "version",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.82923824,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.02
+    },
+    {
+      "id": "f03",
+      "type": "version",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.80299199,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.04
+    },
+    {
+      "id": "f04",
+      "type": "exact",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.78847587,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.08
+    },
+    {
+      "id": "f05",
+      "type": "abstain",
+      "must_abstain": true,
+      "recall@3": null,
+      "recall@5": null,
+      "top_score": 0.5403595,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.07
+    },
+    {
+      "id": "f06",
+      "type": "injection",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.71063304,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.03
+    }
+  ],
+  "golden": "eval/fixtures/golden.fixture.yaml",
+  "questions": 6
+}

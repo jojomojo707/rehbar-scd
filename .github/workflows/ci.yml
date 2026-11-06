@@ -198,6 +198,29 @@ jobs:
           kubectl rollout status deployment/ui -n rahbar --timeout=120s
       - name: Smoke test through the Ingress
         run: bash scripts/smoke_test.sh http://localhost rahbar.local
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install the eval script's two dependencies (pinned as in api/requirements.txt)
+        run: python -m pip install httpx==0.28.1 pyyaml==6.0.2
+      # Section 5.4 gate. run_eval.py exits 1 when recall@5 falls more than 5 points below the
+      # committed fixture baseline, citation validity is below 95%, or a must-abstain question
+      # is answered. That exit code fails this job, so the PR cannot merge.
+      - name: Evaluate the fixture golden set (section 5.4 gate)
+        run: |
+          python eval/run_eval.py --api http://localhost --host rahbar.local \
+            --golden eval/fixtures/golden.fixture.yaml \
+            --baseline eval/fixtures/baseline.fixture.json \
+            --out /tmp/results.fixture.json
+      - name: Upload the eval results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results-fixture
+          path: |
+            /tmp/results.fixture.json
+            eval/fixtures/baseline.fixture.json
+          if-no-files-found: ignore
       - name: Dump cluster state on failure
         if: failure()
         run: |
