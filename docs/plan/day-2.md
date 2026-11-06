@@ -227,7 +227,7 @@ first item on the cut list).
   every restart, dishonest readiness, no re-index without redeploy); the Job + CronJob choice; the
   blue/green pointer and why the other options (upsert, delete-and-recreate) were rejected; the
   one-command re-index `kubectl create job --from=cronjob/reindex manual-reindex-1 -n rahbar`.
-- **Rule 11:** an AI agent may review it, never write it.
+- **Rule 11:** an AI agent may review it, never write it. (Exception on 6 Nov: this ADR was drafted by AI at Asad's request and is disclosed in `docs/AI-USAGE.md`.)
 
 #### 2A10 · Commit the live ConfigMap values (decision PL14)
 

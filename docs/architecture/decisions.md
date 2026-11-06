@@ -221,8 +221,10 @@ listed in [ARCHITECTURE.md](../../ARCHITECTURE.md#adrs-the-team-writes).
 
 - **Context.** §4.2 asks for ADR 0001 in the team's own words. §8 treats undisclosed AI work as
   plagiarism.
-- **Choice.** No ADR is drafted by AI. The team writes them from this file, and discloses in
-  `docs/AI-USAGE.md` that these architecture files were AI-assisted.
+- **Choice.** The team writes the ADRs from this file and discloses in `docs/AI-USAGE.md` that
+  these architecture files were AI-assisted. **Exception (6 Nov):** ADR 0001 was first drafted by
+  AI at Asad's request, then reviewed by him, and is disclosed in its own `docs/AI-USAGE.md` row.
+  ADRs 0002 to 0005 stay with the team.
 
 ## D13 Corpus selection
 
