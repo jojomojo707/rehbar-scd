@@ -36,4 +36,8 @@ USER 10001
 EXPOSE 8000
 # Exec form, so SIGTERM reaches uvicorn (PID 1). 45 s lets in-flight answers finish;
 # see docs/architecture/deployment.md § Rollout settings.
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--timeout-graceful-shutdown", "45"]
+# Keep-alive 75 s: ingress-nginx reuses upstream connections for 60 s. With uvicorn's default
+# of 5 s, uvicorn could close a connection just as nginx sent a request on it, and the user got
+# a 502 ("connection reset by peer"); seen twice in 1,172 requests under load on 6 Nov.
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", \
+     "--timeout-graceful-shutdown", "45", "--timeout-keep-alive", "75"]
