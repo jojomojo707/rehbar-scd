@@ -300,7 +300,7 @@ B, with `LLM_PROVIDER=hosted`: screenshots `ui-answer.png` (cited answer) and `u
 
 - [ ] If code changed since Day 3: final real eval (A's key, `--pause 25`); commit `results.json`
       (and `baseline.json` only for a deliberate improvement).
-- [ ] `make check` clean: no `STARTER-TODO`, no `NotImplementedError`, ≥ 4 ADRs (one filename
+- [ ] `make check` clean: no starter TODO marker, no `NotImplementedError`, ≥ 4 ADRs (one filename
       contains "job"), ≥ 5 evidence files, both workflows, commit/author/prefix counts.
 - [ ] `gitleaks detect --source . -v` over the full history finds nothing.
 - [ ] **Clean-clone dry run, before the final merge (PL11):** only once every evidence file is
