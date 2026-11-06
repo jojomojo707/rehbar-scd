@@ -45,9 +45,25 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             "embed_model": settings.embed_model, "cache_dir": settings.embed_cache_dir,
             "error": embed_error})
 
-    # One lazy Chroma client and one IndexState, shared by retrieval and /readyz.
+    # Redis: the semantic cache (D3, ADR 0003) and the turn log (D4, ADR 0005). Short timeouts,
+    # because every Redis error only skips the cache or the log; the answer is still returned.
+    import redis
+
+    from .services.cache import RedisSemanticCache
+    from .services.turns import RedisTurnLog
+
+    redis_client = redis.Redis(host=settings.redis_host, port=settings.redis_port,
+                               socket_connect_timeout=0.5, socket_timeout=0.5)
+    app.state.cache = RedisSemanticCache(redis_client, settings.cache_threshold,
+                                         settings.cache_ttl_seconds, settings.cache_max_entries)
+    app.state.turns = RedisTurnLog(redis_client, settings.turn_log_max_entries,
+                                   settings.turn_log_ttl_seconds)
+
+    # One lazy Chroma client and one IndexState, shared by retrieval and /readyz. When the
+    # active index changes, old-version cache keys are deleted (the keys can no longer match).
     chroma = LazyChromaClient(settings)
-    index_state = IndexState(settings, client=chroma)
+    index_state = IndexState(settings, client=chroma,
+                             cache_invalidator=app.state.cache.invalidate_except)
     if settings.retriever == "chroma":
         from .retrieval.chroma import ChromaRetriever
 
@@ -57,8 +73,6 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     else:
         app.state.retriever = get_retriever(settings)
     app.state.provider = get_provider(settings)
-
-    import redis
 
     app.state.readiness = Readiness(
         settings, index_state, embedder, embed_error,
