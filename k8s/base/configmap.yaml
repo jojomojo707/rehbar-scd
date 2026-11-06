@@ -2,9 +2,10 @@
 # (section 4.1). Every key is listed in docs/architecture/interfaces.md § Configuration keys.
 # All values are strings. LLM_API_KEY is NOT here: it lives in the Secret rahbar-secret.
 #
-# Day 1 values: the stub stack (RETRIEVER=stub, LLM_PROVIDER=stub) with the starter's dummy
-# index (EMBED_MODEL=dummy-768). Values proved on the live cluster are committed here the same
-# day (PL14).
+# Day 2 values (PL14: values proved on the live cluster are committed here the same day):
+# the real index and retriever (RETRIEVER=chroma, EMBED_MODEL=BAAI/bge-small-en-v1.5) with the
+# chunk configuration measured on 5 Nov (docs/PIPELINE.md): 480 tokens, 64 overlap.
+# LLM_PROVIDER stays "stub" until Day 3 switches to Groq.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -13,7 +14,7 @@ metadata:
     app.kubernetes.io/part-of: rahbar
 data:
   # --- Retrieval and generation (api) ---
-  RETRIEVER: "stub"
+  RETRIEVER: "chroma"
   LLM_PROVIDER: "stub"
   LLM_MODEL: "openai/gpt-oss-20b"
   HOSTED_BASE_URL: "https://api.groq.com/openai/v1"
@@ -24,11 +25,11 @@ data:
   TEMPERATURE: "0.2"
   TOP_K: "5"
   RELEVANCE_FLOOR: "0.60"
-  HYBRID_RETRIEVAL: "true"
+  HYBRID_RETRIEVAL: "false"   # off, as in the chunk-size measurements; Day 3 decides
   SUPERSEDED_FILTER: "true"
 
   # --- The embedding pin (api AND indexer, section 4.4) ---
-  EMBED_MODEL: "dummy-768"
+  EMBED_MODEL: "BAAI/bge-small-en-v1.5"
 
   # --- Chroma (api and indexer) ---
   CHROMA_HOST: "chroma"
@@ -51,8 +52,8 @@ data:
 
   # --- Indexer ---
   CORPUS_DIR: "/corpus"
-  CHUNK_SIZE: "384"
-  CHUNK_OVERLAP: "48"
+  CHUNK_SIZE: "480"
+  CHUNK_OVERLAP: "64"
   CHUNK_STRATEGY: "structure"
   OCR_ENABLED: "true"
   IMAGE_TAG: "dev"
