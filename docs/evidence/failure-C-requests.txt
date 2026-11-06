@@ -1,0 +1,16 @@
+# failure-C-requests.txt: failure-analysis stage C (Retrieval), TOP_K=1
+# 2026-11-06, Asad's minikube, real index rahbar-v20261106-163759 (764 chunks), HYBRID_RETRIEVAL true,
+# RELEVANCE_FLOOR 0.73, LLM_PROVIDER stub. Eval: eval/run_eval.py over eval/golden.yaml (18 questions)
+# through the Ingress. Full results: failure-C-before.json, failure-C-broken.json, failure-C-restored.json.
+
+## Eval gate output, broken run (TOP_K=1)
+results written to failure-C-broken.json
+
+GATE FAILED
+  - recall@5 0.812 is more than 5% below the baseline 0.938
+
+## One answered log line from the broken run (fields cut to the ones used in FAILURE-ANALYSIS.md)
+{"msg": "answered", "top_k": 1, "chunk_ids": ["fee-structure-page:00005"], "scores": [0.7074], "outcome": "abstained", "max_score": 0.7074}
+
+## Restored (TOP_K=5), same command, cache flushed first
+recall@3 0.9375, recall@5 0.9375, citation_validity 1.0, abstention_correctness 1.0; gate passed
