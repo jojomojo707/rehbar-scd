@@ -1,0 +1,78 @@
+﻿Name:                     failure-a-20261106b
+Namespace:                rahbar
+Selector:                 batch.kubernetes.io/controller-uid=d04f42d6-fde8-4eaa-bfde-571c34da5800
+Labels:                   app.kubernetes.io/name=indexer
+                          app.kubernetes.io/part-of=rahbar
+Annotations:              cronjob.kubernetes.io/instantiate: manual
+Controlled By:            CronJob/reindex
+Parallelism:              1
+Completions:              1
+Completion Mode:          NonIndexed
+Suspend:                  false
+Backoff Limit:            2
+Start Time:               Fri, 06 Nov 2026 23:23:13 +0500
+Completed At:             Fri, 06 Nov 2026 23:31:09 +0500
+Duration:                 7m56s
+Active Deadline Seconds:  3600s
+Pods Statuses:            0 Active (0 Ready) / 1 Succeeded / 0 Failed
+Pod Template:
+  Labels:           app.kubernetes.io/name=indexer
+                    app.kubernetes.io/part-of=rahbar
+                    batch.kubernetes.io/controller-uid=d04f42d6-fde8-4eaa-bfde-571c34da5800
+                    batch.kubernetes.io/job-name=failure-a-20261106b
+                    controller-uid=d04f42d6-fde8-4eaa-bfde-571c34da5800
+                    job-name=failure-a-20261106b
+  Service Account:  rahbar-indexer
+  Init Containers:
+   fetch-corpus:
+    Image:      rahbar-indexer:dev
+    Port:       <none>
+    Host Port:  <none>
+    Command:
+      python
+      /app/corpus/fetch.py
+      --out
+      /corpus
+      --strict
+    Limits:
+      cpu:     200m
+      memory:  256Mi
+    Requests:
+      cpu:        50m
+      memory:     64Mi
+    Environment:  <none>
+    Mounts:
+      /corpus from corpus (rw)
+  Containers:
+   indexer:
+    Image:      rahbar-indexer:dev
+    Port:       <none>
+    Host Port:  <none>
+    Limits:
+      cpu:     2
+      memory:  3Gi
+    Requests:
+      cpu:     500m
+      memory:  2200Mi
+    Environment Variables from:
+      rahbar-config  ConfigMap  Optional: false
+    Environment:     <none>
+    Mounts:
+      /corpus from corpus (ro)
+      /tmp from tmp (rw)
+  Volumes:
+   corpus:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  corpus
+    ReadOnly:   false
+   tmp:
+    Type:          EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:
+    SizeLimit:     1Gi
+  Node-Selectors:  <none>
+  Tolerations:     <none>
+Events:
+  Type    Reason            Age    From            Message
+  ----    ------            ----   ----            -------
+  Normal  SuccessfulCreate  8m19s  job-controller  Created pod: failure-a-20261106b-d5mjf
+  Normal  Completed         23s    job-controller  Job completed
