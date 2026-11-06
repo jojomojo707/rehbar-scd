@@ -110,7 +110,7 @@ def _provider_error(status_code: int) -> ProviderError:
     return ProviderError("bad_request", f"Hosted provider rejected the request ({status_code}).")
 
 
-def _int_or_zero(value: object) -> int:
+def _int_or_zero(value: Any) -> int:
     try:
         return int(value) if value is not None else 0
     except (TypeError, ValueError):

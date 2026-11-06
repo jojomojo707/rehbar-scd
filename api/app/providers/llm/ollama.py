@@ -64,7 +64,7 @@ class OllamaProvider:
         )
 
 
-def _int_or_zero(value: object) -> int:
+def _int_or_zero(value: Any) -> int:
     try:
         return int(value) if value is not None else 0
     except (TypeError, ValueError):
