@@ -143,3 +143,76 @@ def test_generation_retries_invalid_json_with_correction_turn() -> None:
     assert len(provider.messages) == 2
     assert provider.messages[1][-2] == {"role": "assistant", "content": "not json"}
     assert "invalid_json" in provider.messages[1][-1]["content"]
+
+
+def test_valid_citation_supplies_missing_inline_marker() -> None:
+    raw = Answer(
+        reasoning="",
+        answer="Academic warning is below the minimum CGPA.",
+        citations=[
+            Citation(source="handbook.pdf", section="5.4 Academic Warning", page=31),
+            Citation(source="handbook.pdf", section="5.4 Academic Warning", page=31),
+        ],
+        answered_from_context=True,
+        confidence="medium",
+    ).model_dump_json()
+
+    answer = validate_answer(raw, [passage()])
+
+    assert answer.answer == (
+        "Academic warning is below the minimum CGPA [handbook.pdf / "
+        "5.4 Academic Warning]."
+    )
+    assert len(answer.citations) == 1
+
+
+def test_valid_citation_is_added_to_each_uncited_sentence() -> None:
+    raw = Answer(
+        reasoning="",
+        answer="First fact. Second fact!",
+        citations=[Citation(source="handbook.pdf", section="5.4 Academic Warning", page=31)],
+        answered_from_context=True,
+        confidence="medium",
+    ).model_dump_json()
+
+    answer = validate_answer(raw, [passage()])
+
+    marker = "[handbook.pdf / 5.4 Academic Warning]"
+    assert answer.answer == f"First fact {marker}. Second fact {marker}!"
+
+
+def test_several_sources_without_inline_marker_are_retried_not_guessed() -> None:
+    raw = Answer(
+        reasoning="",
+        answer="Warning is below 2.00. Probation follows.",
+        citations=[
+            Citation(source="handbook.pdf", section="5.4 Academic Warning", page=31),
+            Citation(source="handbook.pdf", section="5.5 Probation", page=32),
+        ],
+        answered_from_context=True,
+        confidence="medium",
+    ).model_dump_json()
+    passages = [passage(), passage().model_copy(update={
+        "chunk_id": "handbook:00002", "section": "5.5 Probation", "page": 32})]
+
+    with pytest.raises(AnswerValidationError) as error:
+        validate_answer(raw, passages)
+    assert error.value.reason == "no_inline_citation"
+
+
+def test_several_sources_keep_the_models_own_markers() -> None:
+    text = "Warning is below 2.00 [handbook.pdf / 5.4 Academic Warning]. Probation follows."
+    raw = Answer(
+        reasoning="",
+        answer=text,
+        citations=[
+            Citation(source="handbook.pdf", section="5.4 Academic Warning", page=31),
+            Citation(source="handbook.pdf", section="5.5 Probation", page=32),
+        ],
+        answered_from_context=True,
+        confidence="medium",
+    ).model_dump_json()
+    passages = [passage(), passage().model_copy(update={
+        "chunk_id": "handbook:00002", "section": "5.5 Probation", "page": 32})]
+
+    assert validate_answer(raw, passages).answer == text

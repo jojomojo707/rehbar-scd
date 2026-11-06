@@ -53,7 +53,7 @@ attempt and is recorded as the reason.
 | 5 | Citations not matching a retrieved passage are **dropped** and counted ([Citation rules](#citation-rules)) | (none, but recorded) |
 | 6 | Inline `[source / section]` markers not matching a retrieved passage are removed from `answer` and counted | (none, but recorded) |
 | 7 | At least one valid citation remains | `no_valid_citation` |
-| 8 | At least one valid inline marker remains in `answer` | `no_inline_citation` |
+| 8 | Every sentence without a valid inline marker gets one **only if exactly one source was validated** (then the attribution is certain). With two or more sources, at least one valid inline marker must already remain in `answer` | `no_inline_citation` |
 
 **Never used:** model output is never passed to `eval`, `exec`, a shell, or SQL (R-SEC-05), and
 `reasoning` is discarded after validation.
