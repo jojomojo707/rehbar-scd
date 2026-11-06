@@ -94,7 +94,7 @@ were decided and are already written into the tasks below:
 10. **Write as you go.** Each evening (10 min): append to `docs/AI-USAGE.md` (tool, what it wrote,
     what you changed and why); note any bug that cost > 1 hour in `docs/ENGINEERING-NOTES.md` Q7
     (symptom, what you wrongly believed, the command that showed the truth).
-11. **ADRs are written by you, in your own words** (D12). An agent may review an ADR, never write it.
+11. **ADRs are written by you, in your own words** (D12). An agent may review an ADR, never write it (exception: ADR 0001 was drafted by AI on 6 Nov and is disclosed in `docs/AI-USAGE.md`).
 12. **20-minute walkthrough each night:** each person explains the other's merged PRs out loud.
 
 ## File ownership
