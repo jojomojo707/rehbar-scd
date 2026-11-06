@@ -1,0 +1,33 @@
+# hpa-startup-scaling.txt: Engineering Note Q3. The CPU HPA scales on start-up work, not on load.
+# 2026-11-06T20:04:08Z, minikube (4 CPUs, 8 GiB), namespace rahbar, dev overlay, real index (764 chunks).
+# Clock check: laptop date -u = 20:04:08; minikube node date -u = 20:04:09.
+# Context: the api Deployment was rolled six times between 19:40 and 20:00 UTC for failure-analysis
+# stages C and E (new ReplicaSets created at 19:40:32, 19:42:31, 19:45:11, 19:51:48, 19:55:56 and
+# 19:59:41; `kubectl get rs -l app.kubernetes.io/name=api`). The only traffic was the 18-question
+# golden eval, run sequentially (one request at a time), plus 3 single questions. Each new pod
+# loads the fastembed model (BAAI/bge-small-en-v1.5) and warms Chroma at start-up, which burns
+# CPU for tens of seconds. The HPA divides that by the 250m request and scales up; it then
+# scales down only after the 300 s stabilization window. Nothing about real demand changed.
+
+$ kubectl get hpa api -n rahbar
+NAME   REFERENCE        TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+api    Deployment/api   cpu: 2%/70%   3         8         8          35h
+
+$ kubectl top pods -n rahbar -l app.kubernetes.io/name=api
+NAME                   CPU(cores)   MEMORY(bytes)   
+api-65fb58d77b-2967s   8m           247Mi           
+api-65fb58d77b-7rtr7   7m           259Mi           
+api-65fb58d77b-9dsd9   8m           247Mi           
+api-65fb58d77b-dqrg7   7m           247Mi           
+api-65fb58d77b-jk5zf   7m           261Mi           
+api-65fb58d77b-n6wsk   8m           247Mi           
+api-65fb58d77b-v5qt2   7m           258Mi           
+api-65fb58d77b-w8pzd   7m           267Mi           
+
+$ kubectl get events -n rahbar --field-selector involvedObject.kind=HorizontalPodAutoscaler --sort-by=.lastTimestamp
+LAST SEEN   TYPE      REASON                         OBJECT                        MESSAGE
+21m         Warning   FailedGetResourceMetric        horizontalpodautoscaler/api   failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+21m         Warning   FailedComputeMetricsReplicas   horizontalpodautoscaler/api   invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+21m         Normal    SuccessfulRescale              horizontalpodautoscaler/api   New size: 6; reason: cpu resource utilization (percentage of request) above target
+12m         Normal    SuccessfulRescale              horizontalpodautoscaler/api   New size: 5; reason: All metrics below target
+12m         Normal    SuccessfulRescale              horizontalpodautoscaler/api   New size: 8; reason: cpu resource utilization (percentage of request) above target
