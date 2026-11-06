@@ -1,0 +1,44 @@
+# clean-clone-dryrun.txt: brief §1.3 and §8, a stranger follows only the README from a clean clone
+# 2026-11-06 20:50-21:35 UTC (7 Nov PKT), Asad's laptop: Debian 13, Docker Desktop (VM 7631 MB,
+# 12 CPUs), minikube v1.37.0. The previous cluster was removed first with `minikube delete`.
+# Clone: git clone -b dev https://github.com/jojomojo707/rehbar-scd.git  ->  dd3ce0f
+# Clock check: laptop date -u 21:35:25, minikube node 21:35:26.
+#
+# Step (README order)                          Result
+# make install                                 ok, 49 s
+# make cluster                                 FAILED: "X Exiting due to MK_USAGE: Docker has only 7631MB
+#                                              memory but you specified 8192MB". Ran the same minikube start
+#                                              with --memory=7168 and the two addons by hand: ok, 6 min 22 s.
+#                                              Fixed in this PR: MINIKUBE_MEMORY ?= 7168 in the Makefile,
+#                                              README prerequisites and gotchas updated.
+# make images                                  ok, 11 min 29 s; rahbar-api, rahbar-indexer, rahbar-ui :dev loaded
+# kubectl apply -f k8s/base/namespace.yaml     ok
+# export LLM_API_KEY=... ; make secret         ok (run by Asad in his own terminal; the key never left it).
+#                                              kubectl get secret rahbar-secret -n rahbar shows key LLM_API_KEY.
+# kubectl apply -k k8s/overlays/dev            ok, 28 objects created, no errors
+# kubectl wait ... job/indexer --timeout=30m   ok after 1346 s. Last log line:
+#   {"msg": "indexer finished", "collection": "rahbar-v20261106-213100", "chunks": 764, "documents": 9,
+#    "skipped": 0, "original_tokens": 86144, "stored_tokens": 108314, "amplification": 1.257, "seconds": 1249.5}
+# kubectl rollout status deployment/api        ok, 3/3 api pods Ready
+#
+# make ask is run with INGRESS_IP=127.0.0.1:18080 through
+# kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 18080:80, only because the tool
+# sandbox used for this run cannot reach the minikube IP. The request is otherwise the same.
+
+## make ask Q="What CGPA puts a student on academic warning?"   (LLM_PROVIDER hosted, Groq)
+answer: A CGPA below 2.00 puts a student on academic warning [academic-rules-handbook-jun-2026.pdf / 5.4 Minimum CGPA required to avoid academic warning is 2.00].
+answered_from_context: True   provider: hosted   cached: False
+citations: academic-rules-handbook-jun-2026.pdf / 5.4 Minimum CGPA required to avoid academic warning is 2.00
+
+## make ask Q="How are hostel rooms allocated?"
+answer: The documents I have do not cover this question, so I can't answer it from them.
+answered_from_context: False   provider: hosted   cached: False
+citations: (none)
+
+## Delete one api pod while asking in a loop (README loop: make ask ... | grep -c citations; sleep 0.5)
+deleting pod/api-9d47dbc-g2pt8 at 21:33:19
+requests: 60, succeeded: 60, failed: 0   (21:33:12 to 21:34:34; longest gap between answers 3 s)
+
+# Side observation: right after the first deletion the HPA scaled 3 -> 7 -> 8 pods at no real load
+# (new pods load the embedding model, a CPU burst). Same effect as docs/evidence/hpa-startup-scaling.txt.
+# Final state: 8 api pods Running and Ready; node memory 4398Mi (57%) of 7168 MB.

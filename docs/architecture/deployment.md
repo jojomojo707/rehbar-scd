@@ -8,7 +8,7 @@ policies in [security.md](security.md), and pipelines in [ci-cd.md](ci-cd.md).
 
 | Tool | Purpose | Notes |
 | --- | --- | --- |
-| minikube with the docker driver | Local cluster | `make cluster`: `minikube start --driver=docker --cni=calico --memory=6144 --cpus=4`, then `minikube addons enable metrics-server` and `minikube addons enable ingress` (R-ENV-01). Use 8192 MB if the machine has it, so the HPA's 8 replicas fit |
+| minikube with the docker driver | Local cluster | `make cluster`: `minikube start --driver=docker --cni=calico --memory=7168 --cpus=4` (`MINIKUBE_MEMORY`, default 7168: Docker Desktop's 8 GB VM refuses 8192), then `minikube addons enable metrics-server` and `minikube addons enable ingress` (R-ENV-01). The clean-clone run on 7 Nov had all 8 HPA replicas Running at 7168 MB |
 | Calico | Enforces NetworkPolicy | Chosen at `minikube start`; cannot be added afterwards |
 | metrics-server addon | `kubectl top`; the HPA's CPU figures | Without it the HPA shows `<unknown>/70%` (−6) |
 | ingress addon (ingress-nginx) | The Ingress controller, in namespace `ingress-nginx` | Its namespace is what the NetworkPolicies allow traffic from |
