@@ -168,7 +168,7 @@ first item on the cut list).
 - **Start-up ERROR line:** `{"msg": "embedding pin mismatch", "configured_model": …, "index_model": …, "configured_dimension": …, "index_dimension": …, "collection": …}`.
 - **Tests:** `test_healthz_touches_no_dependency`, `test_readyz_reports_each_failure`
   (parametrised over every check), `test_pin_mismatch_logs_conflict`.
-- **Remove** the `STARTER-TODO(4.4)` in `main.py` and `STARTER-TODO(4.3, 4.4)` in `health.py`.
+- **Remove** the starter TODO (4.4) marker in `main.py` and starter TODO (4.3, 4.4) marker in `health.py`.
 
 #### 2A6 · Pin demo (brief §4.4) → `pin-mismatch.txt`
 
@@ -302,7 +302,7 @@ first item on the cut list).
   `query_intent.py`: older-version words (*old, previous, earlier, superseded, last year…* or a
   superseded year) and exact-term regexes. **A takes this file over on Day 3.**
 - **Tests:** `test_superseded_filtered_by_default`, `test_explicit_old_version_includes_superseded`.
-- **Removes** `STARTER-TODO(3.2)` in `chroma.py`.
+- **Removes** starter TODO (3.2) marker in `chroma.py`.
 - **Tell A** when merged (unblocks 2A6).
 
 #### 2B4 · Eval plumbing: `--pause`, `pytest-cov`, coverage gate

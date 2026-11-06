@@ -349,7 +349,7 @@ All of these are **manual** steps (GitHub and Docker Hub web pages, terminal).
   - Abstain questions have `relevant: []` and `must_abstain: true`.
   - Version questions name a value that differs between 2023 and 2026, or an annual-report
     figure.
-  - Delete the template's comment lines and every `STARTER-TODO` (the checker counts them).
+  - Delete the template's comment lines and every starter TODO marker (the checker counts them).
 - **Done when:** merged into `dev` **today**. The Git history is the proof that it came before
   tuning (tuning starts Day 2, 2B6).
 
@@ -414,7 +414,7 @@ All of these are **manual** steps (GitHub and Docker Hub web pages, terminal).
     `--update-baseline`). Use the three constants at the top of the file.
 - **Tests:** `test_recall_at_k_prefix_match`, `test_citation_validity`, `test_summarise_by_type`,
   `test_gate_conditions`. Pure Python: no cluster, no network.
-- **Removes** the four `STARTER-TODO(5.x)` markers and `NotImplementedError`s in `run_eval.py`.
+- **Removes** the four starter TODO (5.x) marker markers and `NotImplementedError`s in `run_eval.py`.
 - **Done when:** `.venv/bin/pytest tests/` is green. (`make test` runs root `tests/` from Day 2,
   2B4.)
 

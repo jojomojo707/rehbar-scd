@@ -256,7 +256,7 @@ contract changes; STARTER.md requires an ADR for that).
   `stream: false`; documented as "implemented, not deployed".
 - **Tests:** `test_hosted_request_shape`, `test_ollama_request_shape` (both with
   `httpx.MockTransport`; no real network).
-- **Removes** `STARTER-TODO(3.4)` and `NotImplementedError` in both files.
+- **Removes** starter TODO (3.4) marker and `NotImplementedError` in both files.
 
 #### 3B3 · Metrics and the per-request log line
 
