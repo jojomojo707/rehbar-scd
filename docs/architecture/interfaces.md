@@ -76,7 +76,7 @@ The ConfigMap column shows the base value; the `ci` overlay's differences are in
 | `CHROMA_WAIT_SECONDS` | indexer | `180` | `180` | (none) | How long the indexer waits for Chroma's heartbeat before failing |
 | `TOP_K` | api | `5` | `5` | §4.1, §3.2 | 1–20 |
 | `RELEVANCE_FLOOR` | api | `0.60` | tuned value | §4.1 | Cosine similarity; chosen from data ([Tuning procedures](testing-and-evaluation.md#tuning-procedures)) |
-| `HYBRID_RETRIEVAL` | api | `true` | `true` | (none) | [D9](decisions.md#d9-light-hybrid-retrieval) |
+| `HYBRID_RETRIEVAL` | api | `true` | `false` (until Day 3 measures it) | (none) | [D9](decisions.md#d9-light-hybrid-retrieval) |
 | `SUPERSEDED_FILTER` | api | `true` | `true` | (none) | Failure switch for stage E (default P5) |
 | `REDIS_HOST` | api | `redis` | `redis` | (none) | Service name |
 | `REDIS_PORT` | api | `6379` | `6379` | (none) | (none) |

@@ -71,15 +71,16 @@ spec:
               envFrom:
                 - configMapRef:
                     name: rahbar-config
-              # OCR at 300 dpi and embedding batches are the memory peak of the system.
-              # Starting points; replaced with kubectl top numbers from a real run (section 4.5).
+              # OCR at 300 dpi and embedding batches are the memory peak of the system. The real
+              # corpus at CHUNK_SIZE 480 was OOM-killed (exit 137) at 2Gi and completed at 3Gi on
+              # 5 Nov, so the limit is 3Gi with a 1500Mi request (section 4.5).
               resources:
                 requests:
                   cpu: 500m
-                  memory: 1Gi
+                  memory: 1500Mi
                 limits:
                   cpu: "2"
-                  memory: 2Gi
+                  memory: 3Gi
               securityContext:
                 allowPrivilegeEscalation: false
                 readOnlyRootFilesystem: true
