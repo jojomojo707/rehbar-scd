@@ -41,6 +41,10 @@ Thresholds you tried, the false hit that ruled one out, the one you shipped.
 
 Recall@k matches normalized source names and section identifiers, with a section-prefix boundary: golden `5.4` matches `5.4 Academic Warning`, but not `5.41`. Citation validity checks each citation against that response's own retrieved passages, including page when the citation supplies one. Abstention is correct only when a must-abstain question has `answered_from_context: false`.
 
+## Post-PR-60 Groq retest (2026-11-06; manual review pending)
+
+The 18-question uncached run on the PR #60 image passed the automated gate: recall@5 0.9375 (previous baseline 0.8125), citation validity 100%, and required abstention 100%. Three answer-generation requests (O06–O08) exhausted both validation attempts and returned the safe fallback; API logs show validation failures rather than provider throttling. The remaining 15 requests did not fall back. Review all captured answers and retrieved evidence before replacing the prior manual-review table below; that table describes an earlier run. Raw answer capture was kept outside the repository.
+
 ## Day 3 manual answer review (real corpus, Groq)
 
 Reviewed the second 18-question run against each captured response and its retrieved Chroma passages. The raw responses were kept outside the repository; this table records the six manual checks required by the Day 3 plan. “Avoids unsupported claims” is Yes when the answer makes no unsupported factual claim. N/A means the check does not apply to a correctly declined out-of-corpus question.
