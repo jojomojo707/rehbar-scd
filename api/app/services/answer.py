@@ -17,7 +17,7 @@ from ..retrieval.base import RetrievalQuery, Retriever
 from ..routes import metrics
 from ..schemas import Answer, AskResponse, HistoryTurn, Passage, RetrievedRef
 from .cache import NullSemanticCache
-from .fallback import safe_fallback
+from .fallback import relevance_abstention, safe_fallback
 from .prompt import build_prompt
 from .query_intent import QueryIntent, classify_query, make_retrieval_query
 from .turns import NullTurnLog, Turn
@@ -56,9 +56,9 @@ def _retrieval_query(
     return make_retrieval_query(question, settings.top_k, collection, embedder, versions)
 
 
-def _check_relevance_floor(passages: list[Passage]) -> bool:
-    """Day 2 placeholder: leave relevance-floor decisions to the later answer task."""
-    return False
+def _check_relevance_floor(passages: list[Passage], floor: float) -> bool:
+    """Abstain when retrieval found no passage at or above the configured score floor."""
+    return not passages or max(passage.score for passage in passages) < floor
 
 
 def _validated_completion(
@@ -176,7 +176,7 @@ def answer_question(
         metrics.RETRIEVAL.observe(time.perf_counter() - retrieval_started)
 
         # 6. Relevance floor (no-op today), then 7. augment, generate, validate, and fallback.
-        should_abstain = _check_relevance_floor(passages)
+        should_abstain = _check_relevance_floor(passages, settings.relevance_floor)
         fallback_reason = None
         tokens_in = 0
         tokens_out = 0
@@ -184,7 +184,7 @@ def answer_question(
         generation_attempts = 0
         if should_abstain:
             metrics.ABSTENTIONS.labels(reason="relevance_floor").inc()
-            answer = safe_fallback(None, provider.name)
+            answer = relevance_abstention()
         else:
             generation_started = time.perf_counter()
             (
