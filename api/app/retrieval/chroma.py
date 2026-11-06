@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import time
+from collections.abc import Mapping
 from typing import Any, cast
 
 from ..config import Settings
@@ -113,7 +114,7 @@ class ChromaRetriever:
 
 
 def _passages_from_result(
-    result: dict[str, Any],
+    result: Mapping[str, object],
     query: RetrievalQuery,
     limit: int,
     superseded_filter: bool,
