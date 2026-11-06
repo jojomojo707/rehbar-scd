@@ -41,6 +41,8 @@ _ATTACK_CLAUSE = re.compile(
 def retrieval_text(text: str) -> str:
     """Drop obvious override clauses from the embedding query, not the user question."""
     clauses = re.split(r"(?<=[!?])\s+|(?<=\.)\s+(?=[A-Z])|;\s*|\bthen\b", text)
+    if not any(_ATTACK_CLAUSE.search(clause) for clause in clauses):
+        return text
     retained = [
         clause.strip(" ,;")
         for clause in clauses

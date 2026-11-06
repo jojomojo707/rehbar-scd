@@ -46,3 +46,8 @@ def test_retrieval_text_drops_override_clause_and_keeps_factual_question() -> No
 def test_retrieval_text_preserves_ordinary_multi_part_query() -> None:
     question = "Under clause 1.17, how is load determined? What is the limit?"
     assert retrieval_text(question) == question
+
+
+def test_retrieval_text_preserves_follow_up_separator_when_query_is_safe() -> None:
+    question = "What is the minimum attendance?\nAnd does it apply to MS?"
+    assert retrieval_text(question) == question
