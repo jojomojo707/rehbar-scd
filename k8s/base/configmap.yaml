@@ -42,7 +42,10 @@ data:
   # --- Redis: semantic cache and turn log (api) ---
   REDIS_HOST: "redis"
   REDIS_PORT: "6379"
-  CACHE_THRESHOLD: "0.92"
+  # Lowest tested value with zero false hits on eval/cache_pairs.yaml (3A3): 0.95 served the
+  # wrong answer for "minimum CGPA for an undergraduate degree" vs "... graduate degree" (0.9533).
+  # See docs/evidence/cache-threshold.txt.
+  CACHE_THRESHOLD: "0.96"
   CACHE_TTL_SECONDS: "86400"
   CACHE_MAX_ENTRIES: "500"
   HISTORY_MAX_TURNS: "3"
