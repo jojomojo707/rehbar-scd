@@ -1,0 +1,146 @@
+# kubectl-top-pods.txt: brief 4.5, measured CPU and memory of the serving pods under load
+# 2026-11-06, minikube (4 CPUs, 8 GiB), namespace rahbar, real index (764 chunks), HYBRID_RETRIEVAL true.
+# Load: the 18 golden questions, 6 concurrent clients for 180 s, through the Ingress
+# (kubectl port-forward to ingress-nginx, Host: rahbar.local). LLM_PROVIDER is hosted but this
+# cluster has no Groq key, so every answer is the canned fallback or a floor abstention: the
+# load is the api's own work (query embedding, Chroma queries, validation), with no LLM wait.
+# Loop: kubectl get hpa api; kubectl top pods -n rahbar --containers; every 15 s.
+#
+# Summary (peak per container across this run and the indexing run)
+#   api     363Mi under query load, 444Mi once during the index switch; CPU 1000m = its limit
+#   chroma  159Mi, 93m       redis 17Mi, 25m       ui 2Mi, 1m
+#   HPA     scaled 3 -> 8 replicas (target 70% of the 250m CPU request); events below
+#   Run 1 (before the keep-alive fix): requests by status over 180 s, 6 concurrent clients: {200: 1170, 502: 2}
+#   Run 2 (after uvicorn --timeout-keep-alive 75, this run): requests by status over 180 s, 6 concurrent clients: {200: 1295}
+
+=== 16:52:19
+api   Deployment/api   cpu: 3%/70%   3     8     8     32h
+POD                      NAME     CPU(cores)   MEMORY(bytes)   
+api-546c7f7-852hn        api      8m           363Mi           
+api-679dc78b48-7xmd2     api      968m         229Mi           
+api-679dc78b48-855cp     api      8m           248Mi           
+api-679dc78b48-kmn6v     api      126m         247Mi           
+api-679dc78b48-p5kxs     api      331m         259Mi           
+api-679dc78b48-x5lj7     api      514m         248Mi           
+api-679dc78b48-x6zc6     api      7m           245Mi           
+chroma-0                 chroma   11m          157Mi           
+redis-5d4659f5d4-pkjfn   redis    24m          17Mi            
+ui-6f6f5dbf96-sggtq      ui       1m           2Mi             
+
+=== 16:52:34
+api   Deployment/api   cpu: 3%/70%   3     8     8     32h
+POD                      NAME     CPU(cores)   MEMORY(bytes)   
+api-679dc78b48-5b8vz     api      702m         264Mi           
+api-679dc78b48-7xmd2     api      249m         250Mi           
+api-679dc78b48-855cp     api      194m         252Mi           
+api-679dc78b48-kmn6v     api      161m         250Mi           
+api-679dc78b48-lbl4l     api      427m         263Mi           
+api-679dc78b48-p5kxs     api      186m         263Mi           
+api-679dc78b48-x5lj7     api      192m         251Mi           
+api-679dc78b48-x6zc6     api      215m         249Mi           
+chroma-0                 chroma   28m          158Mi           
+redis-5d4659f5d4-pkjfn   redis    23m          17Mi            
+ui-6f6f5dbf96-sggtq      ui       1m           2Mi             
+
+=== 16:52:49
+api   Deployment/api   cpu: 75%/70%   3     8     8     32h
+POD                      NAME     CPU(cores)   MEMORY(bytes)   
+api-679dc78b48-5b8vz     api      702m         264Mi           
+api-679dc78b48-7xmd2     api      249m         250Mi           
+api-679dc78b48-855cp     api      194m         252Mi           
+api-679dc78b48-kmn6v     api      161m         250Mi           
+api-679dc78b48-lbl4l     api      427m         263Mi           
+api-679dc78b48-p5kxs     api      186m         263Mi           
+api-679dc78b48-x5lj7     api      192m         251Mi           
+api-679dc78b48-x6zc6     api      215m         249Mi           
+chroma-0                 chroma   28m          158Mi           
+redis-5d4659f5d4-pkjfn   redis    23m          17Mi            
+ui-6f6f5dbf96-sggtq      ui       1m           2Mi             
+
+=== 16:53:35
+api   Deployment/api   cpu: 75%/70%   3     8     8     32h
+POD                      NAME     CPU(cores)   MEMORY(bytes)   
+api-679dc78b48-5b8vz     api      1000m        266Mi           
+api-679dc78b48-7xmd2     api      1000m        252Mi           
+api-679dc78b48-855cp     api      1000m        255Mi           
+api-679dc78b48-kmn6v     api      1000m        252Mi           
+api-679dc78b48-lbl4l     api      1000m        264Mi           
+api-679dc78b48-p5kxs     api      1000m        265Mi           
+api-679dc78b48-x5lj7     api      1000m        253Mi           
+api-679dc78b48-x6zc6     api      1000m        252Mi           
+chroma-0                 chroma   93m          157Mi           
+redis-5d4659f5d4-pkjfn   redis    17m          17Mi            
+ui-6f6f5dbf96-sggtq      ui       1m           2Mi             
+
+=== 16:53:50
+api   Deployment/api   cpu: 400%/70%   3     8     8     32h
+POD                      NAME     CPU(cores)   MEMORY(bytes)   
+api-679dc78b48-5b8vz     api      1000m        266Mi           
+api-679dc78b48-7xmd2     api      1000m        252Mi           
+api-679dc78b48-855cp     api      1000m        255Mi           
+api-679dc78b48-kmn6v     api      1000m        252Mi           
+api-679dc78b48-lbl4l     api      1000m        264Mi           
+api-679dc78b48-p5kxs     api      1000m        265Mi           
+api-679dc78b48-x5lj7     api      1000m        253Mi           
+api-679dc78b48-x6zc6     api      1000m        252Mi           
+chroma-0                 chroma   93m          157Mi           
+redis-5d4659f5d4-pkjfn   redis    17m          17Mi            
+ui-6f6f5dbf96-sggtq      ui       1m           2Mi             
+
+=== 16:54:35
+api   Deployment/api   cpu: 400%/70%   3     8     8     32h
+POD                      NAME     CPU(cores)   MEMORY(bytes)   
+api-679dc78b48-5b8vz     api      1000m        268Mi           
+api-679dc78b48-7xmd2     api      1000m        253Mi           
+api-679dc78b48-855cp     api      1000m        254Mi           
+api-679dc78b48-kmn6v     api      1000m        253Mi           
+api-679dc78b48-lbl4l     api      1000m        266Mi           
+api-679dc78b48-p5kxs     api      1000m        266Mi           
+api-679dc78b48-x5lj7     api      1000m        254Mi           
+api-679dc78b48-x6zc6     api      1000m        255Mi           
+chroma-0                 chroma   92m          159Mi           
+redis-5d4659f5d4-pkjfn   redis    17m          17Mi            
+ui-6f6f5dbf96-sggtq      ui       1m           2Mi             
+
+=== 16:55:36
+api   Deployment/api   cpu: 400%/70%   3     8     8     32h
+POD                      NAME     CPU(cores)   MEMORY(bytes)   
+api-679dc78b48-5b8vz     api      900m         268Mi           
+api-679dc78b48-7xmd2     api      887m         254Mi           
+api-679dc78b48-855cp     api      888m         255Mi           
+api-679dc78b48-kmn6v     api      881m         253Mi           
+api-679dc78b48-lbl4l     api      887m         267Mi           
+api-679dc78b48-p5kxs     api      881m         266Mi           
+api-679dc78b48-x5lj7     api      871m         254Mi           
+api-679dc78b48-x6zc6     api      864m         255Mi           
+chroma-0                 chroma   75m          159Mi           
+redis-5d4659f5d4-pkjfn   redis    17m          17Mi            
+ui-6f6f5dbf96-sggtq      ui       1m           2Mi             
+
+=== 16:55:51
+api   Deployment/api   cpu: 352%/70%   3     8     8     32h
+POD                      NAME     CPU(cores)   MEMORY(bytes)   
+api-679dc78b48-5b8vz     api      900m         268Mi           
+api-679dc78b48-7xmd2     api      887m         254Mi           
+api-679dc78b48-855cp     api      888m         255Mi           
+api-679dc78b48-kmn6v     api      881m         253Mi           
+api-679dc78b48-lbl4l     api      887m         267Mi           
+api-679dc78b48-p5kxs     api      881m         266Mi           
+api-679dc78b48-x5lj7     api      871m         254Mi           
+api-679dc78b48-x6zc6     api      864m         255Mi           
+chroma-0                 chroma   75m          159Mi           
+redis-5d4659f5d4-pkjfn   redis    17m          17Mi            
+ui-6f6f5dbf96-sggtq      ui       1m           2Mi             
+
+
+# kubectl describe hpa api -n rahbar (events) and kubectl get hpa api -n rahbar
+Events:
+  Type     Reason                        Age                  From                       Message
+  ----     ------                        ----                 ----                       -------
+  Normal   SuccessfulRescale             51m                  horizontal-pod-autoscaler  New size: 3; reason: All metrics below target
+  Warning  FailedGetResourceMetric       4m5s (x25 over 33h)  horizontal-pod-autoscaler  failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+  Warning  FailedComputeMetricsReplicas  4m5s (x25 over 33h)  horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+  Normal   SuccessfulRescale             109s                 horizontal-pod-autoscaler  New size: 5; reason: cpu resource utilization (percentage of request) above target
+  Normal   SuccessfulRescale             49s (x2 over 68m)    horizontal-pod-autoscaler  New size: 8; reason: cpu resource utilization (percentage of request) above target
+NAME   REFERENCE        TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+api    Deployment/api   cpu: 270%/70%   3         8         8          33h

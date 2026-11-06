@@ -1,0 +1,100 @@
+# Deployment api: the FastAPI service. Reads Chroma, never writes it (sections 4.1, 4.2).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  labels:
+    app.kubernetes.io/name: api
+    app.kubernetes.io/part-of: rahbar
+spec:
+  replicas: 3
+  progressDeadlineSeconds: 1200
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1          # one extra pod during a rollout
+      maxUnavailable: 0    # never drop below 3 ready pods (section 4.6)
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: api
+        app.kubernetes.io/part-of: rahbar
+    spec:
+      # Do not inject Service env vars (CHROMA_PORT=tcp://..., REDIS_PORT=...): they clash with the
+      # ConfigMap keys of the same names. Service discovery uses DNS names (chroma, redis).
+      enableServiceLinks: false
+      serviceAccountName: rahbar-api
+      automountServiceAccountToken: false
+      # preStop 10 s + uvicorn graceful shutdown 45 s + margin (deployment.md § Rollout settings)
+      terminationGracePeriodSeconds: 60
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: api
+          image: rahbar-api
+          ports:
+            - name: http
+              containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: rahbar-config
+          env:
+            - name: LLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: rahbar-secret
+                  key: LLM_API_KEY
+                  optional: true   # the stub provider and CI need no key
+          # Measured with kubectl top (docs/evidence/kubectl-top-pods.txt, section 4.5): memory peak
+          # 444Mi (once, during an index switch; 230-363Mi under query load). Request 448Mi = that
+          # peak; limit 640Mi = peak + 44% (margin of at least 30%). CPU: 1000m under 6 concurrent
+          # clients, i.e. it saturates the 1-CPU limit; the HPA scales on 70% of the 250m request,
+          # so it adds pods long before one is saturated (3 -> 8 in the same run).
+          resources:
+            requests:
+              cpu: 250m
+              memory: 448Mi
+            limits:
+              cpu: "1"
+              memory: 640Mi
+          startupProbe:          # finished booting? liveness and readiness wait for it
+            httpGet:
+              path: /healthz
+              port: 8000
+            failureThreshold: 30
+            periodSeconds: 2
+          livenessProbe:         # still alive? touches no dependency (section 4.3)
+            httpGet:
+              path: /healthz
+              port: 8000
+            periodSeconds: 20
+            failureThreshold: 3
+          readinessProbe:        # can take traffic? Chroma, index, pin, Redis
+            httpGet:
+              path: /readyz
+              port: 8000
+            periodSeconds: 10
+            failureThreshold: 3
+            timeoutSeconds: 3
+          lifecycle:
+            preStop:             # leave the Service before uvicorn stops accepting
+              exec:
+                command: ["sleep", "10"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}

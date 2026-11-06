@@ -7,6 +7,7 @@ Switch to RETRIEVER=chroma in the ConfigMap once your index exists.
 from __future__ import annotations
 
 from ..schemas import Passage
+from .base import RetrievalQuery
 
 _PASSAGES = [
     Passage(
@@ -42,5 +43,6 @@ _PASSAGES = [
 class StubRetriever:
     name = "stub"
 
-    def retrieve(self, question: str, k: int) -> list[Passage]:
-        return [p.model_copy() for p in _PASSAGES[:k]]
+    def retrieve(self, query: RetrievalQuery | str, k: int | None = None) -> list[Passage]:
+        limit = query.k if isinstance(query, RetrievalQuery) else (k or 5)
+        return [p.model_copy() for p in _PASSAGES[:limit]]

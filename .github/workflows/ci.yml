@@ -1,0 +1,232 @@
+# CI (section 6): runs on every pull request into main or dev, and on every push to dev.
+# lint, test, manifests (Day 1); build and scan (Day 2); e2e-eval (Day 3).
+name: ci
+
+on:
+  pull_request:
+    branches: [main, dev]
+  push:
+    branches: [dev]
+
+# Least privilege: CI only reads the repository.
+permissions:
+  contents: read
+
+# A newer push to the same branch cancels the older, now pointless, run.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  KUSTOMIZE_VERSION: "5.7.1"
+  KUBECONFORM_VERSION: "0.7.0"
+  # e2e-eval (and cd.yml deploy): kind v0.32.0 and its Kubernetes 1.35 node image, by digest.
+  KIND_VERSION: "v0.32.0"
+  KIND_NODE_IMAGE: "kindest/node:v1.35.5@sha256:ce977ae6d65918d0b58a5f8b5e940429c2ce42fa3a5619ec2bbc60b949c0ac95"
+  INGRESS_NGINX_VERSION: "v1.15.1"
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            api/requirements*.txt
+            indexer/requirements*.txt
+      - name: Install dependencies
+        run: make install PY=python
+      - name: ruff and mypy
+        run: make lint
+
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            api/requirements*.txt
+            indexer/requirements*.txt
+      - name: Install OCR system packages (Tesseract, poppler)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-eng poppler-utils
+      - name: Install dependencies
+        run: make install PY=python
+      - name: pytest (stub provider only, no network, no model)
+        run: make test
+
+  manifests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned kustomize and kubeconform
+        run: |
+          mkdir -p "$HOME/bin"
+          curl -sSL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KUSTOMIZE_VERSION}/kustomize_v${KUSTOMIZE_VERSION}_linux_amd64.tar.gz" \
+            | tar -xz -C "$HOME/bin" kustomize
+          curl -sSL "https://github.com/yannh/kubeconform/releases/download/v${KUBECONFORM_VERSION}/kubeconform-linux-amd64.tar.gz" \
+            | tar -xz -C "$HOME/bin" kubeconform
+          echo "$HOME/bin" >> "$GITHUB_PATH"
+      - name: kubeconform the prod overlay
+        run: kustomize build k8s/overlays/prod | kubeconform -strict -summary
+      - name: kubeconform the dev overlay
+        run: kustomize build k8s/overlays/dev | kubeconform -strict -summary
+      - name: kubeconform the ci overlay
+        run: kustomize build k8s/overlays/ci | kubeconform -strict -summary
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install PyYAML for the parity check
+        run: python -m pip install pyyaml==6.0.2
+      - name: Job indexer and CronJob reindex run the same pod (AMB-14)
+        run: |
+          python scripts/check_manifests.py k8s/base/indexer-job.yaml k8s/base/reindex-cronjob.yaml
+          kustomize build k8s/overlays/prod | python scripts/check_manifests.py -
+          kustomize build k8s/overlays/dev | python scripts/check_manifests.py -
+          kustomize build k8s/overlays/ci | python scripts/check_manifests.py -
+
+  # Section 6: build all three images on every PR, never push them. Each image is exported
+  # as a tar and uploaded, so scan (and e2e-eval on Day 3) use exactly these bytes.
+  build:
+    needs: [lint, test]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [api, ui, indexer]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build rahbar-${{ matrix.image }} (no push)
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.image }}
+          # The indexer image needs the fetch script, the committed manifest and the CI
+          # fixture corpus from outside indexer/ (decision P1). Ignored by the other two.
+          build-contexts: |
+            corpus=corpus
+            fixtures=eval/fixtures
+          tags: docker.io/majnoon57/rahbar-${{ matrix.image }}:${{ github.sha }}
+          push: false
+          outputs: type=docker,dest=/tmp/rahbar-${{ matrix.image }}.tar
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: image-${{ matrix.image }}
+          path: /tmp/rahbar-${{ matrix.image }}.tar
+          retention-days: 3
+
+  # Fail on any HIGH or CRITICAL vulnerability that has a fix available. A .trivyignore
+  # entry needs a written reason next to it.
+  scan:
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [api, ui, indexer]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: image-${{ matrix.image }}
+          path: /tmp
+      - name: Trivy scan rahbar-${{ matrix.image }}
+        # v0.36.0, pinned by commit: several older tags of this action were re-published
+        # in March 2026, so a tag alone is not trustworthy.
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
+        with:
+          input: /tmp/rahbar-${{ matrix.image }}.tar
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+          format: table
+
+  # Section 6: a throwaway kind cluster on the runner, the ci overlay (stub LLM, real
+  # embeddings, fixture corpus baked into the indexer image), the indexer Job, the rollouts,
+  # then a request through the Ingress. The images are the exact tars the build job made.
+  e2e-eval:
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: image-*
+          path: /tmp/images
+          merge-multiple: true
+      - name: Create the kind cluster
+        # helm/kind-action v1.15.1, pinned by commit like trivy-action above.
+        uses: helm/kind-action@1544676c07bb3570fcb70166beaa07c4528fd4aa
+        with:
+          version: ${{ env.KIND_VERSION }}
+          node_image: ${{ env.KIND_NODE_IMAGE }}
+          config: .github/kind/cluster.yaml
+          cluster_name: rahbar
+      - name: Install ingress-nginx for kind (pinned manifest)
+        run: |
+          kubectl apply -f "https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-${INGRESS_NGINX_VERSION}/deploy/static/provider/kind/deploy.yaml"
+          # The admission webhook rejects Ingress objects until the controller is ready.
+          kubectl wait --namespace ingress-nginx --for=condition=ready pod \
+            --selector=app.kubernetes.io/component=controller --timeout=180s
+      - name: Load the three images into the kind node
+        run: |
+          for image in api ui indexer; do
+            kind load image-archive "/tmp/images/rahbar-${image}.tar" --name rahbar
+          done
+      - name: Point a working copy of the ci overlay at this commit's images, then apply
+        run: bash scripts/ci_deploy.sh "${{ github.sha }}"
+      - name: Wait for the indexer Job to index the fixture corpus
+        run: bash scripts/wait_job.sh indexer rahbar 600
+      - name: Wait for the api and ui rollouts
+        run: |
+          kubectl rollout status deployment/api -n rahbar --timeout=300s
+          kubectl rollout status deployment/ui -n rahbar --timeout=120s
+      - name: Smoke test through the Ingress
+        run: bash scripts/smoke_test.sh http://localhost rahbar.local
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install the eval script's two dependencies (pinned as in api/requirements.txt)
+        run: python -m pip install httpx==0.28.1 pyyaml==6.0.2
+      # Section 5.4 gate. run_eval.py exits 1 when recall@5 falls more than 5 points below the
+      # committed fixture baseline, citation validity is below 95%, or a must-abstain question
+      # is answered. That exit code fails this job, so the PR cannot merge.
+      - name: Evaluate the fixture golden set (section 5.4 gate)
+        run: |
+          python eval/run_eval.py --api http://localhost --host rahbar.local \
+            --golden eval/fixtures/golden.fixture.yaml \
+            --baseline eval/fixtures/baseline.fixture.json \
+            --out /tmp/results.fixture.json
+      - name: Upload the eval results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results-fixture
+          path: |
+            /tmp/results.fixture.json
+            eval/fixtures/baseline.fixture.json
+          if-no-files-found: ignore
+      - name: Dump cluster state on failure
+        if: failure()
+        run: |
+          kubectl get pods,jobs,svc,endpoints,ingress,networkpolicy -n rahbar -o wide || true
+          kubectl get events -n rahbar --sort-by=.lastTimestamp || true
+          kubectl describe pods -n rahbar || true
+          kubectl logs job/indexer -n rahbar --all-containers --tail=200 || true
+          kubectl logs deployment/api -n rahbar --tail=200 || true
+          kubectl logs -n ingress-nginx deployment/ingress-nginx-controller --tail=100 || true

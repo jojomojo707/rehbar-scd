@@ -1,0 +1,33 @@
+# endpoints.txt: brief 4.6, scale the api and show the Service routes to every ready pod
+# 2026-11-06T17:49:24Z, minikube, namespace rahbar. The HPA (min 3) scales back to 3 after its
+# 300 s stabilisation window, so the endpoints are read within a minute of scaling (plan risk R5).
+
+$ kubectl get endpoints api -n rahbar
+Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+NAME   ENDPOINTS                                                  AGE
+api    10.244.120.66:8000,10.244.120.67:8000,10.244.120.70:8000   47h
+
+$ kubectl scale deployment/api --replicas=4 -n rahbar
+deployment.apps/api scaled
+
+$ kubectl rollout status deployment/api -n rahbar
+Waiting for deployment "api" rollout to finish: 3 of 4 updated replicas are available...
+deployment "api" successfully rolled out
+
+$ kubectl get endpoints api -n rahbar   # 17:49:43
+Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+NAME   ENDPOINTS                                                              AGE
+api    10.244.120.65:8000,10.244.120.66:8000,10.244.120.67:8000 + 1 more...   47h
+
+$ kubectl get pods -n rahbar -l app.kubernetes.io/name=api -o wide
+NAME                   READY   STATUS    RESTARTS   AGE     IP              NODE       NOMINATED NODE   READINESS GATES
+api-679dc78b48-fsc92   1/1     Running   0          2m33s   10.244.120.66   minikube   <none>           <none>
+api-679dc78b48-mkxzs   1/1     Running   0          18s     10.244.120.65   minikube   <none>           <none>
+api-679dc78b48-q6bdh   1/1     Running   0          118s    10.244.120.70   minikube   <none>           <none>
+api-679dc78b48-vtr6d   1/1     Running   0          2m17s   10.244.120.67   minikube   <none>           <none>
+
+$ kubectl describe endpoints api -n rahbar   # every pod IP is a Ready address
+Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+  Addresses:          10.244.120.65,10.244.120.66,10.244.120.67,10.244.120.70
+  NotReadyAddresses:  <none>
+  Ports:

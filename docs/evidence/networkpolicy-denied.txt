@@ -1,0 +1,47 @@
+$ kubectl get networkpolicy -n rahbar
+NAME             POD-SELECTOR                     AGE
+allow-dns        <none>                           18s
+api-egress       app.kubernetes.io/name=api       18s
+api-ingress      app.kubernetes.io/name=api       18s
+chroma-ingress   app.kubernetes.io/name=chroma    18s
+default-deny     <none>                           18s
+indexer-egress   app.kubernetes.io/name=indexer   18s
+redis-ingress    app.kubernetes.io/name=redis     18s
+ui-ingress       app.kubernetes.io/name=ui        18s
+
+$ kubectl exec deploy/ui -n rahbar -- wget -qO- -T 3 http://chroma:8000/api/v2/heartbeat
+wget: download timed out
+command terminated with exit code 1
+exit=1
+
+$ kubectl exec deploy/ui -n rahbar -- wget -qO- -T 3 http://redis:6379
+wget: download timed out
+command terminated with exit code 1
+exit=1
+
+# the same Chroma request from an api pod (python, the api image has no wget) must succeed
+$ kubectl exec deploy/api -n rahbar -- python -c "import urllib.request; print(urllib.request.urlopen('http://chroma:8000/api/v2/heartbeat', timeout=3).read().decode())"
+{"nanosecond heartbeat":1793872085071941763}
+exit=0
+
+# api egress to the internet on 443 (Groq) is allowed; the api has no rule to port 80
+$ kubectl exec deploy/api -n rahbar -- python -c "<HEAD https://api.groq.com, then http://example.com>"
+https://api.groq.com/openai/v1/models -> HTTP 403 (reached the server)
+http://example.com/ -> blocked URLError <urlopen error timed out>
+
+# a pod with the indexer label: DNS, nu.edu.pk on 443 and 80, chroma allowed; redis denied
+$ kubectl run netpol-indexer-probe -n rahbar --rm -i --restart=Never --image=rahbar-indexer:dev --labels=app.kubernetes.io/name=indexer --command -- python -c "<HEAD nu.edu.pk; connect chroma:8000, redis:6379>"
+https://nu.edu.pk/ -> 200
+http://nu.edu.pk/ -> 301
+chroma:8000 -> connected
+redis:6379 -> blocked (TimeoutError)
+
+# probes still pass with every policy applied
+$ kubectl get pods -n rahbar
+NAME                     READY   STATUS    RESTARTS   AGE
+api-7679fcc6c-jr26h      1/1     Running   0          15h
+api-7679fcc6c-ncgh7      1/1     Running   0          15h
+api-7679fcc6c-r6j6k      1/1     Running   0          15h
+chroma-0                 1/1     Running   0          15h
+redis-5d4659f5d4-tf2pb   1/1     Running   0          15h
+ui-788d6965c4-wpsxb      1/1     Running   0          15h

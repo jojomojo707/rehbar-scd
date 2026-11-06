@@ -1,0 +1,18 @@
+# kind cluster for ci.yml e2e-eval and cd.yml deploy (section 6). kind ("Kubernetes in Docker",
+# a Kubernetes SIG project) runs one node as a Docker container on the GitHub runner.
+# - The node carries the label ingress-ready=true: the pinned ingress-nginx manifest for kind
+#   only schedules its controller on a node with that label.
+# - Port 80 of the node is mapped to port 80 of the runner, so `curl http://localhost` with
+#   `Host: rahbar.local` reaches the Ingress exactly as a browser would.
+# kind's default network plugin (kindnet) enforces NetworkPolicy, so the eight policies are
+# exercised here too.
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    labels:
+      ingress-ready: "true"
+    extraPortMappings:
+      - containerPort: 80
+        hostPort: 80
+        protocol: TCP

@@ -1,0 +1,22 @@
+# Pin demo (brief section 4.4). The active index rahbar-v20261105-084745 was built with
+# EMBED_MODEL=dummy-768 (768 dimensions). EMBED_MODEL was changed in the ConfigMap and the api
+# restarted, with no re-index.
+
+$ kubectl patch configmap rahbar-config -n rahbar --type merge -p '{"data":{"EMBED_MODEL":"BAAI/bge-small-en-v1.5"}}'
+$ kubectl rollout restart deployment/api -n rahbar
+
+$ kubectl get configmap rahbar-config -n rahbar -o jsonpath={.data.EMBED_MODEL}
+BAAI/bge-small-en-v1.5
+
+$ kubectl get pods -n rahbar -l app.kubernetes.io/name=api
+NAME                   READY   STATUS    RESTARTS   AGE
+api-6b9cb9b8c4-46jb2   1/1     Running   0          2m17s
+api-6b9cb9b8c4-b4j5p   1/1     Running   0          2m10s
+api-6b9cb9b8c4-rwd9f   1/1     Running   0          2m15s
+api-759c9597b6-rn8tx   0/1     Running   0          65s
+
+$ kubectl logs pod/api-759c9597b6-rn8tx -n rahbar | grep "pin mismatch"
+{"ts": "2026-11-05T09:44:43Z", "level": "ERROR", "logger": "rahbar.api", "msg": "embedding pin mismatch", "request_id": "-", "configured_model": "BAAI/bge-small-en-v1.5", "index_model": "dummy-768", "configured_dimension": 384, "index_dimension": 768, "collection": "rahbar-v20261105-084745"}
+
+$ kubectl exec pod/api-759c9597b6-rn8tx -n rahbar -- python -c "<GET http://localhost:8000/readyz>"
+503 {"status":"not_ready","checks":{"chroma":"ok","index_pointer":"ok","collection":"ok","embedding_pin":"mismatch","embedding_model":"ok","redis":"ok"},"index":"rahbar-v20261105-084745","failed":"embedding_pin","detail":"embedding_pin: configured BAAI/bge-small-en-v1.5 (384 dimensions) but index rahbar-v20261105-084745 was built with dummy-768 (768 dimensions)"}

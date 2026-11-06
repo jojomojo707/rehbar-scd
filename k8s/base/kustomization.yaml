@@ -1,0 +1,24 @@
+# Base for every overlay. `namespace:` puts every object in rahbar, never default (section 4.1).
+# secret.placeholder.yaml is deliberately NOT listed: applying it would overwrite the real
+# Secret created with `make secret`.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: rahbar
+labels:
+  - pairs:
+      app.kubernetes.io/part-of: rahbar
+resources:
+  - namespace.yaml
+  - serviceaccounts.yaml
+  - configmap.yaml
+  - api.yaml
+  - hpa.yaml
+  - ui.yaml
+  - services.yaml
+  - chroma-statefulset.yaml
+  - redis.yaml
+  - corpus-pvc.yaml
+  - indexer-job.yaml
+  - reindex-cronjob.yaml
+  - ingress.yaml
+  - networkpolicy.yaml

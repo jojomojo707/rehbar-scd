@@ -1,0 +1,70 @@
+# rahbar-config: the ONE place both the api and the indexer read their settings from
+# (section 4.1). Every key is listed in docs/architecture/interfaces.md § Configuration keys.
+# All values are strings. LLM_API_KEY is NOT here: it lives in the Secret rahbar-secret.
+#
+# Day 2 values (PL14: values proved on the live cluster are committed here the same day):
+# the real index and retriever (RETRIEVER=chroma, EMBED_MODEL=BAAI/bge-small-en-v1.5) with the
+# chunk configuration measured on 5 Nov (docs/PIPELINE.md): 480 tokens, 64 overlap.
+# Day 3 values (3A8): Groq in hosted mode (the ci overlay patches LLM_PROVIDER back to "stub"),
+# the measured relevance floor, and hybrid retrieval on.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rahbar-config
+  labels:
+    app.kubernetes.io/part-of: rahbar
+data:
+  # --- Retrieval and generation (api) ---
+  RETRIEVER: "chroma"
+  LLM_PROVIDER: "hosted"   # Groq, decision D6; key from the Secret rahbar-secret
+  LLM_MODEL: "openai/gpt-oss-20b"
+  HOSTED_BASE_URL: "https://api.groq.com/openai/v1"
+  LLM_TIMEOUT_SECONDS: "20"
+  LLM_MAX_TOKENS: "1024"
+  LLM_REASONING_EFFORT: "low"
+  # 0.2: factual extraction into strict JSON; low variance without fully greedy decoding; it does not fix missing knowledge.
+  TEMPERATURE: "0.2"
+  TOP_K: "5"
+  # Must-abstain and answerable top scores overlap on the real golden set (must-abstain up to
+  # 0.7285, lowest answerable 0.6478, PR #41), so the floor is set for 100% abstention just above
+  # 0.7285 (tuning procedure 2). Fixtures: must-abstain 0.540, lowest answerable 0.711.
+  RELEVANCE_FLOOR: "0.73"
+  # On: recall@5 0.8125 -> 0.9375 on the golden set, exact-term injection questions 0 -> 1 (PR #42).
+  HYBRID_RETRIEVAL: "true"
+  SUPERSEDED_FILTER: "true"
+
+  # --- The embedding pin (api AND indexer, section 4.4) ---
+  EMBED_MODEL: "BAAI/bge-small-en-v1.5"
+
+  # --- Chroma (api and indexer) ---
+  CHROMA_HOST: "chroma"
+  CHROMA_PORT: "8000"
+  CHROMA_COLLECTION: "rahbar"
+  KEEP_COLLECTIONS: "2"
+  CHROMA_WAIT_SECONDS: "180"
+  INDEX_REFRESH_SECONDS: "10"
+
+  # --- Redis: semantic cache and turn log (api) ---
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  # Lowest tested value with zero false hits on eval/cache_pairs.yaml (3A3): 0.95 served the
+  # wrong answer for "minimum CGPA for an undergraduate degree" vs "... graduate degree" (0.9533).
+  # See docs/evidence/cache-threshold.txt.
+  CACHE_THRESHOLD: "0.96"
+  CACHE_TTL_SECONDS: "86400"
+  CACHE_MAX_ENTRIES: "500"
+  HISTORY_MAX_TURNS: "3"
+  HISTORY_ANSWER_MAX_CHARS: "600"
+  TURN_LOG_MAX_ENTRIES: "1000"
+  TURN_LOG_TTL_SECONDS: "604800"
+
+  # --- Indexer ---
+  CORPUS_DIR: "/corpus"
+  CHUNK_SIZE: "480"
+  CHUNK_OVERLAP: "64"
+  CHUNK_STRATEGY: "structure"
+  OCR_ENABLED: "true"
+  IMAGE_TAG: "dev"
+
+  # --- Both ---
+  LOG_LEVEL: "INFO"
