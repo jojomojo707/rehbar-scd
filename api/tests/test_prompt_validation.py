@@ -3,7 +3,7 @@ import pytest
 from app.providers.llm.base import Completion
 from app.schemas import Answer, Citation, HistoryTurn, Passage
 from app.services.answer import _validated_completion
-from app.services.prompt import SYSTEM_PROMPT, build_prompt
+from app.services.prompt import PROMPT_VERSION, SYSTEM_PROMPT, build_prompt
 from app.services.validate import (
     ABSTENTION_TEXT,
     AnswerValidationError,
@@ -32,6 +32,11 @@ def test_prompt_numbers_evidence_and_includes_source_metadata() -> None:
     assert '<evidence id="1" source="handbook.pdf"' in messages[1]["content"]
     assert 'doc_version="2026-06" superseded="false"' in messages[1]["content"]
     assert "<question>\nWhat is academic warning?\n</question>" in messages[1]["content"]
+
+
+def test_prompt_honors_explicit_historical_version_request() -> None:
+    assert PROMPT_VERSION == "2"
+    assert "do not substitute the current rule" in SYSTEM_PROMPT
 
 
 def test_prompt_neutralizes_forged_tags_in_evidence_history_and_question() -> None:

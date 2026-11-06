@@ -28,6 +28,27 @@ _EXACT_TERM = re.compile(
     r"\b\d+(?:\.\d+)+\b|\b[A-Z]{2,4}-?\d{3,4}\b|"
     r"\b\d{1,3}(?:,\d{3})+\b|\b\d{1,3}\s?%(?!\w)"
 )
+_ATTACK_CLAUSE = re.compile(
+    r"\b(?:ignore|disregard|override|bypass|forget)\b.{0,80}\b"
+    r"(?:rules?|instructions?|prompt|grounding|handbook)\b|"
+    r"\b(?:reveal|print|show|expose)\b.{0,80}\b"
+    r"(?:hidden|system|secret)\s+prompt\b|"
+    r"\binvent\b.{0,60}\b(?:discount|fee|policy|fact|citation)\b",
+    re.IGNORECASE,
+)
+
+
+def retrieval_text(text: str) -> str:
+    """Drop obvious override clauses from the embedding query, not the user question."""
+    clauses = re.split(r"(?<=[!?])\s+|(?<=\.)\s+(?=[A-Z])|;\s*|\bthen\b", text)
+    if not any(_ATTACK_CLAUSE.search(clause) for clause in clauses):
+        return text
+    retained = [
+        clause.strip(" ,;")
+        for clause in clauses
+        if clause.strip(" ,;") and not _ATTACK_CLAUSE.search(clause)
+    ]
+    return " ".join(retained) if retained else text
 
 
 def classify_query(text: str, superseded_versions: list[str] | None = None) -> QueryIntent:
@@ -56,10 +77,11 @@ def make_retrieval_query(
     embedder: Embedder,
     superseded_versions: list[str] | None = None,
 ) -> RetrievalQuery:
+    query_text = retrieval_text(text)
     intent = classify_query(text, superseded_versions)
     return RetrievalQuery(
-        text=text,
-        vector=embedder.embed_query(text),
+        text=query_text,
+        vector=embedder.embed_query(query_text),
         k=k,
         include_superseded=intent.include_superseded,
         exact_terms=intent.exact_terms,
