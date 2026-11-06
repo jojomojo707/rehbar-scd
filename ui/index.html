@@ -159,6 +159,19 @@ function errorMessage(status, body) {
   return `Request failed (HTTP ${status})${detail ? `: ${detail}` : "."}`;
 }
 
+// Conversation memory (D4, ADR 0005): the last 3 turns of THIS tab only, sent as `history`
+// so the API can recognise a follow-up ("what about MS students?"). Nothing is stored in
+// the browser; a reload starts a new conversation. The API trims again and treats it as
+// untrusted data.
+const HISTORY_MAX_TURNS = 3;
+const HISTORY_ANSWER_MAX_CHARS = 600;
+const history = [];
+
+function remember(question, answer) {
+  history.push({ question, answer: String(answer || "").slice(0, HISTORY_ANSWER_MAX_CHARS) });
+  while (history.length > HISTORY_MAX_TURNS) history.shift();
+}
+
 async function ask(question) {
   thread.append(el("div", { class: "q" }, question));
   const pending = el("div", { class: "pending" }, "Retrieving passages and writing an answer…");
@@ -169,7 +182,7 @@ async function ask(question) {
     const res = await fetch(`${API_BASE}/api/ask`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question }),
+      body: JSON.stringify({ question, history }),
     });
     let body = null;
     try { body = await res.json(); } catch { /* non-JSON error page */ }
@@ -178,6 +191,7 @@ async function ask(question) {
       thread.append(el("div", { class: "err" }, errorMessage(res.status, body)));
     } else {
       thread.append(renderAnswer(body, res.headers.get("X-Cache")));
+      remember(question, body && body.answer);
     }
   } catch (err) {
     pending.remove();

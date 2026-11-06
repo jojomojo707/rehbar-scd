@@ -1,4 +1,7 @@
-"""Extract explicit historical-version intent before retrieval."""
+"""Query intent before retrieval: explicit older versions, exact terms, and follow-ups.
+
+Follow-up rules are D4 / workflows.md § Follow-up questions.
+"""
 
 from __future__ import annotations
 
@@ -7,6 +10,7 @@ from dataclasses import dataclass
 
 from ..providers.embedding.base import Embedder
 from ..retrieval.base import RetrievalQuery
+from ..schemas import HistoryTurn
 
 
 @dataclass(frozen=True)
@@ -62,3 +66,43 @@ def make_retrieval_query(
         collection=collection,
         requested_year=intent.requested_year,
     )
+
+
+# A follow-up starts with one of these phrases ...
+_FOLLOW_UP_START = re.compile(r"^(and|also|so|what about|how about|then|but|what if)\b", re.I)
+# ... or has a referring word among its first three words. "there" is not one: "Is there a
+# late fee?" is a new question.
+_REFERRING_WORDS = frozenset({"it", "its", "that", "this", "those", "these", "they", "them"})
+_WORD = re.compile(r"[a-z]+(?:'[a-z]+)?")
+
+
+def trim_history(
+    history: list[HistoryTurn], max_turns: int, answer_max_chars: int
+) -> list[HistoryTurn]:
+    """Keep the newest `max_turns` turns (oldest first) and cut each answer. Never fails."""
+    if max_turns <= 0:
+        return []
+    return [
+        turn.model_copy(update={"answer": turn.answer[: max(0, answer_max_chars)]})
+        for turn in history[-max_turns:]
+    ]
+
+
+def is_follow_up(question: str, history: list[HistoryTurn]) -> bool:
+    """True only when there is history AND the question's start refers back to it.
+
+    Only the start is checked, so "What is the fee that applies to MS students?" is not a
+    follow-up even though it contains "that".
+    """
+    if not history:
+        return False
+    text = question.strip()
+    if _FOLLOW_UP_START.match(text):
+        return True
+    first_words = [word.replace("'s", "s") for word in _WORD.findall(text.lower())[:3]]
+    return any(word in _REFERRING_WORDS for word in first_words)
+
+
+def follow_up_retrieval_text(question: str, history: list[HistoryTurn]) -> str:
+    """The last history question, a newline, then the new question (workflows.md)."""
+    return f"{history[-1].question}\n{question}" if history else question
