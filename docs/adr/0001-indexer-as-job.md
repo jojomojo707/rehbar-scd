@@ -76,7 +76,7 @@ to Chroma.
   Reviewing the first version of the store code on Day 2 also found that it would have crashed
   after writing every chunk but before moving the pointer. That is exactly the failure this
   design makes safe: the API would still have served the previous index.
-- **What to watch.** The indexer's memory, since OCR and embedding batches are the peak: we
-  set its limit to 2 GiB and will check it with `kubectl top` during a real run, and exit code
-  137 would mean the limit is too low. A Job that has finished cannot be re-applied with a
+- **What to watch.** The indexer's memory, since OCR and embedding batches are the peak: the
+  first real run with 480-token chunks was OOM-killed (exit code 137) at 2 GiB and finished at
+  3 GiB, so the limit is now 3 GiB, and it needs checking again if the corpus grows. A Job that has finished cannot be re-applied with a
   changed template; delete it first. The weekly CronJob can start during an experiment.
