@@ -1,0 +1,124 @@
+# CD (section 6): test, then build-push (needs: test), then deploy (needs: build-push).
+# Runs on every push to main, which branch protection only allows through a merged pull
+# request. workflow_dispatch lets us run it once from dev to find Docker Hub problems early;
+# the run submitted for grading is the one on main.
+name: cd
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Least privilege: no job writes to the repository. Docker Hub credentials come from the
+# DOCKERHUB_USERNAME and DOCKERHUB_TOKEN repository secrets (an access token, not a password).
+permissions:
+  contents: read
+
+# Never run two deploys of the same branch at once; let a running one finish.
+concurrency:
+  group: cd-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # The Docker Hub namespace the prod overlay points at (k8s/overlays/prod/kustomization.yaml).
+  REGISTRY: docker.io/majnoon57
+  KIND_VERSION: "v0.32.0"
+  KIND_NODE_IMAGE: "kindest/node:v1.35.5@sha256:ce977ae6d65918d0b58a5f8b5e940429c2ce42fa3a5619ec2bbc60b949c0ac95"
+  INGRESS_NGINX_VERSION: "v1.15.1"
+
+jobs:
+  # Same checks as ci.yml lint + test, so nothing untested is ever published.
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            api/requirements*.txt
+            indexer/requirements*.txt
+      - name: Install OCR system packages (Tesseract, poppler)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-eng poppler-utils
+      - name: Install dependencies
+        run: make install PY=python
+      - name: ruff and mypy
+        run: make lint
+      - name: pytest (stub provider only, no network, no model)
+        run: make test
+
+  # Push the three images tagged with the commit SHA only. Never :latest (section 8, -6).
+  build-push:
+    needs: test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: true
+      matrix:
+        image: [api, ui, indexer]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push rahbar-${{ matrix.image }}:${{ github.sha }}
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.image }}
+          # The indexer image needs the fetch script, the manifest and the CI fixture corpus
+          # from outside indexer/ (decision P1). Ignored by the other two.
+          build-contexts: |
+            corpus=corpus
+            fixtures=eval/fixtures
+          tags: ${{ env.REGISTRY }}/rahbar-${{ matrix.image }}:${{ github.sha }}
+          push: true
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
+
+  # A throwaway kind cluster that pulls the PUBLISHED images from Docker Hub, waits for the
+  # indexer Job and the rollouts, then smoke tests through the Ingress.
+  deploy:
+    needs: build-push
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create the kind cluster
+        # helm/kind-action v1.15.1, pinned by commit.
+        uses: helm/kind-action@1544676c07bb3570fcb70166beaa07c4528fd4aa
+        with:
+          version: ${{ env.KIND_VERSION }}
+          node_image: ${{ env.KIND_NODE_IMAGE }}
+          config: .github/kind/cluster.yaml
+          cluster_name: rahbar
+      - name: Install ingress-nginx for kind (pinned manifest)
+        run: |
+          kubectl apply -f "https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-${INGRESS_NGINX_VERSION}/deploy/static/provider/kind/deploy.yaml"
+          kubectl wait --namespace ingress-nginx --for=condition=ready pod \
+            --selector=app.kubernetes.io/component=controller --timeout=180s
+      - name: Deploy the ci overlay with the pushed ${{ github.sha }} images
+        # No `kind load` here: the kind node pulls each image from Docker Hub.
+        run: bash scripts/ci_deploy.sh "${{ github.sha }}"
+      - name: Wait for the indexer Job
+        run: bash scripts/wait_job.sh indexer rahbar 900
+      - name: kubectl rollout status
+        run: |
+          kubectl rollout status deployment/api -n rahbar --timeout=300s
+          kubectl rollout status deployment/ui -n rahbar --timeout=120s
+      - name: Smoke test through the Ingress
+        run: bash scripts/smoke_test.sh http://localhost rahbar.local
+      - name: Dump cluster state on failure
+        if: failure()
+        run: |
+          kubectl get pods,jobs,svc,endpoints,ingress -n rahbar -o wide || true
+          kubectl get events -n rahbar --sort-by=.lastTimestamp || true
+          kubectl describe pods -n rahbar || true
+          kubectl logs job/indexer -n rahbar --all-containers --tail=200 || true
+          kubectl logs deployment/api -n rahbar --tail=200 || true
