@@ -72,12 +72,13 @@ spec:
                 - configMapRef:
                     name: rahbar-config
               # OCR at 300 dpi and embedding batches are the memory peak of the system. The real
-              # corpus at CHUNK_SIZE 480 was OOM-killed (exit 137) at 2Gi and completed at 3Gi on
-              # 5 Nov, so the limit is 3Gi with a 1500Mi request (section 4.5).
+              # corpus at CHUNK_SIZE 480 was OOM-killed (exit 137) at 2Gi on 5 Nov. Measured on 6 Nov
+              # (docs/evidence/kubectl-top-indexer.txt): peak 2108Mi, CPU pinned at the 2-CPU limit for
+              # the 18-minute embedding phase. Request 2200Mi = peak; limit 3Gi = peak + 46%.
               resources:
                 requests:
                   cpu: 500m
-                  memory: 1500Mi
+                  memory: 2200Mi
                 limits:
                   cpu: "2"
                   memory: 3Gi

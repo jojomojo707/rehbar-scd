@@ -52,14 +52,18 @@ spec:
                   name: rahbar-secret
                   key: LLM_API_KEY
                   optional: true   # the stub provider and CI need no key
-          # Starting points; replaced with kubectl top numbers on Day 3 (section 4.5).
+          # Measured with kubectl top (docs/evidence/kubectl-top-pods.txt, section 4.5): memory peak
+          # 444Mi (once, during an index switch; 230-363Mi under query load). Request 448Mi = that
+          # peak; limit 640Mi = peak + 44% (margin of at least 30%). CPU: 1000m under 6 concurrent
+          # clients, i.e. it saturates the 1-CPU limit; the HPA scales on 70% of the 250m request,
+          # so it adds pods long before one is saturated (3 -> 8 in the same run).
           resources:
             requests:
               cpu: 250m
-              memory: 384Mi
+              memory: 448Mi
             limits:
               cpu: "1"
-              memory: 768Mi
+              memory: 640Mi
           startupProbe:          # finished booting? liveness and readiness wait for it
             httpGet:
               path: /healthz

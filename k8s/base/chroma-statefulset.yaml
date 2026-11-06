@@ -43,6 +43,9 @@ spec:
           env:
             - name: ANONYMIZED_TELEMETRY
               value: "FALSE"
+          # Measured peak 159Mi / 93m under query load, 69Mi while the indexer wrote 764 chunks
+          # (docs/evidence/kubectl-top-*.txt). The 1Gi limit is kept for blue/green (D2): during a
+          # re-index Chroma holds two full index versions, and the corpus may grow.
           resources:
             requests:
               cpu: 100m

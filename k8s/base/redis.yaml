@@ -53,6 +53,8 @@ spec:
           ports:
             - name: redis
               containerPort: 6379
+          # Measured peak 17Mi / 25m (docs/evidence/kubectl-top-pods.txt). The 256Mi limit is set by
+          # --maxmemory 200mb (the cache can grow to 200 MB before volatile-lru evicts) + 28%.
           resources:
             requests:
               cpu: 50m

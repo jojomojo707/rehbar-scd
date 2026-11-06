@@ -31,6 +31,8 @@ spec:
           ports:
             - name: http
               containerPort: 8080
+          # Measured peak 2Mi / 1m: nginx serving one static file. 32Mi/64Mi leave room for
+          # nginx's worker buffers under many concurrent connections.
           resources:
             requests:
               cpu: 10m
