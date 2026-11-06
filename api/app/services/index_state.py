@@ -101,9 +101,15 @@ class IndexState:
 
         failed = next((name for name, value in checks.items() if value != "ok"), None)
         status = IndexStatus(active, previous, metadata, checks, details, failed)
+        # On the first refresh and on every pointer move, clear cache keys of other index
+        # versions (D3). The cache compares with rahbar:cache:version, so a pod starting on
+        # an unchanged index costs one GET. A cache failure never breaks readiness.
         prior_active = self._cached.active if self._cached else None
-        if active and prior_active and active != prior_active and self.cache_invalidator:
-            self.cache_invalidator(active)
+        if active and active != prior_active and self.cache_invalidator:
+            try:
+                self.cache_invalidator(active)
+            except Exception:  # noqa: BLE001
+                pass
         self._cached = status
         self._refreshed_at = time.monotonic()
         return status
