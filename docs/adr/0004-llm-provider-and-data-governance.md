@@ -35,6 +35,17 @@ does not include customer inputs or outputs. Groq says customer data is not used
 models. Zero Data Retention is available in Data Controls; when enabled, it disables reliability
 and abuse-monitoring retention. This project does not assume ZDR is enabled for its account.
 
+### Groq's terms, quoted (re-read 7 November 2026)
+
+- [Your Data in GroqCloud](https://console.groq.com/docs/your-data): "By default, Groq does not
+  retain customer data for inference requests." Logs made for abuse or reliability cases "are
+  retained for up to 30 days, unless legally required to retain longer." "When ZDR is enabled,
+  Groq will not retain customer data for system reliability and abuse monitoring."
+- [Services Agreement](https://console.groq.com/docs/legal/services-agreement) §4.2: "Groq is
+  not permitted to use Inputs or Outputs for training or fine-tuning any AI Model Services or
+  other models" (unless the customer explicitly allows it), and "Groq does not access, use,
+  store, or retain Inputs or Outputs except as necessary to provide the Cloud Services".
+
 ## Options considered
 
 - **Groq hosted mode (chosen).** Meets the provider requirement without operating a second model
