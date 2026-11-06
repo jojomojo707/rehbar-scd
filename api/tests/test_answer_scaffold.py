@@ -1,4 +1,4 @@
-from app.schemas import Answer, AskResponse
+from app.schemas import Answer, AskResponse, Citation, Passage
 from app.services.cache import NullSemanticCache
 from app.services.fallback import FALLBACK_TEXT, safe_fallback
 from app.services.prompt import build_prompt
@@ -16,12 +16,17 @@ def test_day_two_pipeline_boundaries_are_safe_noops() -> None:
     cache.store("rahbar-v1", [], "question", response)
     NullTurnLog().append(Turn("question", "answer"))
 
-    candidate = Answer(
-        reasoning="", answer="answer", citations=[], answered_from_context=True,
-        confidence="high",
+    retrieved = Passage(
+        chunk_id="test:00001", text="fact", source="source.pdf", section="3.1",
+        page=1, score=0.9,
     )
-    assert build_prompt("question", []) == []
-    assert validate_answer(candidate, []) is candidate
+    candidate = Answer(
+        reasoning="", answer="answer [source.pdf / 3.1]",
+        citations=[Citation(source="source.pdf", section="3.1", page=1)],
+        answered_from_context=True, confidence="high",
+    )
+    assert len(build_prompt("question", [])) == 2
+    assert validate_answer(candidate, [retrieved]) is not candidate
     assert safe_fallback(candidate, "stub") is candidate
 
     fallback = safe_fallback(None, "stub")

@@ -4,11 +4,13 @@ from __future__ import annotations
 
 from ..schemas import Answer
 
-FALLBACK_TEXT = "I couldn't produce a reliable, cited answer right now. Please try again."
+FALLBACK_TEXT = (
+    "I couldn't produce a reliable, cited answer right now. Please try again in a moment."
+)
 
 
 def safe_fallback(answer: Answer | None, provider: str) -> Answer:
-    """Keep a valid stub answer; produce a canned abstention if a future stage returns none."""
+    """Keep a validated answer or return the standard safe failure response."""
     if answer is not None:
         return answer
     return Answer(

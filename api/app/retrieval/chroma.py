@@ -103,6 +103,8 @@ class ChromaRetriever:
                 section=str(meta.get("section", "")),
                 page=_optional_int(meta.get("page")),
                 score=1.0 - float(distance),
+                doc_version=str(meta.get("doc_version", "unknown")),
+                superseded=bool(meta.get("superseded", False)),
             ))
             if len(passages) >= query.k:
                 break
