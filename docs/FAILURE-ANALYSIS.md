@@ -1,10 +1,15 @@
-# Failure analysis
+﻿# Failure analysis
 
-<!-- STARTER-TODO(5.5): break four of the six stages on purpose, one at a time, restore each,
-     and fill in one block per stage. Delete this comment when done. -->
+## Stage A · OCR/extraction disabled (Person B)
 
-## Stage ? · name
-- **What we broke:**
-- **Symptom:**
-- **Diagnosis, as if we had not caused it:** which metric, log line or command shows it
-- **Remedy:**
+- **What we broke:** Set `OCR_ENABLED=false` in the live `rahbar-config` ConfigMap and re-indexed the real nine-document corpus with the stub provider.
+- **Symptom:** The indexer warned that pages without a text layer were left empty for `faculty-entrepreneurship-and-technical-start-ups-policy.pdf` and reported `chunks: 0` for that source. Before the change, a question about the policy returned a cited page-1 passage; against the broken index, the same request abstained with no citations.
+- **Diagnosis, as if we had not caused it:** `kubectl logs <indexer-pod> -n rahbar -c indexer` shows both the warning and zero-chunk line. `docs/evidence/failure-A-after.json` shows retrieval recall@5 falling from 0.9375 to 0.875; the evaluation gate fails because the drop exceeds five percentage points. `docs/evidence/failure-A-before.json` and `failure-A-after-policy-query.json` preserve the before/after query behavior.
+- **Remedy and restoration check:** Restored `OCR_ENABLED=true` and re-indexed the corpus. Job `restore-a-20261106` completed in 666.2 seconds with 764 chunks, 9 documents, no skipped sources, 86,144 original tokens, 108,314 stored tokens, and 1.257 amplification. `/readyz` then reported active index `rahbar-v20261106-184319`; the same question again returned a page-1 citation and the 18-question evaluation gate passed. The before, broken, and restored query/evaluation outputs and both Job log captures are under `docs/evidence/failure-A-*`.
+
+## Stage B · fixed 100-token chunks
+
+- **What we broke:** Set `CHUNK_STRATEGY=fixed`, `CHUNK_SIZE=100`, and `CHUNK_OVERLAP=0`, which bypasses heading detection, then re-indexed the real corpus. Job `failure-b-20261106` completed in 408 seconds: 1,370 chunks, 9 documents, no skipped sources, 86,144 original tokens, 114,807 stored tokens, and 1.333 amplification.
+- **Symptom:** The 18-question evaluation fell to recall@5 0.000 from 0.938 and failed its gate; citation validity and required abstention remained 100%. The policy query still retrieved relevant text, but every returned chunk was labelled with the file-level section `faculty-entrepreneurship-and-technical-start-ups-policy`, rather than the actual heading `1. Purpose`.
+- **Diagnosis, as if we had not caused it:** Check the indexer's chunk configuration and stage logs, then compare retrieved metadata with the golden section IDs. `indexer/pipeline/chunk.py` documents that fixed mode skips heading detection. The run's job/log captures, 18-question metrics and same-question response are in `docs/evidence/failure-B-*`.
+- **Remedy and restoration check:** Restored `CHUNK_STRATEGY=structure`, `CHUNK_SIZE=480`, and `CHUNK_OVERLAP=64`, then re-indexed. Job `config-480-20261107` completed in 615.1 seconds with 764 chunks, 9 documents, no skipped sources, 86,144 original tokens, 108,314 stored tokens, and 1.257 amplification. `/readyz` reports the active 480/64 index; the policy query again returns section `1. Purpose`; and the 18-question hybrid evaluation passes at recall@5 0.9375, citation validity 100%, and required abstention 100%. Dense-only retrieval on that index is also recorded for the chunk comparison. Job, logs, query, and both evaluations are in `docs/evidence/chunk-480-*` and `failure-B-restored-policy-query.json`.

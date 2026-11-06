@@ -1,0 +1,12 @@
+﻿{"ts": "2026-11-06T19:14:56Z", "logger": "rahbar.indexer", "msg": "indexer starting", "dummy": false, "embed_model": "BAAI/bge-small-en-v1.5", "collection": "rahbar", "chroma": "chroma:8000", "pod": "config-480-20261107-j4n5s"}
+[0;93m2026-11-06 19:14:57.329504179 [W:onnxruntime:Default, telemetry_1ds.cc:600 operator()] Failed to persist telemetry device ID; using an in-memory identifier[m
+{"ts": "2026-11-06T19:16:37Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "undergraduate-academic-rules-aug-2023.pdf", "chunks": 122}
+{"ts": "2026-11-06T19:16:50Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-handbook-jun-2026.pdf", "chunks": 201}
+{"ts": "2026-11-06T19:16:52Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "prospectus-2026-academic-rules-and-regulations.pdf", "chunks": 21}
+{"ts": "2026-11-06T19:17:04Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "student-handbook-jun-2026.pdf", "chunks": 135}
+{"ts": "2026-11-06T19:17:08Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "annual-report-2019-20.pdf", "chunks": 59}
+{"ts": "2026-11-06T19:17:18Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "annual-report-2023-24.pdf", "chunks": 192}
+{"ts": "2026-11-06T19:17:18Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "fee-structure-page.html", "chunks": 9}
+{"ts": "2026-11-06T19:17:18Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "grading-page.html", "chunks": 7}
+{"ts": "2026-11-06T19:17:43Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "faculty-entrepreneurship-and-technical-start-ups-policy.pdf", "chunks": 18}
+{"ts": "2026-11-06T19:25:11Z", "logger": "rahbar.indexer", "msg": "indexer finished", "collection": "rahbar-v20261106-192510", "chunks": 764, "documents": 9, "skipped": 0, "original_tokens": 86144, "stored_tokens": 108314, "amplification": 1.257, "seconds": 615.1}
