@@ -182,7 +182,7 @@ Every container, including the Job's and the initContainer, has requests and lim
 | ui | 10m / 32Mi | 100m / 64Mi | Static files |
 | chroma | 100m / 256Mi | 500m / 1Gi | HNSW index in memory |
 | redis | 50m / 64Mi | 200m / 256Mi | `maxmemory 200mb` plus overhead |
-| indexer | 500m / 1Gi | 2 / 2Gi | OCR at 300 dpi and embedding batches. **Measure during a real run** (Engineering Note Q4); exit 137 means the limit is too low |
+| indexer | 500m / 1500Mi | 2 / 3Gi | OCR at 300 dpi and embedding batches. Measured 5 Nov: the real corpus at CHUNK_SIZE 480 was OOM-killed (exit 137) at 2Gi and completed at 3Gi |
 | fetch-corpus | 50m / 64Mi | 200m / 256Mi | One download at a time |
 
 **Fit check on 6 GB minikube.** 8 api pods at the maximum need 3 GiB of requests. Together with
