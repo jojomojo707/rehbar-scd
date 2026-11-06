@@ -1,0 +1,104 @@
+# Question pairs for choosing CACHE_THRESHOLD (brief section 3.3; design
+# testing-and-evaluation.md § Tuning procedures, 3). Run:
+#   python eval/tune_cache.py --pairs eval/cache_pairs.yaml --thresholds 0.88 0.92 0.95
+#
+# same_answer: true   a paraphrase; serving the cached answer to `b` would be correct.
+# same_answer: false  a near miss; serving the cached answer to `b` would be WRONG. Any pair
+#                     like this at or above a threshold is a false hit, which rules it out.
+#
+# The pairs are written about our real corpus (handbook, fee page, grading page, annual
+# reports), not taken from retrieval output. The near misses change one thing that changes the
+# answer: a clause number, a programme, a year, a grade, a number, or the direction of a rule.
+
+pairs:
+  # --- Paraphrases: same question, different words --------------------------------------
+  - id: p01
+    a: What is the minimum attendance required to sit the final exam?
+    b: How much attendance do I need to be allowed into the final examination?
+    same_answer: true
+  - id: p02
+    a: What is the minimum CGPA required for an undergraduate degree?
+    b: What CGPA do I need to graduate with a bachelor's degree?
+    same_answer: true
+  - id: p03
+    a: How many courses is the normal undergraduate course load?
+    b: How many courses does an undergraduate normally take in a semester?
+    same_answer: true
+  - id: p04
+    a: Who must approve withdrawal from a course?
+    b: Whose approval do I need to withdraw from a course?
+    same_answer: true
+  - id: p05
+    a: How are repeated courses treated in the CGPA calculation?
+    b: If I repeat a course, which grade counts towards my CGPA?
+    same_answer: true
+  - id: p06
+    a: What language is used for instruction at FAST?
+    b: What is the medium of instruction at the university?
+    same_answer: true
+  - id: p07
+    a: How many teaching weeks are in a regular semester?
+    b: How long is a regular semester in teaching weeks?
+    same_answer: true
+  - id: p08
+    a: Which grade point is assigned to A-minus?
+    b: How many grade points is an A- worth?
+    same_answer: true
+  - id: p09
+    a: What minimum number of students must register for a summer course to be offered?
+    b: How many students have to enrol before a summer course is offered?
+    same_answer: true
+  - id: p10
+    a: What is the tuition fee per credit hour for BS programmes?
+    b: How much does one credit hour cost for a BS student?
+    same_answer: true
+  - id: p11
+    a: When is a student placed on academic warning?
+    b: What puts a student on academic warning?
+    same_answer: true
+
+  # --- Near misses: one detail changes the answer ----------------------------------------
+  - id: n01
+    a: What does clause 1.21 of the academic rules say?
+    b: What does clause 1.12 of the academic rules say?
+    same_answer: false
+  - id: n02
+    a: What is the tuition fee per credit hour for BS programmes?
+    b: What is the tuition fee per credit hour for MS programmes?
+    same_answer: false
+  - id: n03
+    a: What was the minimum attendance requirement in 2023?
+    b: What is the minimum attendance requirement?
+    same_answer: false
+  - id: n04
+    a: Which grade point is assigned to A-minus?
+    b: Which grade point is assigned to B-minus?
+    same_answer: false
+  - id: n05
+    a: What is the minimum CGPA required for an undergraduate degree?
+    b: What is the minimum CGPA required for a graduate degree?
+    same_answer: false
+  - id: n06
+    a: How many courses is the normal undergraduate course load?
+    b: How many courses is the maximum undergraduate course load?
+    same_answer: false
+  - id: n07
+    a: How many summer internship applications were received in the 2023-24 annual report?
+    b: How many summer internship applications were received in the 2019-20 annual report?
+    same_answer: false
+  - id: n08
+    a: Who must approve withdrawal from a course?
+    b: Who must approve withdrawal from a semester?
+    same_answer: false
+  - id: n09
+    a: What happens if a student's CGPA falls below 2.00?
+    b: What happens if a student's CGPA falls below 1.50?
+    same_answer: false
+  - id: n10
+    a: What is the admission fee for BS programmes?
+    b: What is the security deposit for BS programmes?
+    same_answer: false
+  - id: n11
+    a: Can a student repeat a course in which they got a D grade?
+    b: Can a student repeat a course in which they got an F grade?
+    same_answer: false

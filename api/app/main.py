@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 import time
 import uuid
 from collections.abc import AsyncIterator
@@ -26,6 +27,7 @@ from .services.readiness import (STARTUP_INDEX_TIMEOUT_SECONDS, LazyChromaClient
                                  UnavailableEmbedder, load_embedder)
 
 log = logging.getLogger("rahbar.api")
+_REQUEST_ID = re.compile(r"^[A-Za-z0-9._-]{1,64}$")
 
 
 @asynccontextmanager
@@ -82,7 +84,8 @@ app = FastAPI(title="RAHBAR API", lifespan=lifespan)
 
 @app.middleware("http")
 async def request_context(request: Request, call_next):  # type: ignore[no-untyped-def]
-    rid = request.headers.get("X-Request-ID") or uuid.uuid4().hex
+    candidate = request.headers.get("X-Request-ID", "")
+    rid = candidate if _REQUEST_ID.fullmatch(candidate) else uuid.uuid4().hex
     token = request_id_var.set(rid)
     start = time.perf_counter()
     status = 500

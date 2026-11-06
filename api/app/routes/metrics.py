@@ -1,8 +1,4 @@
-"""Prometheus metrics at /metrics (section 4.8).
-
-Request count and latency are wired up already. Add your own the same way:
-retrieval latency, generation latency, cache hits, abstentions, fallbacks, tokens.
-"""
+"""Prometheus request, pipeline, dependency, token, and index metrics."""
 
 from __future__ import annotations
 
@@ -26,7 +22,9 @@ CACHE_HIT_RATIO = Gauge("rahbar_cache_hit_ratio", "Cache hits divided by hits pl
 ABSTENTIONS = Counter("rahbar_abstentions_total", "Answers declined", ["reason"])
 FALLBACKS = Counter("rahbar_fallbacks_total", "Safe fallback responses", ["reason"])
 LLM_TOKENS = Counter("rahbar_llm_tokens_total", "LLM tokens", ["direction"])
-LLM_TOKENS_PER_REQUEST = Histogram("rahbar_llm_tokens_per_request", "LLM tokens per request", ["direction"])
+LLM_TOKENS_PER_REQUEST = Histogram(
+    "rahbar_llm_tokens_per_request", "LLM tokens per request", ["direction"]
+)
 CITATIONS_DROPPED = Counter("rahbar_citations_dropped_total", "Invalid citations removed")
 DEPENDENCY_ERRORS = Counter("rahbar_dependency_errors_total", "Dependency errors", ["dependency"])
 INFLIGHT = Gauge("rahbar_inflight_requests", "Requests currently being processed")

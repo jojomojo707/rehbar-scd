@@ -52,8 +52,13 @@ class Settings:
 
     # Retrieval and generation
     top_k: int = 5
+    hybrid_retrieval: bool = False
+    relevance_floor: float = 0.60
     temperature: float = 0.2
     llm_model: str = "llama3.2:3b"
+    llm_max_tokens: int = 1024
+    llm_timeout_seconds: int = 20
+    llm_reasoning_effort: str = "low"
     ollama_url: str = "http://host.minikube.internal:11434"
     hosted_base_url: str = ""        # e.g. an OpenAI-compatible endpoint
     llm_api_key: str = field(default="", repr=False)   # from the Secret; never log it
@@ -80,8 +85,13 @@ def get_settings() -> Settings:
         turn_log_max_entries=_int("TURN_LOG_MAX_ENTRIES", 1000),
         turn_log_ttl_seconds=_int("TURN_LOG_TTL_SECONDS", 604800),
         top_k=_int("TOP_K", 5),
+        hybrid_retrieval=_bool("HYBRID_RETRIEVAL", False),
+        relevance_floor=_float("RELEVANCE_FLOOR", 0.60),
         temperature=_float("TEMPERATURE", 0.2),
         llm_model=os.environ.get("LLM_MODEL", "llama3.2:3b"),
+        llm_max_tokens=_int("LLM_MAX_TOKENS", 1024),
+        llm_timeout_seconds=_int("LLM_TIMEOUT_SECONDS", 20),
+        llm_reasoning_effort=os.environ.get("LLM_REASONING_EFFORT", "low"),
         ollama_url=os.environ.get("OLLAMA_URL", "http://host.minikube.internal:11434"),
         hosted_base_url=os.environ.get("HOSTED_BASE_URL", ""),
         llm_api_key=os.environ.get("LLM_API_KEY", ""),

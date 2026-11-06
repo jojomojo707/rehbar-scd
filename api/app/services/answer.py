@@ -12,16 +12,16 @@ import time
 
 from ..config import Settings
 from ..logjson import request_id_var
-from ..providers.llm.base import LLMProvider
+from ..providers.llm.base import LLMProvider, ProviderError
 from ..retrieval.base import RetrievalQuery, Retriever
 from ..routes import metrics
-from ..schemas import AskResponse, HistoryTurn, Passage, RetrievedRef
+from ..schemas import Answer, AskResponse, HistoryTurn, Passage, RetrievedRef
 from .cache import NullSemanticCache
-from .fallback import safe_fallback
+from .fallback import relevance_abstention, safe_fallback
 from .prompt import build_prompt
 from .query_intent import QueryIntent, classify_query, make_retrieval_query
 from .turns import NullTurnLog, Turn
-from .validate import validate_answer
+from .validate import AnswerValidationError, validate_answer
 
 log = logging.getLogger("rahbar.answer")
 
@@ -56,9 +56,84 @@ def _retrieval_query(
     return make_retrieval_query(question, settings.top_k, collection, embedder, versions)
 
 
-def _check_relevance_floor(passages: list[Passage]) -> bool:
-    """Day 2 placeholder: leave relevance-floor decisions to the later answer task."""
-    return False
+def _check_relevance_floor(passages: list[Passage], floor: float) -> bool:
+    """Abstain when retrieval found no passage at or above the configured score floor."""
+    return not passages or max(passage.score for passage in passages) < floor
+
+
+def _validated_completion(
+    question: str,
+    passages: list[Passage],
+    history: list[HistoryTurn],
+    provider: LLMProvider,
+    temperature: float,
+) -> tuple[Answer, str | None, int, int, str, int]:
+    """Generate and validate at most twice, retaining aggregate provider usage."""
+    messages = build_prompt(question, passages, history)
+    schema = Answer.model_json_schema()
+    failure_reason = "unknown"
+    tokens_in = 0
+    tokens_out = 0
+    model = ""
+    for attempt in range(2):
+        try:
+            completion = provider.complete(messages, schema, temperature)
+            raw_text = completion.text
+            tokens_in += max(0, completion.tokens_in)
+            tokens_out += max(0, completion.tokens_out)
+            model = completion.model
+        except ProviderError as exc:
+            failure_reason = "provider"
+            dependency = "groq" if provider.name == "hosted" else provider.name
+            metrics.DEPENDENCY_ERRORS.labels(dependency=dependency).inc()
+            if exc.kind in {"auth", "not_configured"}:
+                break
+            if attempt == 1:
+                break
+            if exc.kind in {"timeout", "rate_limited", "server"}:
+                time.sleep(1)
+            elif exc.kind == "bad_request":
+                messages = [*messages, {
+                    "role": "user",
+                    "content": "Your request was rejected. Reply with JSON matching the schema "
+                    "and cite only the evidence headers above.",
+                }]
+            continue
+        except Exception as exc:
+            log.error("provider call failed", extra={"error_type": type(exc).__name__})
+            failure_reason = "provider"
+            break
+
+        try:
+            return (
+                validate_answer(raw_text, passages),
+                None,
+                tokens_in,
+                tokens_out,
+                model,
+                attempt + 1,
+            )
+        except AnswerValidationError as exc:
+            failure_reason = "validation"
+            if attempt == 1:
+                break
+            messages = [
+                *messages,
+                {"role": "assistant", "content": raw_text},
+                {
+                    "role": "user",
+                    "content": f"Your previous reply was rejected: {exc.reason}. Reply again "
+                    "with JSON matching the schema, citing only the evidence headers above.",
+                },
+            ]
+    return (
+        safe_fallback(None, provider.name),
+        failure_reason,
+        tokens_in,
+        tokens_out,
+        model,
+        attempt + 1,
+    )
 
 
 def answer_question(
@@ -101,18 +176,38 @@ def answer_question(
         metrics.RETRIEVAL.observe(time.perf_counter() - retrieval_started)
 
         # 6. Relevance floor (no-op today), then 7. augment, generate, validate, and fallback.
-        should_abstain = _check_relevance_floor(passages)
+        should_abstain = _check_relevance_floor(passages, settings.relevance_floor)
+        fallback_reason = None
+        tokens_in = 0
+        tokens_out = 0
+        generation_model = ""
+        generation_attempts = 0
         if should_abstain:
             metrics.ABSTENTIONS.labels(reason="relevance_floor").inc()
-            answer = safe_fallback(None, provider.name)
+            answer = relevance_abstention()
         else:
-            build_prompt(question, passages, history if follow_up else [])
             generation_started = time.perf_counter()
-            raw_answer = provider.generate(question, passages)
+            (
+                answer,
+                fallback_reason,
+                tokens_in,
+                tokens_out,
+                generation_model,
+                generation_attempts,
+            ) = _validated_completion(
+                question,
+                passages,
+                history if follow_up else [],
+                provider,
+                settings.temperature,
+            )
             metrics.GENERATION.observe(time.perf_counter() - generation_started)
-            answer = validate_answer(raw_answer, passages)
-            answer = safe_fallback(answer, provider.name)
-        if not answer.answered_from_context:
+            if fallback_reason is not None:
+                metrics.FALLBACKS.labels(reason=fallback_reason).inc()
+        for direction, count in (("in", tokens_in), ("out", tokens_out)):
+            metrics.LLM_TOKENS.labels(direction=direction).inc(count)
+            metrics.LLM_TOKENS_PER_REQUEST.labels(direction=direction).observe(count)
+        if fallback_reason is None and not should_abstain and not answer.answered_from_context:
             metrics.ABSTENTIONS.labels(reason="model").inc()
 
         # 8. Store turn and cache result (both no-op scaffolds on Day 2).
@@ -148,6 +243,7 @@ def answer_question(
             extra={
                 "retriever": retriever.name,
                 "provider": provider.name,
+                "model": generation_model or settings.llm_model,
                 "top_k": settings.top_k,
                 "chunk_ids": [passage.chunk_id for passage in passages],
                 "scores": [round(passage.score, 4) for passage in passages],
@@ -160,6 +256,9 @@ def answer_question(
                 "exact_terms": len(intent.exact_terms),
                 "cached": False,
                 "cache_score": None,
+                "generation_attempts": generation_attempts,
+                "tokens_in": tokens_in,
+                "tokens_out": tokens_out,
                 "index_version": index_version,
                 "question_sha256": question_hash,
                 "question_chars": len(question),

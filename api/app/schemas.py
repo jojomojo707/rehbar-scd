@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from typing import Annotated
 
 
@@ -33,16 +33,22 @@ class Passage(BaseModel):
     section: str
     page: int | None = None
     score: float = Field(description="Similarity, higher is closer (1 - cosine distance).")
+    doc_version: str = "unknown"
+    superseded: bool = False
 
 
 class Citation(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     source: str
     section: str
-    page: int | None = None
+    page: int | None
 
 
 class Answer(BaseModel):
     """The model's output contract. Send its JSON schema to the model, then validate."""
+
+    model_config = ConfigDict(extra="forbid")
 
     reasoning: str
     answer: str
