@@ -50,7 +50,7 @@ Design details: [ARCHITECTURE.md](ARCHITECTURE.md), which routes to every file i
 
 | Tool | Why |
 | --- | --- |
-| minikube (docker driver), 4 CPUs and 8 GB free | The local cluster. `make cluster` also enables Calico (NetworkPolicy), metrics-server (HPA, `kubectl top`) and ingress-nginx |
+| minikube (docker driver), 4 CPUs, and Docker with at least 7.5 GB of memory | The local cluster. `make cluster` starts it with 7168 MB and also enables Calico (NetworkPolicy), metrics-server (HPA, `kubectl top`) and ingress-nginx |
 | Docker 23+ with buildx | Builds the three images |
 | kubectl (with built-in kustomize) | `kubectl apply -k` |
 | Python 3.12 and GNU make (bash) | Tests, the eval and the helper targets |
@@ -100,6 +100,11 @@ itself. On macOS or Windows, run `minikube tunnel` in another terminal and pass
 
 ### Things that bit us
 
+- **`make cluster` says `Docker has only 7631MB memory but you specified 8192MB`.** Docker
+  Desktop's VM (8 GB by default) reports less than 8 GB, so minikube refuses 8192 MB. That is
+  why `make cluster` uses 7168 MB; the whole stack, with the HPA at 8 api pods, fits in it. With
+  more memory available, run `make cluster MINIKUBE_MEMORY=8192`. Check what Docker has with
+  `docker info --format '{{.MemTotal}}'`.
 - **The first index takes about 22 minutes on a laptop** (OCR of the scanned pages, then about
   18 minutes of embedding at the Job's 2-CPU limit). The api pods stay not-ready until it
   finishes; that is readiness doing its job.
