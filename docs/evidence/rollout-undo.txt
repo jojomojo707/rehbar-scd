@@ -1,0 +1,93 @@
+# rollout-undo.txt: brief 4.6, set image -> rollout status -> rollout undo serving the old version
+# 2026-11-06T17:46:09Z, minikube, namespace rahbar. rahbar-api:v2 is the current api image plus an
+# image label org.opencontainers.image.version=v2, so it has its own tag and image ID.
+# Requests go through the Ingress (kubectl port-forward to ingress-nginx, Host: rahbar.local).
+
+## 1. Before: v1 (rahbar-api:dev)
+$ kubectl get pods -n rahbar -l app.kubernetes.io/name=api -o custom-columns=NAME:.metadata.name,IMAGE:.spec.containers[0].image,IMAGE_ID:.status.containerStatuses[0].imageID
+NAME                   IMAGE            IMAGE_ID
+api-679dc78b48-5b8vz   rahbar-api:dev   docker://sha256:0de9bf134b381b48b59bfa4f70706dd59e156f5a64d8de3e3a542ee85e26cc13
+api-679dc78b48-7xmd2   rahbar-api:dev   docker://sha256:0de9bf134b381b48b59bfa4f70706dd59e156f5a64d8de3e3a542ee85e26cc13
+api-679dc78b48-lbl4l   rahbar-api:dev   docker://sha256:0de9bf134b381b48b59bfa4f70706dd59e156f5a64d8de3e3a542ee85e26cc13
+
+$ curl -H 'Host: rahbar.local' -d '{"question": "What is the minimum CGPA required for an undergraduate degree?"}' http://<ingress>/api/ask
+HTTP 200
+request_id 25b756f2d3e26df1b00f72eb37bbbfc4 | retrieved 5 passages
+
+## 2. Ship v2
+$ kubectl set image deployment/api api=rahbar-api:v2 -n rahbar
+deployment.apps/api image updated
+
+$ kubectl rollout status deployment/api -n rahbar --timeout=300s
+Waiting for deployment "api" rollout to finish: 1 out of 3 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 1 out of 3 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 1 out of 3 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 2 out of 3 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 2 out of 3 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 2 out of 3 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "api" rollout to finish: 1 old replicas are pending termination...
+deployment "api" successfully rolled out
+
+$ kubectl get pods -n rahbar -l app.kubernetes.io/name=api -o custom-columns=NAME:.metadata.name,IMAGE:.spec.containers[0].image,IMAGE_ID:.status.containerStatuses[0].imageID
+NAME                   IMAGE            IMAGE_ID
+api-679dc78b48-5b8vz   rahbar-api:dev   docker://sha256:0de9bf134b381b48b59bfa4f70706dd59e156f5a64d8de3e3a542ee85e26cc13
+api-77469f5765-84glq   rahbar-api:v2    docker://sha256:b7ca110d18fff725f0b2368908ba96dee8b50fabffd498feb54af59acde71769
+api-77469f5765-fbxwq   rahbar-api:v2    docker://sha256:b7ca110d18fff725f0b2368908ba96dee8b50fabffd498feb54af59acde71769
+api-77469f5765-wnfcs   rahbar-api:v2    docker://sha256:b7ca110d18fff725f0b2368908ba96dee8b50fabffd498feb54af59acde71769
+
+$ curl -H 'Host: rahbar.local' -d '{"question": "What is the minimum CGPA required for an undergraduate degree?"}' http://<ingress>/api/ask
+HTTP 200
+request_id a238ee145d005946445609453cbdac0f | retrieved 5 passages
+
+$ kubectl rollout history deployment/api -n rahbar
+deployment.apps/api 
+REVISION  CHANGE-CAUSE
+1         <none>
+2         <none>
+3         <none>
+4         <none>
+5         <none>
+6         <none>
+7         <none>
+8         <none>
+9         <none>
+10        <none>
+11        <none>
+
+
+## 3. Roll back
+$ kubectl rollout undo deployment/api -n rahbar
+Warning: resource deployments/api was previously managed with 'kubectl apply'. Rolling back will not update the kubectl.kubernetes.io/last-applied-configuration annotation, which may cause unexpected behavior on future 'kubectl apply' operations. Consider using 'kubectl apply' with your previous configuration file instead.
+deployment.apps/api rolled back
+
+$ kubectl rollout status deployment/api -n rahbar --timeout=300s
+Waiting for deployment "api" rollout to finish: 1 out of 3 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 1 out of 3 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 1 out of 3 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 2 out of 3 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 2 out of 3 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 2 out of 3 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "api" rollout to finish: 1 old replicas are pending termination...
+deployment "api" successfully rolled out
+
+$ kubectl get pods -n rahbar -l app.kubernetes.io/name=api -o custom-columns=NAME:.metadata.name,IMAGE:.spec.containers[0].image,IMAGE_ID:.status.containerStatuses[0].imageID
+NAME                   IMAGE            IMAGE_ID
+api-679dc78b48-fsc92   rahbar-api:dev   docker://sha256:0de9bf134b381b48b59bfa4f70706dd59e156f5a64d8de3e3a542ee85e26cc13
+api-679dc78b48-q6bdh   rahbar-api:dev   docker://sha256:0de9bf134b381b48b59bfa4f70706dd59e156f5a64d8de3e3a542ee85e26cc13
+api-679dc78b48-vtr6d   rahbar-api:dev   docker://sha256:0de9bf134b381b48b59bfa4f70706dd59e156f5a64d8de3e3a542ee85e26cc13
+api-77469f5765-wnfcs   rahbar-api:v2    docker://sha256:b7ca110d18fff725f0b2368908ba96dee8b50fabffd498feb54af59acde71769
+
+$ curl -H 'Host: rahbar.local' -d '{"question": "What is the minimum CGPA required for an undergraduate degree?"}' http://<ingress>/api/ask
+HTTP 200
+request_id c1736bba8869079964adfda26f791cd3 | retrieved 5 passages
+
+Result: after set image every ready pod ran rahbar-api:v2 (sha256:b7ca110d...) and answered 200; after rollout undo the pods run rahbar-api:dev again (sha256:0de9bf13..., the image from step 1) and answer 200. Pods still listed with the other image are old pods in their 10 s preStop + graceful shutdown (maxUnavailable 0, maxSurge 1).
+
+## 4. A minute later (old pods gone)
+$ kubectl get pods -n rahbar -l app.kubernetes.io/name=api -o custom-columns=NAME:.metadata.name,IMAGE:.spec.containers[0].image,IMAGE_ID:.status.containerStatuses[0].imageID
+NAME                   IMAGE            IMAGE_ID
+api-679dc78b48-fsc92   rahbar-api:dev   docker://sha256:0de9bf134b381b48b59bfa4f70706dd59e156f5a64d8de3e3a542ee85e26cc13
+api-679dc78b48-q6bdh   rahbar-api:dev   docker://sha256:0de9bf134b381b48b59bfa4f70706dd59e156f5a64d8de3e3a542ee85e26cc13
+api-679dc78b48-vtr6d   rahbar-api:dev   docker://sha256:0de9bf134b381b48b59bfa4f70706dd59e156f5a64d8de3e3a542ee85e26cc13
