@@ -41,9 +41,14 @@ class Settings:
     index_refresh_seconds: int = 10
     superseded_filter: bool = True
 
-    # Redis (readiness now; the semantic cache and turn log on Day 3)
+    # Redis: readiness, the semantic cache (D3) and the turn log (D4)
     redis_host: str = "redis"
     redis_port: int = 6379
+    cache_threshold: float = 0.96    # cosine at or above this is a hit (chosen in 3A3)
+    cache_ttl_seconds: int = 86400
+    cache_max_entries: int = 500
+    turn_log_max_entries: int = 1000
+    turn_log_ttl_seconds: int = 604800
 
     # Retrieval and generation
     top_k: int = 5
@@ -69,6 +74,11 @@ def get_settings() -> Settings:
         superseded_filter=_bool("SUPERSEDED_FILTER", True),
         redis_host=os.environ.get("REDIS_HOST", "redis"),
         redis_port=_int("REDIS_PORT", 6379),
+        cache_threshold=_float("CACHE_THRESHOLD", 0.96),
+        cache_ttl_seconds=_int("CACHE_TTL_SECONDS", 86400),
+        cache_max_entries=_int("CACHE_MAX_ENTRIES", 500),
+        turn_log_max_entries=_int("TURN_LOG_MAX_ENTRIES", 1000),
+        turn_log_ttl_seconds=_int("TURN_LOG_TTL_SECONDS", 604800),
         top_k=_int("TOP_K", 5),
         temperature=_float("TEMPERATURE", 0.2),
         llm_model=os.environ.get("LLM_MODEL", "llama3.2:3b"),
