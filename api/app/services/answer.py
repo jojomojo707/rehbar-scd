@@ -74,12 +74,8 @@ def _validated_completion(
     failure_reason = "unknown"
     for attempt in range(2):
         try:
-            complete = getattr(provider, "complete", None)
-            if callable(complete):
-                completion = complete(messages, schema, temperature)
-                raw_text = completion.text
-            else:
-                raw_text = provider.generate(question, passages).model_dump_json()
+            completion = provider.complete(messages, schema, temperature)
+            raw_text = completion.text
         except ProviderError as exc:
             failure_reason = "provider"
             if exc.kind in {"auth", "not_configured"}:
