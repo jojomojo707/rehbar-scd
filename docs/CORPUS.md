@@ -2,6 +2,22 @@
 
 The retrieval corpus uses official public material from the National University of Computer and Emerging Sciences (FAST-NUCES). It contains nine documents: seven PDFs totaling 279 pages and two HTML pages. The source inventory, version labels, superseded flags, byte counts, and SHA-256 digests are recorded in [`corpus/MANIFEST.md`](../corpus/MANIFEST.md); the fetched files stay local under the ignored `corpus/raw/` directory. `python corpus/fetch.py --verify` checked all nine downloads against that manifest.
 
+## Source versions and superseded status
+
+These values are copied from `corpus/sources.yaml` and flow into each stored chunk's `doc_version` and `superseded` metadata through the fetched `_index.json`.
+
+| Document | `doc_version` | `superseded` |
+| --- | --- | --- |
+| Undergraduate Academic Rules (Aug 2023) | `2023-08` | `true` |
+| Academic Rules Handbook (Jun 2026) | `2026-06` | `false` |
+| Prospectus 2026 – Academic Rules and Regulations | `2026` | `false` |
+| Student Handbook (Jun 2026) | `2026-06` | `false` |
+| Annual Report 2019–20 | `2019-20` | `true` |
+| Annual Report 2023–24 | `2023-24` | `false` |
+| Fee Structure page | `2026-27` | `false` |
+| Grading page | `2026` | `false` |
+| Faculty Entrepreneurship and Technical Start-ups Policy | `2022-05` | `false` |
+
 | # | Required property | Document(s) | Evidence |
 | --- | --- | --- | --- |
 | 1 | At least 6 documents and 40 pages | All nine entries in `corpus/sources.yaml` | Seven PDFs have 279 pages total (26 + 58 + 5 + 64 + 33 + 85 + 8); two additional official pages are HTML. |

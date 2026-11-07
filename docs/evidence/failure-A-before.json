@@ -1,0 +1,52 @@
+﻿{
+    "request_id":  "17e06e1303c146f6875b21a600763d4f",
+    "answer":  "(stub) The first passage says: faculty-entrepreneurship-and-technical-start-ups-policy\n30.05.2022/FacultyEntrepreneurshipPolicy\nFaculty Entrepreneurship / Technical Start-ups\nPolicy and Procedure [faculty-entrepreneurship-and-technical-start-ups-policy.pdf / faculty-entrepreneurship-and-technical-start-ups-policy]",
+    "citations":  [
+                      {
+                          "source":  "faculty-entrepreneurship-and-technical-start-ups-policy.pdf",
+                          "section":  "faculty-entrepreneurship-and-technical-start-ups-policy",
+                          "page":  1
+                      }
+                  ],
+    "answered_from_context":  true,
+    "confidence":  "low",
+    "retrieved":  [
+                      {
+                          "chunk_id":  "faculty-entrepreneurship-and-technical-start-ups-policy:00000",
+                          "source":  "faculty-entrepreneurship-and-technical-start-ups-policy.pdf",
+                          "section":  "faculty-entrepreneurship-and-technical-start-ups-policy",
+                          "page":  1,
+                          "score":  0.83879876
+                      },
+                      {
+                          "chunk_id":  "faculty-entrepreneurship-and-technical-start-ups-policy:00001",
+                          "source":  "faculty-entrepreneurship-and-technical-start-ups-policy.pdf",
+                          "section":  "1. Purpose",
+                          "page":  1,
+                          "score":  0.83171701
+                      },
+                      {
+                          "chunk_id":  "faculty-entrepreneurship-and-technical-start-ups-policy:00005",
+                          "source":  "faculty-entrepreneurship-and-technical-start-ups-policy.pdf",
+                          "section":  "PROFORMA",
+                          "page":  4,
+                          "score":  0.7406667499999999
+                      },
+                      {
+                          "chunk_id":  "faculty-entrepreneurship-and-technical-start-ups-policy:00002",
+                          "source":  "faculty-entrepreneurship-and-technical-start-ups-policy.pdf",
+                          "section":  "1. Purpose",
+                          "page":  1,
+                          "score":  0.7305386700000001
+                      },
+                      {
+                          "chunk_id":  "faculty-entrepreneurship-and-technical-start-ups-policy:00003",
+                          "source":  "faculty-entrepreneurship-and-technical-start-ups-policy.pdf",
+                          "section":  "1. Purpose",
+                          "page":  2,
+                          "score":  0.7229873
+                      }
+                  ],
+    "provider":  "stub",
+    "cached":  false
+}

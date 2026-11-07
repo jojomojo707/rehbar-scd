@@ -1,0 +1,48 @@
+﻿{
+    "request_id":  "b961cb4ae4d445c9b503620a343af297",
+    "answer":  "The documents I have do not cover this question, so I can\u0027t answer it from them.",
+    "citations":  [
+
+                  ],
+    "answered_from_context":  false,
+    "confidence":  "low",
+    "retrieved":  [
+                      {
+                          "chunk_id":  "student-handbook-jun-2026:00003",
+                          "source":  "student-handbook-jun-2026.pdf",
+                          "section":  "FOREWORD",
+                          "page":  5,
+                          "score":  0.6704876399999999
+                      },
+                      {
+                          "chunk_id":  "annual-report-2023-24:00116",
+                          "source":  "annual-report-2023-24.pdf",
+                          "section":  "(ORIC)",
+                          "page":  58,
+                          "score":  0.66018742
+                      },
+                      {
+                          "chunk_id":  "annual-report-2023-24:00165",
+                          "source":  "annual-report-2023-24.pdf",
+                          "section":  "HEC.",
+                          "page":  75,
+                          "score":  0.65817386
+                      },
+                      {
+                          "chunk_id":  "annual-report-2023-24:00166",
+                          "source":  "annual-report-2023-24.pdf",
+                          "section":  "1. Faculty Mentoring Supporting newly hired and relatively junior faculty members in",
+                          "page":  75,
+                          "score":  0.6535141
+                      },
+                      {
+                          "chunk_id":  "annual-report-2023-24:00118",
+                          "source":  "annual-report-2023-24.pdf",
+                          "section":  "(ORIC)",
+                          "page":  60,
+                          "score":  0.6526518
+                      }
+                  ],
+    "provider":  "stub",
+    "cached":  false
+}

@@ -10,7 +10,7 @@
 - [ ] README states FAST-NUCES files are fetched, not committed
 - [ ] README states the embeddings source (fastembed with `BAAI/bge-small-en-v1.5` inside the api and indexer images) and the generation source (Groq)
 - [ ] README shows the `kubectl create secret` line
-- [ ] `scripts/check_submission.py` runs clean (no `STARTER-TODO`, no `NotImplementedError`)
+- [ ] `scripts/check_submission.py` runs clean (no starter TODO marker, no `NotImplementedError`)
 
 ## Corpus
 - [ ] At least 6 documents and 40 pages, all public or your own

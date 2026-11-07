@@ -241,7 +241,7 @@ Same format as A's.
    ```bash
    make check
    ```
-   Must show no FAIL: no `STARTER-TODO`, no `raise NotImplementedError`, ≥ 4 ADRs (one filename
+   Must show no FAIL: no starter TODO marker, no `raise NotImplementedError`, ≥ 4 ADRs (one filename
    contains "job"), ≥ 5 evidence files, both workflows, ≥ 12 tests incl. injection/abstention/
    fallback, README and notes long enough. Read every WARN too.
 3. **Secrets:**

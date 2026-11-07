@@ -28,18 +28,23 @@ Ship structure-aware chunks with `CHUNK_SIZE=480` and `CHUNK_OVERLAP=64`. Keep l
 retrieval enabled for queries with exact terms. Hybrid retrieval supplements dense embedding
 search; it does not change the stored chunks or the API's read-only role.
 
-The measured chunking results were:
+The Day 4 reruns used the 18-question golden set and dense retrieval for all three chunk settings.
+Their measured results were:
 
-| Chunk size (tokens) | Overlap (tokens) | Recall@5 | Chunks | Storage amplification |
+| Chunk size (tokens) | Overlap (tokens) | Dense recall@5 | Chunks | Storage amplification |
 | ---: | ---: | ---: | ---: | ---: |
-| 256 | 32 | 0.8125 | 948 | 1.340 |
-| 384 | 48 | 0.8125 | 806 | 1.265 |
-| **480** | **64** | **0.8125** | **764** | **1.257** |
+| 256 | 32 | 0.8750 | 948 | 1.340 |
+| 384 | 48 | 0.8750 | 806 | 1.265 |
+| **480** | **64** | **0.8750** | **764** | **1.257** |
 
-All three settings had equal recall@5. The 480/64 setting stores the fewest chunks and has the
-lowest measured amplification, so it was selected. Its first indexing run exceeded the original
-2 GiB memory limit; it completed after the indexer limit was raised to 3 GiB, with a 1500 MiB
-request. The committed Job and CronJob use those resource values.
+All three settings tied on dense recall@5. The 480/64 setting stores the fewest chunks and has the
+lowest measured amplification, so it was selected. On that same 480/64 index, hybrid retrieval
+raised recall@5 to 0.9375 by improving injection-type recall from 0.5 to 1.0; the per-type table
+and result artifacts are in `docs/PIPELINE.md` and `docs/evidence/chunk-480-*-eval.json`. Its
+first indexing run exceeded the original 2 GiB memory limit; it completed after the indexer
+limit was raised to 3 GiB. The current Job and CronJob request 2200 MiB and limit memory to 3
+GiB, leaving measured headroom above the 2108 MiB peak. The earlier 1500 MiB request was raised
+after observing that peak.
 
 On the real Chroma index, the retrieval-only comparison at `top_k=5` produced:
 
@@ -48,12 +53,13 @@ On the real Chroma index, the retrieval-only comparison at `top_k=5` produced:
 | Ordinary | 1.0000 | 1.0000 |
 | Exact term | 1.0000 | 1.0000 |
 | Version | 0.6667 | 0.6667 |
-| Prompt injection | 0.0000 | 1.0000 |
-| **Overall** | **0.8125** | **0.9375** |
+| Prompt injection | 0.5000 | 1.0000 |
+| **Overall** | **0.8750** | **0.9375** |
 
 This measurement used the same corpus, index, query vectors, and golden set; it did not call an
-LLM. The hybrid path improved overall recall by 0.125, entirely from the two injection-type
-queries in this set. It did not improve the version questions: V03 remained a retrieval miss.
+LLM. The hybrid path improved overall recall by 0.0625 by recovering one of the two
+injection-type questions in this set. It did not improve the version questions: V03 remained a
+retrieval miss.
 
 ## Options considered
 

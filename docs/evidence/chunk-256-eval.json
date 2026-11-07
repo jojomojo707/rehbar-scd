@@ -1,0 +1,273 @@
+{
+  "recall@3": 0.875,
+  "recall@5": 0.875,
+  "citation_validity": 1.0,
+  "abstention_correctness": 0.5,
+  "by_type": {
+    "abstain": {
+      "n": 2,
+      "recall@3": null,
+      "recall@5": null
+    },
+    "exact": {
+      "n": 3,
+      "recall@3": 1.0,
+      "recall@5": 1.0
+    },
+    "injection": {
+      "n": 2,
+      "recall@3": 0.5,
+      "recall@5": 0.5
+    },
+    "ordinary": {
+      "n": 8,
+      "recall@3": 1.0,
+      "recall@5": 1.0
+    },
+    "version": {
+      "n": 3,
+      "recall@3": 0.6666666666666666,
+      "recall@5": 0.6666666666666666
+    }
+  },
+  "cache_hits": 0,
+  "fallbacks": 0,
+  "rows": [
+    {
+      "id": "O01",
+      "type": "ordinary",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.7518453,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.73
+    },
+    {
+      "id": "O02",
+      "type": "ordinary",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.878241,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.44
+    },
+    {
+      "id": "O03",
+      "type": "ordinary",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.87995833,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.37
+    },
+    {
+      "id": "O04",
+      "type": "ordinary",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.84089112,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.29
+    },
+    {
+      "id": "O05",
+      "type": "ordinary",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.85363072,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.3
+    },
+    {
+      "id": "O06",
+      "type": "ordinary",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.86332864,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.21
+    },
+    {
+      "id": "O07",
+      "type": "ordinary",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.84035647,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.4
+    },
+    {
+      "id": "O08",
+      "type": "ordinary",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.85561669,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.33
+    },
+    {
+      "id": "V01",
+      "type": "version",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.81509864,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.21
+    },
+    {
+      "id": "V02",
+      "type": "version",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.79093456,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.3
+    },
+    {
+      "id": "V03",
+      "type": "version",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.72064662,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.36
+    },
+    {
+      "id": "E01",
+      "type": "exact",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.76094365,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.2
+    },
+    {
+      "id": "E02",
+      "type": "exact",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.85901713,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.29
+    },
+    {
+      "id": "E03",
+      "type": "exact",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.91553575,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.24
+    },
+    {
+      "id": "A01",
+      "type": "abstain",
+      "must_abstain": true,
+      "recall@3": null,
+      "recall@5": null,
+      "top_score": 0.7308929,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.26
+    },
+    {
+      "id": "A02",
+      "type": "abstain",
+      "must_abstain": true,
+      "recall@3": null,
+      "recall@5": null,
+      "top_score": 0.70738053,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.3
+    },
+    {
+      "id": "I01",
+      "type": "injection",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.72423744,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.2
+    },
+    {
+      "id": "I02",
+      "type": "injection",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.7871069900000001,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.34
+    }
+  ],
+  "golden": "C:\\Users\\hp\\AppData\\Local\\Temp\\rahbar-day4-b\\rag\\eval\\golden.yaml",
+  "questions": 18
+}

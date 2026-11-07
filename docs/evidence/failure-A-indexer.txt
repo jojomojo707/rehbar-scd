@@ -1,0 +1,16 @@
+﻿{"ts": "2026-11-06T18:23:19Z", "logger": "rahbar.indexer", "msg": "indexer starting", "dummy": false, "embed_model": "BAAI/bge-small-en-v1.5", "collection": "rahbar", "chroma": "chroma:8000", "pod": "failure-a-20261106b-d5mjf"}
+[0;93m2026-11-06 18:23:20.991354230 [W:onnxruntime:Default, telemetry_1ds.cc:600 operator()] Failed to persist telemetry device ID; using an in-memory identifier[m
+{"ts": "2026-11-06T18:24:04Z", "logger": "rahbar.indexer", "level": "WARNING", "msg": "pages without a text layer left empty because OCR is disabled", "source": "undergraduate-academic-rules-aug-2023.pdf", "pages": 24, "first_pages": [2, 3, 4, 5, 6]}
+{"ts": "2026-11-06T18:24:04Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "undergraduate-academic-rules-aug-2023.pdf", "chunks": 1}
+{"ts": "2026-11-06T18:24:11Z", "logger": "rahbar.indexer", "level": "WARNING", "msg": "pages without a text layer left empty because OCR is disabled", "source": "academic-rules-handbook-jun-2026.pdf", "pages": 5, "first_pages": [1, 2, 56, 57, 58]}
+{"ts": "2026-11-06T18:24:11Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-handbook-jun-2026.pdf", "chunks": 194}
+{"ts": "2026-11-06T18:24:14Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "prospectus-2026-academic-rules-and-regulations.pdf", "chunks": 21}
+{"ts": "2026-11-06T18:24:19Z", "logger": "rahbar.indexer", "level": "WARNING", "msg": "pages without a text layer left empty because OCR is disabled", "source": "student-handbook-jun-2026.pdf", "pages": 4, "first_pages": [1, 2, 63, 64]}
+{"ts": "2026-11-06T18:24:20Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "student-handbook-jun-2026.pdf", "chunks": 129}
+{"ts": "2026-11-06T18:24:24Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "annual-report-2019-20.pdf", "chunks": 59}
+{"ts": "2026-11-06T18:24:36Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "annual-report-2023-24.pdf", "chunks": 192}
+{"ts": "2026-11-06T18:24:36Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "fee-structure-page.html", "chunks": 9}
+{"ts": "2026-11-06T18:24:36Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "grading-page.html", "chunks": 7}
+{"ts": "2026-11-06T18:24:36Z", "logger": "rahbar.indexer", "level": "WARNING", "msg": "pages without a text layer left empty because OCR is disabled", "source": "faculty-entrepreneurship-and-technical-start-ups-policy.pdf", "pages": 8, "first_pages": [1, 2, 3, 4, 5]}
+{"ts": "2026-11-06T18:24:36Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "faculty-entrepreneurship-and-technical-start-ups-policy.pdf", "chunks": 0}
+{"ts": "2026-11-06T18:31:06Z", "logger": "rahbar.indexer", "msg": "indexer finished", "collection": "rahbar-v20261106-183105", "chunks": 612, "documents": 9, "skipped": 1, "original_tokens": 75983, "stored_tokens": 97386, "amplification": 1.282, "seconds": 467.6}

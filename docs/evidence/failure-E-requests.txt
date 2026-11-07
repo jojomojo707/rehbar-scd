@@ -1,0 +1,145 @@
+# failure-E-requests.txt: failure-analysis stage E (Source), SUPERSEDED_FILTER=false
+# 2026-11-06 19:51-20:00 UTC, Asad's minikube, real index rahbar-v20261106-163759 (764 chunks),
+# TOP_K 5, HYBRID_RETRIEVAL true, RELEVANCE_FLOOR 0.73, LLM_PROVIDER stub (no Groq key in this cluster;
+# the stub quotes the top-ranked passage, so the answer shows which chunk won).
+# Three questions about CURRENT rules, none naming a year, sent through the Ingress with
+# X-Request-ID stageE-<phase>-<n>. Cache flushed before each phase.
+# The answered log lines are cut to the fields used in docs/FAILURE-ANALYSIS.md
+# (kubectl logs -n rahbar -l app.kubernetes.io/name=api | grep answered).
+#
+# Collection metadata of the active index: superseded_versions = "2019-20,2023-08"; 181 of 764 chunks
+# carry superseded=true, from undergraduate-academic-rules-aug-2023.pdf and annual-report-2019-20.pdf.
+# The current rules are academic-rules-handbook-jun-2026.pdf.
+
+====================================================================================================
+## BEFORE: SUPERSEDED_FILTER=true (shipped). Second ask; the first, uncached run returned the same chunk_ids.
+
+### Responses (answer text cut to 500 characters)
+=== stageE-before-0: What is the normal undergraduate course load?
+answer: (stub) The first passage says: 1.17 Normal semester course load for undergraduate students, who are not on academic warning/probation, is as per the University study plan [academic-rules-handbook-jun-2026.pdf / 1.17 Normal semester course load for undergraduate students,]. [academic-rules-handbook-jun-2026.pdf / 1.17 Normal semester course load for undergraduate students,]
+answered_from_context: True cached: True
+citations: [('academic-rules-handbook-jun-2026.pdf', '1.17 Normal semester course load for undergraduate students,')]
+  retrieved: academic-rules-handbook-jun-2026:00028 0.8296
+  retrieved: academic-rules-handbook-jun-2026:00083 0.8026
+  retrieved: student-handbook-jun-2026:00027 0.7767
+  retrieved: prospectus-2026-academic-rules-and-regulations:00000 0.7321
+  retrieved: prospectus-2026-academic-rules-and-regulations:00002 0.7241
+=== stageE-before-1: How many courses can a student repeat?
+answer: (stub) The first passage says: Repeating a Course A student can repeat a course if that course has not been passed or the student desires to improve his/her grade [grading-page.html / Repeating a Course]. A student must repeat all failed courses [grading-page.html / Repeating a Course]. Students under warning must repeat such passed courses, in which [grading-page.html / Repeating a Course]
+answered_from_context: True cached: True
+citations: [('grading-page.html', 'Repeating a Course')]
+  retrieved: grading-page:00005 0.8606
+  retrieved: academic-rules-handbook-jun-2026:00136 0.8451
+  retrieved: academic-rules-handbook-jun-2026:00133 0.8275
+  retrieved: prospectus-2026-academic-rules-and-regulations:00011 0.811
+  retrieved: annual-report-2023-24:00157 0.7954
+=== stageE-before-2: What is the maximum course load a student can register for in a regular semester?
+answer: (stub) The first passage says: 4.3 The normal course load is 5 courses [academic-rules-handbook-jun-2026.pdf / 4.3 The normal course load is 5 courses. A final year student may]. A final year student may register in one additional course (inclusive of Final Year Project-FYP) [academic-rules-handbook-jun-2026.pdf / 4.3 The normal course load is 5 courses. A final year student may]. Registration of Students under Academic Warning [academic-rules-handbook-jun-2026.pdf / 4.3 The normal course load i
+answered_from_context: True cached: True
+citations: [('academic-rules-handbook-jun-2026.pdf', '4.3 The normal course load is 5 courses. A final year student may')]
+  retrieved: academic-rules-handbook-jun-2026:00083 0.8443
+  retrieved: academic-rules-handbook-jun-2026:00030 0.83
+  retrieved: student-handbook-jun-2026:00027 0.8161
+  retrieved: academic-rules-handbook-jun-2026:00031 0.7935
+  retrieved: academic-rules-handbook-jun-2026:00028 0.7884
+
+### answered log lines
+{"ts": "2026-11-06T19:51:42Z", "request_id": "stageE-before-0", "top_k": 5, "include_superseded": false, "chunk_ids": ["academic-rules-handbook-jun-2026:00028", "academic-rules-handbook-jun-2026:00083", "student-handbook-jun-2026:00027", "prospectus-2026-academic-rules-and-regulations:00000", "prospectus-2026-academic-rules-and-regulations:00002"], "scores": [0.8296, 0.8026, 0.7767, 0.7321, 0.7241], "superseded_flags": null, "max_score": null, "outcome": "cached", "cached": true}
+{"ts": "2026-11-06T19:51:43Z", "request_id": "stageE-before-1", "top_k": 5, "include_superseded": false, "chunk_ids": ["grading-page:00005", "academic-rules-handbook-jun-2026:00136", "academic-rules-handbook-jun-2026:00133", "prospectus-2026-academic-rules-and-regulations:00011", "annual-report-2023-24:00157"], "scores": [0.8606, 0.8451, 0.8275, 0.811, 0.7954], "superseded_flags": null, "max_score": null, "outcome": "cached", "cached": true}
+{"ts": "2026-11-06T19:51:44Z", "request_id": "stageE-before-2", "top_k": 5, "include_superseded": false, "chunk_ids": ["academic-rules-handbook-jun-2026:00083", "academic-rules-handbook-jun-2026:00030", "student-handbook-jun-2026:00027", "academic-rules-handbook-jun-2026:00031", "academic-rules-handbook-jun-2026:00028"], "scores": [0.8443, 0.83, 0.8161, 0.7935, 0.7884], "superseded_flags": null, "max_score": null, "outcome": "cached", "cached": true}
+
+====================================================================================================
+## BROKEN: SUPERSEDED_FILTER=false
+
+### Responses (answer text cut to 500 characters)
+=== stageE-broken-0: What is the normal undergraduate course load?
+answer: (stub) The first passage says: 1.17 Normal semester course load for undergraduate students, who are not on academic warning/probation, is as per the university study plan [undergraduate-academic-rules-aug-2023.pdf / 1.17 Normal semester course load for undergraduate students, who are]. [undergraduate-academic-rules-aug-2023.pdf / 1.17 Normal semester course load for undergraduate students, who are]
+answered_from_context: True cached: False
+citations: [('undergraduate-academic-rules-aug-2023.pdf', '1.17 Normal semester course load for undergraduate students, who are')]
+  retrieved: undergraduate-academic-rules-aug-2023:00023 0.8296
+  retrieved: academic-rules-handbook-jun-2026:00028 0.8296
+  retrieved: academic-rules-handbook-jun-2026:00083 0.8026
+  retrieved: undergraduate-academic-rules-aug-2023:00022 0.7837
+  retrieved: student-handbook-jun-2026:00027 0.7767
+=== stageE-broken-1: How many courses can a student repeat?
+answer: (stub) The first passage says: Repeating a Course A student can repeat a course if that course has not been passed or the student desires to improve his/her grade [grading-page.html / Repeating a Course]. A student must repeat all failed courses [grading-page.html / Repeating a Course]. Students under warning must repeat such passed courses, in which [grading-page.html / Repeating a Course]
+answered_from_context: True cached: False
+citations: [('grading-page.html', 'Repeating a Course')]
+  retrieved: grading-page:00005 0.8606
+  retrieved: academic-rules-handbook-jun-2026:00136 0.8451
+  retrieved: academic-rules-handbook-jun-2026:00133 0.8275
+  retrieved: undergraduate-academic-rules-aug-2023:00081 0.8216
+  retrieved: prospectus-2026-academic-rules-and-regulations:00011 0.811
+=== stageE-broken-2: What is the maximum course load a student can register for in a regular semester?
+answer: (stub) The first passage says: 1.19 A student can register for a maximum of two courses in summer semester, in accordance with the rules for summer semester [undergraduate-academic-rules-aug-2023.pdf / 1.19 A student can register for a maximum of two courses in summer]. [undergraduate-academic-rules-aug-2023.pdf / 1.19 A student can register for a maximum of two courses in summer]
+answered_from_context: True cached: False
+citations: [('undergraduate-academic-rules-aug-2023.pdf', '1.19 A student can register for a maximum of two courses in summer')]
+  retrieved: undergraduate-academic-rules-aug-2023:00025 0.8543
+  retrieved: academic-rules-handbook-jun-2026:00083 0.8443
+  retrieved: academic-rules-handbook-jun-2026:00030 0.83
+  retrieved: student-handbook-jun-2026:00027 0.8161
+  retrieved: academic-rules-handbook-jun-2026:00031 0.7935
+
+### answered log lines
+{"ts": "2026-11-06T19:54:48Z", "request_id": "stageE-broken-0", "top_k": 5, "include_superseded": false, "chunk_ids": ["undergraduate-academic-rules-aug-2023:00023", "academic-rules-handbook-jun-2026:00028", "academic-rules-handbook-jun-2026:00083", "undergraduate-academic-rules-aug-2023:00022", "student-handbook-jun-2026:00027"], "scores": [0.8296, 0.8296, 0.8026, 0.7837, 0.7767], "superseded_flags": [true, false, false, true, false], "max_score": 0.8296, "outcome": "answered", "cached": false}
+{"ts": "2026-11-06T19:54:50Z", "request_id": "stageE-broken-1", "top_k": 5, "include_superseded": false, "chunk_ids": ["grading-page:00005", "academic-rules-handbook-jun-2026:00136", "academic-rules-handbook-jun-2026:00133", "undergraduate-academic-rules-aug-2023:00081", "prospectus-2026-academic-rules-and-regulations:00011"], "scores": [0.8606, 0.8451, 0.8275, 0.8216, 0.811], "superseded_flags": [false, false, false, true, false], "max_score": 0.8606, "outcome": "answered", "cached": false}
+{"ts": "2026-11-06T19:54:52Z", "request_id": "stageE-broken-2", "top_k": 5, "include_superseded": false, "chunk_ids": ["undergraduate-academic-rules-aug-2023:00025", "academic-rules-handbook-jun-2026:00083", "academic-rules-handbook-jun-2026:00030", "student-handbook-jun-2026:00027", "academic-rules-handbook-jun-2026:00031"], "scores": [0.8543, 0.8443, 0.83, 0.8161, 0.7935], "superseded_flags": [true, false, false, false, false], "max_score": 0.8543, "outcome": "answered", "cached": false}
+
+====================================================================================================
+## RESTORED: SUPERSEDED_FILTER=true
+
+### Responses (answer text cut to 500 characters)
+=== stageE-restored-0: What is the normal undergraduate course load?
+answer: (stub) The first passage says: 1.17 Normal semester course load for undergraduate students, who are not on academic warning/probation, is as per the University study plan [academic-rules-handbook-jun-2026.pdf / 1.17 Normal semester course load for undergraduate students,]. [academic-rules-handbook-jun-2026.pdf / 1.17 Normal semester course load for undergraduate students,]
+answered_from_context: True cached: False
+citations: [('academic-rules-handbook-jun-2026.pdf', '1.17 Normal semester course load for undergraduate students,')]
+  retrieved: academic-rules-handbook-jun-2026:00028 0.8296
+  retrieved: academic-rules-handbook-jun-2026:00083 0.8026
+  retrieved: student-handbook-jun-2026:00027 0.7767
+  retrieved: prospectus-2026-academic-rules-and-regulations:00000 0.7321
+  retrieved: prospectus-2026-academic-rules-and-regulations:00002 0.7241
+=== stageE-restored-1: How many courses can a student repeat?
+answer: (stub) The first passage says: Repeating a Course A student can repeat a course if that course has not been passed or the student desires to improve his/her grade [grading-page.html / Repeating a Course]. A student must repeat all failed courses [grading-page.html / Repeating a Course]. Students under warning must repeat such passed courses, in which [grading-page.html / Repeating a Course]
+answered_from_context: True cached: False
+citations: [('grading-page.html', 'Repeating a Course')]
+  retrieved: grading-page:00005 0.8606
+  retrieved: academic-rules-handbook-jun-2026:00136 0.8451
+  retrieved: academic-rules-handbook-jun-2026:00133 0.8275
+  retrieved: prospectus-2026-academic-rules-and-regulations:00011 0.811
+  retrieved: annual-report-2023-24:00157 0.7954
+=== stageE-restored-2: What is the maximum course load a student can register for in a regular semester?
+answer: (stub) The first passage says: 4.3 The normal course load is 5 courses [academic-rules-handbook-jun-2026.pdf / 4.3 The normal course load is 5 courses. A final year student may]. A final year student may register in one additional course (inclusive of Final Year Project-FYP) [academic-rules-handbook-jun-2026.pdf / 4.3 The normal course load is 5 courses. A final year student may]. Registration of Students under Academic Warning [academic-rules-handbook-jun-2026.pdf / 4.3 The normal course load i
+answered_from_context: True cached: False
+citations: [('academic-rules-handbook-jun-2026.pdf', '4.3 The normal course load is 5 courses. A final year student may')]
+  retrieved: academic-rules-handbook-jun-2026:00083 0.8443
+  retrieved: academic-rules-handbook-jun-2026:00030 0.83
+  retrieved: student-handbook-jun-2026:00027 0.8161
+  retrieved: academic-rules-handbook-jun-2026:00031 0.7935
+  retrieved: academic-rules-handbook-jun-2026:00028 0.7884
+
+### answered log lines
+{"ts": "2026-11-06T19:58:48Z", "request_id": "stageE-restored-0", "top_k": 5, "include_superseded": false, "chunk_ids": ["academic-rules-handbook-jun-2026:00028", "academic-rules-handbook-jun-2026:00083", "student-handbook-jun-2026:00027", "prospectus-2026-academic-rules-and-regulations:00000", "prospectus-2026-academic-rules-and-regulations:00002"], "scores": [0.8296, 0.8026, 0.7767, 0.7321, 0.7241], "superseded_flags": [false, false, false, false, false], "max_score": 0.8296, "outcome": "answered", "cached": false}
+{"ts": "2026-11-06T19:58:49Z", "request_id": "stageE-restored-1", "top_k": 5, "include_superseded": false, "chunk_ids": ["grading-page:00005", "academic-rules-handbook-jun-2026:00136", "academic-rules-handbook-jun-2026:00133", "prospectus-2026-academic-rules-and-regulations:00011", "annual-report-2023-24:00157"], "scores": [0.8606, 0.8451, 0.8275, 0.811, 0.7954], "superseded_flags": [false, false, false, false, false], "max_score": 0.8606, "outcome": "answered", "cached": false}
+{"ts": "2026-11-06T19:58:51Z", "request_id": "stageE-restored-2", "top_k": 5, "include_superseded": false, "chunk_ids": ["academic-rules-handbook-jun-2026:00083", "academic-rules-handbook-jun-2026:00030", "student-handbook-jun-2026:00027", "academic-rules-handbook-jun-2026:00031", "academic-rules-handbook-jun-2026:00028"], "scores": [0.8443, 0.83, 0.8161, 0.7935, 0.7884], "superseded_flags": [false, false, false, false, false], "max_score": 0.8443, "outcome": "answered", "cached": false}
+
+====================================================================================================
+## The 18-question golden eval in each state: answered lines with include_superseded=false, not cached
+
+broken   : 16 current-version lines; 14 contain a superseded chunk; 5 have a superseded chunk at rank 1
+restored : 16 current-version lines; 0 contain a superseded chunk; 0 have a superseded chunk at rank 1
+
+### broken-state lines with a superseded chunk (request ids are generated by the API)
+{"request_id": "d79c1c5930ead812c51aad35ca1f060e", "outcome": "answered", "superseded_flags": [false, false, false, false, true], "chunk_ids": ["grading-page:00005", "academic-rules-handbook-jun-2026:00043", "academic-rules-handbook-jun-2026:00117", "prospectus-2026-academic-rules-and-regulations:00011", "undergraduate-academic-rules-aug-2023:00083"]}
+{"request_id": "90a5b7095870de9b4d13c7edc7cc22f0", "outcome": "abstained", "superseded_flags": [true, false, false, true, false], "chunk_ids": ["undergraduate-academic-rules-aug-2023:00040", "academic-rules-handbook-jun-2026:00048", "student-handbook-jun-2026:00111", "undergraduate-academic-rules-aug-2023:00005", "student-handbook-jun-2026:00012"]}
+{"request_id": "02ebff4853649cfcb91f494999578535", "outcome": "answered", "superseded_flags": [true, false, true, false, false], "chunk_ids": ["undergraduate-academic-rules-aug-2023:00011", "academic-rules-handbook-jun-2026:00012", "undergraduate-academic-rules-aug-2023:00108", "annual-report-2023-24:00069", "annual-report-2023-24:00094"]}
+{"request_id": "4b825025291be0dd5848e7eee9054cb8", "outcome": "abstained", "superseded_flags": [false, true, false, true, false], "chunk_ids": ["academic-rules-handbook-jun-2026:00033", "undergraduate-academic-rules-aug-2023:00029", "academic-rules-handbook-jun-2026:00137", "undergraduate-academic-rules-aug-2023:00026", "academic-rules-handbook-jun-2026:00155"]}
+{"request_id": "64821a9753291a81754580ca419b3a21", "outcome": "answered", "superseded_flags": [false, true, true, false, false], "chunk_ids": ["academic-rules-handbook-jun-2026:00017", "undergraduate-academic-rules-aug-2023:00015", "undergraduate-academic-rules-aug-2023:00013", "academic-rules-handbook-jun-2026:00018", "academic-rules-handbook-jun-2026:00014"]}
+{"request_id": "1df502b2c237d9a935fb5df3f4f1c7c0", "outcome": "answered", "superseded_flags": [false, false, false, true, true], "chunk_ids": ["academic-rules-handbook-jun-2026:00043", "prospectus-2026-academic-rules-and-regulations:00011", "grading-page:00005", "undergraduate-academic-rules-aug-2023:00038", "undergraduate-academic-rules-aug-2023:00081"]}
+{"request_id": "c781474114d8c1ab86882b4d746146ec", "outcome": "answered", "superseded_flags": [false, true, false, true, true], "chunk_ids": ["academic-rules-handbook-jun-2026:00036", "undergraduate-academic-rules-aug-2023:00077", "academic-rules-handbook-jun-2026:00111", "undergraduate-academic-rules-aug-2023:00033", "undergraduate-academic-rules-aug-2023:00096"]}
+{"request_id": "7dbcbffd41527ad411358ef54a86e80e", "outcome": "answered", "superseded_flags": [false, true, false, true, false], "chunk_ids": ["academic-rules-handbook-jun-2026:00141", "undergraduate-academic-rules-aug-2023:00025", "academic-rules-handbook-jun-2026:00030", "undergraduate-academic-rules-aug-2023:00094", "academic-rules-handbook-jun-2026:00132"]}
+{"request_id": "9ae6c0a7380f684c456ff40f715e3f16", "outcome": "answered", "superseded_flags": [true, false, false, false, false], "chunk_ids": ["undergraduate-academic-rules-aug-2023:00070", "academic-rules-handbook-jun-2026:00102", "prospectus-2026-academic-rules-and-regulations:00010", "academic-rules-handbook-jun-2026:00103", "academic-rules-handbook-jun-2026:00086"]}
+{"request_id": "a186bbd055b8515cc657efa8912bd829", "outcome": "answered", "superseded_flags": [false, false, true, false, true], "chunk_ids": ["academic-rules-handbook-jun-2026:00018", "academic-rules-handbook-jun-2026:00020", "undergraduate-academic-rules-aug-2023:00018", "academic-rules-handbook-jun-2026:00023", "undergraduate-academic-rules-aug-2023:00015"]}
+{"request_id": "2fe2306afb12868fdd52175a823bd93c", "outcome": "answered", "superseded_flags": [false, false, true, false, true], "chunk_ids": ["academic-rules-handbook-jun-2026:00083", "student-handbook-jun-2026:00027", "undergraduate-academic-rules-aug-2023:00023", "academic-rules-handbook-jun-2026:00028", "undergraduate-academic-rules-aug-2023:00003"]}
+{"request_id": "7d4e5ef495ca7abe18f4ee128821a222", "outcome": "answered", "superseded_flags": [true, false, true, false, false], "chunk_ids": ["undergraduate-academic-rules-aug-2023:00037", "academic-rules-handbook-jun-2026:00040", "undergraduate-academic-rules-aug-2023:00034", "academic-rules-handbook-jun-2026:00037", "academic-rules-handbook-jun-2026:00039"]}
+{"request_id": "b49454e686bdd7805245698702f9fc56", "outcome": "answered", "superseded_flags": [true, false, false, false, true], "chunk_ids": ["undergraduate-academic-rules-aug-2023:00029", "academic-rules-handbook-jun-2026:00033", "academic-rules-handbook-jun-2026:00115", "academic-rules-handbook-jun-2026:00079", "undergraduate-academic-rules-aug-2023:00026"]}
+{"request_id": "f435972e8fa9d1f439e21a7febdcebae", "outcome": "answered", "superseded_flags": [false, true, true, true, false], "chunk_ids": ["academic-rules-handbook-jun-2026:00036", "undergraduate-academic-rules-aug-2023:00033", "undergraduate-academic-rules-aug-2023:00096", "undergraduate-academic-rules-aug-2023:00077", "academic-rules-handbook-jun-2026:00111"]}
