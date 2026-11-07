@@ -7,8 +7,10 @@ TAG ?= dev
 PY ?= python3
 VENV ?= .venv
 BIN := $(abspath $(VENV))/bin
-# The Ingress address. On Linux this is the minikube IP. On macOS or Windows with the
-# docker driver, run `minikube tunnel` in another terminal and use INGRESS_IP=127.0.0.1.
+# The Ingress address: the minikube IP with Docker Engine on Linux. With Docker Desktop (any
+# OS, Linux included) that IP is unreachable; run
+#   kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8080:80
+# and use INGRESS_IP=127.0.0.1:8080 (README "When the minikube IP does not answer").
 INGRESS_IP ?= $(shell minikube ip 2>/dev/null)
 HOST ?= rahbar.local
 # minikube's memory in MB. 7168 fits Docker Desktop's default 8 GB VM, which reports about
@@ -73,8 +75,11 @@ ask: ## ask through the Ingress: make ask Q="What CGPA puts a student on academi
 fetch: ## download the documents listed in corpus/sources.yaml
 	$(BIN)/python corpus/fetch.py
 
+# Seconds between golden questions: Groq's free tier allows 8,000 tokens a minute (about five
+# questions), so an unpaced run measures the rate limit, not the pipeline.
+EVAL_PAUSE ?= 11
 eval: ## score eval/golden.yaml through the Ingress and apply the CI gate
-	$(BIN)/python eval/run_eval.py --api "http://$(INGRESS_IP)" --host $(HOST)
+	$(BIN)/python eval/run_eval.py --api "http://$(INGRESS_IP)" --host $(HOST) --pause $(EVAL_PAUSE)
 
 eval-fixtures: ## score the CI fixture golden set against a local `make dev`
 	$(BIN)/python eval/run_eval.py --api http://localhost:8000 --golden eval/fixtures/golden.fixture.yaml --out /tmp/rahbar-fixture-results.json
