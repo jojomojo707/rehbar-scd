@@ -74,10 +74,11 @@ are in [`evidence/cache-threshold.txt`](evidence/cache-threshold.txt).
 
 The CI fixture uses a stub generator, so citation membership only proves that the stub cites a
 passage it received; it does not establish factual quality on the public corpus. The real
-citation-validity measurement comes from uncached Groq runs on minikube. On the post-PR-60
-18-question run, measured recall@5 was 0.9375, citation validity was 100%, required abstention
-was 100%, and three responses exhausted validation retries and returned the safe fallback. The
-raw responses remain outside Git.
+citation-validity measurement comes from uncached Groq runs on minikube. On the committed
+18-question run (7 Nov, `eval/results.json`), recall@5 was 0.9375, citation validity was 100%,
+required abstention was 100%, and one response (O07) exhausted its validation retry and
+returned the safe fallback. See "Groq evaluation runs" below for how the fallbacks went from
+three to one. The raw responses remain outside Git.
 
 The active-retrieval type scores for the same run were: ordinary 1.000, exact 1.000, injection
 1.000, version 0.667; must-abstain questions are not part of recall because they have no relevant
@@ -98,13 +99,42 @@ and the Day 3 results.
 
 Recall@k matches normalized source names and section identifiers, with a section-prefix boundary: golden `5.4` matches `5.4 Academic Warning`, but not `5.41`. Citation validity checks each citation against that response's own retrieved passages, including page when the citation supplies one. Abstention is correct only when a must-abstain question has `answered_from_context: false`.
 
-## Post-PR-60 Groq retest (2026-11-06; manual review complete)
+## Groq evaluation runs
 
-The 18-question uncached run on the PR #60 image passed the automated gate: recall@5 0.9375 (previous baseline 0.8125), citation validity 100%, and required abstention 100%. Three answer-generation requests (O06–O08) exhausted both validation attempts and returned the safe fallback; API logs show validation failures rather than provider throttling. The remaining 15 requests did not fall back. Raw answer capture was kept outside the repository.
+### 6 November, post-PR-60 image
 
-### Person B manual review
+The 18-question uncached run on the PR #60 image passed the automated gate: recall@5 0.9375
+(previous baseline 0.8125), citation validity 100%, and required abstention 100%. Three
+answerable questions (O06–O08) returned the safe fallback instead of an answer, although
+retrieval found their passages. At the time we attributed them to validation failures. The API
+did not yet log why a provider call failed, so a rejected reply and a rate limit could not be
+told apart.
 
-Person B (the user) reports reviewing all 18 captured answers and retrieved evidence, found nothing faulty or mistaken, and assigns the run a **100% reviewer rating** (within the requested 75–100% range). This is the user's overall manual assessment; it is separate from the automated metric gate and does not replace the per-question evaluation metrics. O06–O08 are recorded above as safe fallback outputs rather than substantive answers.
+**Manual review (Person B).** Person B read all 18 answers against their retrieved evidence.
+None of the answered questions stated anything wrong or unsupported. O06–O08 are safe
+fallbacks: they claim nothing, but they do not answer the question either, so they count as
+failures to answer, not as correct answers. The six-check table below comes from the earlier,
+pre-PR-60 run.
+
+### 7 November, after logging provider errors
+
+A rerun of the golden set (2 s between questions) returned 4–5 fallbacks. We added a log line
+for every failed provider call, with Groq's own error code (`api/app/services/answer.py`,
+`provider error`; `api/app/providers/llm/hosted.py`, `_error_detail`). Every provider failure
+then read `rate_limit_exceeded ... tokens per minute (TPM): Limit 8000`. A question costs
+about 1,400 tokens, so Groq's free tier serves about five a minute, and the pipeline's single
+retry came 1 s later and hit the same limit. Two changes followed:
+
+- the one retry after a rate limit now waits as long as Groq asks (`Retry-After`, or "try
+  again in 2.75s" in the message), at most 10 s, so the request stays inside the Ingress's
+  60 s timeout;
+- the committed evaluation is paced with `run_eval.py --pause 11` to stay under the limit.
+
+The committed run (`eval/results.json`, also the new `eval/baseline.json`) logged no provider
+errors. It has one fallback: O07, whose reply cited two sources with no inline marker on
+either attempt, which the validator refuses to guess (validation-and-errors.md § Output
+validation). Retrieval did not change: recall@3 and recall@5 0.9375, version-sensitive 0.667
+(V03; see ENGINEERING-NOTES.md Q5 for why).
 
 ## Prior manual answer review (pre-PR-60 run; real corpus, Groq)
 
