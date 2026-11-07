@@ -12,6 +12,14 @@ from ..routes import metrics
 from ..schemas import Answer, Citation, Passage
 
 _INLINE_CITATION = re.compile(r"\[([^\]/]+?)\s*/\s*([^\]]+?)\]")
+# "[a / b]. [a / b]": the model repeated the marker it had just written; keep the first.
+_REPEATED_MARKER = re.compile(r"(\[[^\]/]+?/[^\]]+?\])([.!?]?)\s*\1")
+# A full stop after one of these is not the end of a sentence: "Rs. 12,000", "No. 5".
+_ABBREVIATIONS = frozenset({
+    "rs", "pkr", "no", "nos", "dr", "mr", "mrs", "ms", "prof", "st", "sr", "jr", "vs", "etc",
+    "e.g", "i.e", "approx", "fig", "sec", "cl", "art", "para", "vol", "pp", "dept", "govt",
+})
+_SENTENCE_END = re.compile(r"[.!?]+\s+")
 ABSTENTION_TEXT = (
     "The documents I have do not cover this question, so I can't answer it from them."
 )
@@ -74,14 +82,19 @@ def validate_answer(
             confidence="low",
         )
 
-    by_key = {(p.source, p.section): p for p in passages}
+    # One section can span pages, so several retrieved chunks may share (source, section)
+    # with different pages. Keep every retrieved page: a citation is valid when its page
+    # belongs to one of them (or it gives no page).
+    pages_by_key: dict[tuple[str, str], set[int | None]] = {}
+    for passage in passages:
+        pages_by_key.setdefault((passage.source, passage.section), set()).add(passage.page)
     valid_citations = []
     dropped_citations = 0
     dropped_markers = 0
     seen_citations: set[tuple[str, str, int | None]] = set()
     for citation in parsed.citations:
-        passage = by_key.get((citation.source, citation.section))
-        if passage is not None and (citation.page is None or citation.page == passage.page):
+        pages = pages_by_key.get((citation.source, citation.section))
+        if pages is not None and (citation.page is None or citation.page in pages):
             key = (citation.source, citation.section, citation.page)
             if key not in seen_citations:
                 valid_citations.append(citation)
@@ -101,6 +114,7 @@ def validate_answer(
         return ""
 
     cleaned_text = _INLINE_CITATION.sub(keep_inline, text)
+    cleaned_text = _REPEATED_MARKER.sub(r"\1\2", cleaned_text)
     cleaned_text = re.sub(r"[ \t]{2,}", " ", cleaned_text).strip()
     if not valid_citations:
         raise AnswerValidationError("no_valid_citation", "No citation matched retrieved evidence.")
@@ -136,7 +150,7 @@ def _ensure_inline_citations(text: str, citations: list[Citation]) -> str:
             )
         return text
     markers = f"[{sources[0][0]} / {sources[0][1]}]"
-    sentences = re.split(r"(?<=[.!?])\s+", text.strip())
+    sentences = split_sentences(text)
     cited: list[str] = []
     for sentence in sentences:
         if not sentence or _INLINE_CITATION.search(sentence):
@@ -147,3 +161,28 @@ def _ensure_inline_citations(text: str, citations: list[Citation]) -> str:
         body = sentence[: -len(suffix)] if suffix else sentence
         cited.append(f"{body.rstrip()} {markers}{suffix}")
     return " ".join(cited)
+
+
+def split_sentences(text: str) -> list[str]:
+    """Split at ". ", "! " or "? " only where a new sentence really starts.
+
+    A boundary needs the next character to open a sentence (a capital letter, an opening
+    bracket or a quote) and the word before the stop not to be an abbreviation. So
+    "The fee is Rs. 12,000 per credit hour." stays one sentence, where a plain split on ". "
+    used to put a citation marker between "Rs" and "12,000".
+    """
+    text = text.strip()
+    sentences: list[str] = []
+    start = 0
+    for match in _SENTENCE_END.finditer(text):
+        following = text[match.end():match.end() + 1]
+        if not following or not (following.isupper() or following in "[(\"'\u201c"):
+            continue
+        words = text[start:match.start()].split()
+        last_word = words[-1].lower().rstrip(".") if words else ""
+        if match.group(0).startswith(".") and last_word.lstrip("([") in _ABBREVIATIONS:
+            continue
+        sentences.append(text[start:match.end()].rstrip())
+        start = match.end()
+    sentences.append(text[start:])
+    return [sentence for sentence in sentences if sentence]
