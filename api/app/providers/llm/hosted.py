@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from copy import deepcopy
 from typing import Any
 
@@ -9,6 +10,8 @@ import httpx
 
 from ...config import Settings
 from .base import Completion, ProviderError
+
+_ORG_ID = re.compile(r"\borg_[A-Za-z0-9]+")
 
 
 def strict_json_schema(schema: dict[str, Any]) -> dict[str, Any]:
@@ -82,7 +85,7 @@ class HostedProvider:
             ) from exc
 
         if response.status_code >= 400:
-            raise _provider_error(response.status_code)
+            raise _provider_error(response.status_code, _error_detail(response))
         try:
             body = response.json()
             choice = body["choices"][0]
@@ -100,14 +103,34 @@ class HostedProvider:
         )
 
 
-def _provider_error(status_code: int) -> ProviderError:
+def _error_detail(response: httpx.Response) -> str:
+    """The provider's own error code and message (Groq: `rate_limit_exceeded`,
+    `json_validate_failed`, ...), so a fallback in the logs says why. The organisation id that
+    Groq puts in rate-limit messages is masked; the request never echoes the API key."""
+    try:
+        error = response.json().get("error") or {}
+        code, message = str(error.get("code") or error.get("type") or ""), str(
+            error.get("message") or "")
+    except (ValueError, AttributeError):
+        code, message = "", ""
+    message = _ORG_ID.sub("org_***", " ".join(message.split()))[:200]
+    retry_after = response.headers.get("retry-after")
+    parts = [part for part in (code, message) if part]
+    if retry_after:
+        parts.append(f"retry-after {retry_after}s")
+    return "; ".join(parts)
+
+
+def _provider_error(status_code: int, detail: str = "") -> ProviderError:
+    suffix = f": {detail}" if detail else ""
     if status_code in (401, 403):
         return ProviderError("auth", f"Hosted provider rejected credentials ({status_code}).")
     if status_code == 429:
-        return ProviderError("rate_limited", "Hosted provider rate limit reached.")
+        return ProviderError("rate_limited", f"Hosted provider rate limit reached{suffix}")
     if status_code >= 500:
-        return ProviderError("server", f"Hosted provider returned {status_code}.")
-    return ProviderError("bad_request", f"Hosted provider rejected the request ({status_code}).")
+        return ProviderError("server", f"Hosted provider returned {status_code}{suffix}")
+    return ProviderError("bad_request",
+                         f"Hosted provider rejected the request ({status_code}){suffix}")
 
 
 def _int_or_zero(value: Any) -> int:

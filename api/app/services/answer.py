@@ -104,6 +104,10 @@ def _validated_completion(
             failure_reason = "provider"
             dependency = "groq" if provider.name == "hosted" else provider.name
             metrics.DEPENDENCY_ERRORS.labels(dependency=dependency).inc()
+            # Which kind (rate_limited, bad_request, timeout, ...) decides the remedy, so log
+            # it on every attempt; the outcome line only says "provider".
+            log.warning("provider error", extra={
+                "attempt": attempt + 1, "kind": exc.kind, "error": str(exc)})
             if exc.kind in {"auth", "not_configured"}:
                 break
             if attempt == 1:
@@ -286,7 +290,7 @@ def answer_with_cache_status(
             _record_cache("miss")
             cache_status = "MISS"
         else:
-            _record_cache("skip")
+            _record_cache("skipped")
 
         # 4. Retrieve from the active index; Chroma's adapter applies the source filter.
         retrieval_started = time.perf_counter()

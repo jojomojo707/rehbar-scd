@@ -76,6 +76,24 @@ def test_hosted_status_errors_are_mapped(status: int, kind: str) -> None:
     assert raised.value.kind == kind
 
 
+def test_hosted_error_names_the_providers_code_and_masks_the_org_id() -> None:
+    body = {"error": {"code": "rate_limit_exceeded", "message": (
+        "Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01abcXYZ` "
+        "on tokens per minute (TPM): Limit 8000, Used 7600, Requested 1500.")}}
+    client = httpx.Client(transport=httpx.MockTransport(
+        lambda request: httpx.Response(429, json=body, headers={"retry-after": "3"})))
+    settings = Settings(llm_api_key="test-key", hosted_base_url="https://llm.test")
+
+    with pytest.raises(ProviderError) as raised:
+        HostedProvider(settings, client).complete([], Answer.model_json_schema(), 0.2)
+
+    message = str(raised.value)
+    assert raised.value.kind == "rate_limited"
+    assert "rate_limit_exceeded" in message and "retry-after 3s" in message
+    assert "org_01abcXYZ" not in message and "org_***" in message
+    assert "test-key" not in message
+
+
 def test_hosted_provider_fails_fast_without_a_key() -> None:
     provider = HostedProvider(Settings(hosted_base_url="https://llm.test"))
 
