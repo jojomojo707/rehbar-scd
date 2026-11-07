@@ -5,7 +5,7 @@ Fakes stand in for Chroma, Redis and the model: no cluster, no model, no network
 from __future__ import annotations
 
 import logging
-import time
+import threading
 from collections.abc import Iterator
 from typing import Any
 
@@ -21,19 +21,39 @@ ACTIVE = "rahbar-v20261105-030000"
 INDEX_OK = {"chroma": "ok", "index_pointer": "ok", "collection": "ok"}
 
 
+# A hung dependency blocks on an Event instead of sleeping for "timeout + a bit": the check
+# must give up on its own timeout, and the fixture below releases every hung call afterwards,
+# so no test depends on a sleep being long enough.
+_HUNG: list[threading.Event] = []
+HANG_CAP_SECONDS = 30.0      # never reached; only stops a broken test from hanging CI
+
+
+def _hang(release: threading.Event | None) -> None:
+    if release is not None:
+        _HUNG.append(release)
+        release.wait(HANG_CAP_SECONDS)
+
+
+@pytest.fixture(autouse=True)
+def _release_hung_calls() -> Iterator[None]:
+    yield
+    while _HUNG:
+        _HUNG.pop().set()
+
+
 class FakeIndexState:
     def __init__(self, checks: dict[str, str] | None = None, model: str = "dummy-768",
-                 dimension: int = 768, error: Exception | None = None, delay: float = 0.0):
+                 dimension: int = 768, error: Exception | None = None,
+                 release: threading.Event | None = None):
         self.checks = checks or dict(INDEX_OK)
         self.metadata = {"embed_model": model, "dimension": dimension, "status": "complete"}
         self.error = error
-        self.delay = delay
+        self.release = release      # set: the call blocks until this Event is set
         self.calls = 0
 
     def refresh(self) -> IndexStatus:
         self.calls += 1
-        if self.delay:
-            time.sleep(self.delay)
+        _hang(self.release)
         if self.error:
             raise self.error
         failed = next((k for k, v in self.checks.items() if v != "ok"), None)
@@ -50,13 +70,13 @@ class FakeEmbedder:
 
 
 class FakeRedis:
-    def __init__(self, error: Exception | None = None, delay: float = 0.0) -> None:
-        self.error, self.delay, self.calls = error, delay, 0
+    def __init__(self, error: Exception | None = None,
+                 release: threading.Event | None = None) -> None:
+        self.error, self.release, self.calls = error, release, 0
 
     def ping(self) -> bool:
         self.calls += 1
-        if self.delay:
-            time.sleep(self.delay)
+        _hang(self.release)
         if self.error:
             raise self.error
         return True
@@ -100,7 +120,7 @@ def test_healthz_touches_no_dependency(client: TestClient) -> None:
 @pytest.mark.parametrize(("readiness", "failed", "value"), [
     (lambda: make(index=FakeIndexState(error=ConnectionError("chroma:8000 refused"))),
      "chroma", "error"),
-    (lambda: make(index=FakeIndexState(delay=readiness_mod.INDEX_TIMEOUT_SECONDS + 0.5)),
+    (lambda: make(index=FakeIndexState(release=threading.Event())),
      "chroma", "timeout"),
     (lambda: make(index=FakeIndexState({**INDEX_OK, "index_pointer": "missing",
                                         "collection": "skipped"})), "index_pointer", "missing"),
@@ -115,7 +135,7 @@ def test_healthz_touches_no_dependency(client: TestClient) -> None:
      "embedding_model", "error"),
     (lambda: make(redis=FakeRedis(error=ConnectionError("redis:6379 refused"))),
      "redis", "error"),
-    (lambda: make(redis=FakeRedis(delay=readiness_mod.REDIS_TIMEOUT_SECONDS + 0.5)),
+    (lambda: make(redis=FakeRedis(release=threading.Event())),
      "redis", "timeout"),
 ], ids=["chroma-down", "chroma-hangs", "no-pointer", "empty", "building", "pin-model",
         "pin-dimension", "model-not-loaded", "redis-down", "redis-hangs"])
@@ -153,8 +173,10 @@ def test_pin_mismatch_logs_conflict_once(caplog: pytest.LogCaptureFixture) -> No
 
 def test_startup_check_waits_longer_than_a_probe(caplog: pytest.LogCaptureFixture) -> None:
     """The first check imports chromadb and connects; it must still see the pin conflict."""
-    slow = FakeIndexState(model="dummy-768", dimension=768,
-                          delay=readiness_mod.INDEX_TIMEOUT_SECONDS + 0.5)
+    answered = threading.Event()
+    slow = FakeIndexState(model="dummy-768", dimension=768, release=answered)
+    # Chroma answers after the probe budget but inside the startup budget.
+    threading.Timer(readiness_mod.INDEX_TIMEOUT_SECONDS + 0.5, answered.set).start()
     readiness = make(index=slow, embedder=FakeEmbedder("BAAI/bge-small-en-v1.5", 384),
                      embed_model="BAAI/bge-small-en-v1.5")
     with caplog.at_level(logging.ERROR, logger="rahbar.api"):

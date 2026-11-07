@@ -76,6 +76,44 @@ def test_hosted_status_errors_are_mapped(status: int, kind: str) -> None:
     assert raised.value.kind == kind
 
 
+def test_hosted_error_names_the_providers_code_and_masks_the_org_id() -> None:
+    body = {"error": {"code": "rate_limit_exceeded", "message": (
+        "Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01abcXYZ` "
+        "on tokens per minute (TPM): Limit 8000, Used 7600, Requested 1500.")}}
+    client = httpx.Client(transport=httpx.MockTransport(
+        lambda request: httpx.Response(429, json=body, headers={"retry-after": "3"})))
+    settings = Settings(llm_api_key="test-key", hosted_base_url="https://llm.test")
+
+    with pytest.raises(ProviderError) as raised:
+        HostedProvider(settings, client).complete([], Answer.model_json_schema(), 0.2)
+
+    message = str(raised.value)
+    assert raised.value.kind == "rate_limited"
+    assert "rate_limit_exceeded" in message and "retry-after 3s" in message
+    assert "org_01abcXYZ" not in message and "org_***" in message
+    assert "test-key" not in message
+
+
+@pytest.mark.parametrize(("headers", "message", "expected"), [
+    ({"retry-after": "4"}, "", 4.0),
+    ({}, "Limit 8000, Used 7600. Please try again in 2.75s. Need more tokens?", 2.75),
+    ({}, "Please try again in 850ms.", 0.85),
+    ({}, "Rate limit reached.", None),
+])
+def test_hosted_rate_limit_carries_the_wait_the_provider_asked_for(
+    headers: dict[str, str], message: str, expected: float | None
+) -> None:
+    body = {"error": {"code": "rate_limit_exceeded", "message": message}}
+    client = httpx.Client(transport=httpx.MockTransport(
+        lambda request: httpx.Response(429, json=body, headers=headers)))
+    settings = Settings(llm_api_key="test-key", hosted_base_url="https://llm.test")
+
+    with pytest.raises(ProviderError) as raised:
+        HostedProvider(settings, client).complete([], Answer.model_json_schema(), 0.2)
+
+    assert raised.value.retry_after == expected
+
+
 def test_hosted_provider_fails_fast_without_a_key() -> None:
     provider = HostedProvider(Settings(hosted_base_url="https://llm.test"))
 

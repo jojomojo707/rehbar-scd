@@ -1,22 +1,75 @@
-# Pin demo (brief section 4.4). The active index rahbar-v20261105-084745 was built with
-# EMBED_MODEL=dummy-768 (768 dimensions). EMBED_MODEL was changed in the ConfigMap and the api
-# restarted, with no re-index.
+# pin-mismatch.txt: brief 4.4, change EMBED_MODEL in the ConfigMap, restart the API, and the
+# new pod sits at 0/1 READY with a log line naming the conflict, instead of serving garbage.
+# 2026-11-07T08:28:17Z, minikube, namespace rahbar, on the real index (764 chunks,
+# built with BAAI/bge-small-en-v1.5, 384 dimensions). Clock checked: date -u on the laptop and
+# in the minikube node agree. Recaptured on 7 Nov; the 5 Nov capture used the Day 1 dummy index.
 
-$ kubectl patch configmap rahbar-config -n rahbar --type merge -p '{"data":{"EMBED_MODEL":"BAAI/bge-small-en-v1.5"}}'
-$ kubectl rollout restart deployment/api -n rahbar
-
-$ kubectl get configmap rahbar-config -n rahbar -o jsonpath={.data.EMBED_MODEL}
+$ kubectl get configmap rahbar-config -n rahbar -o jsonpath='{.data.EMBED_MODEL}'; echo
 BAAI/bge-small-en-v1.5
-
 $ kubectl get pods -n rahbar -l app.kubernetes.io/name=api
 NAME                   READY   STATUS    RESTARTS   AGE
-api-6b9cb9b8c4-46jb2   1/1     Running   0          2m17s
-api-6b9cb9b8c4-b4j5p   1/1     Running   0          2m10s
-api-6b9cb9b8c4-rwd9f   1/1     Running   0          2m15s
-api-759c9597b6-rn8tx   0/1     Running   0          65s
-
-$ kubectl logs pod/api-759c9597b6-rn8tx -n rahbar | grep "pin mismatch"
-{"ts": "2026-11-05T09:44:43Z", "level": "ERROR", "logger": "rahbar.api", "msg": "embedding pin mismatch", "request_id": "-", "configured_model": "BAAI/bge-small-en-v1.5", "index_model": "dummy-768", "configured_dimension": 384, "index_dimension": 768, "collection": "rahbar-v20261105-084745"}
-
-$ kubectl exec pod/api-759c9597b6-rn8tx -n rahbar -- python -c "<GET http://localhost:8000/readyz>"
-503 {"status":"not_ready","checks":{"chroma":"ok","index_pointer":"ok","collection":"ok","embedding_pin":"mismatch","embedding_model":"ok","redis":"ok"},"index":"rahbar-v20261105-084745","failed":"embedding_pin","detail":"embedding_pin: configured BAAI/bge-small-en-v1.5 (384 dimensions) but index rahbar-v20261105-084745 was built with dummy-768 (768 dimensions)"}
+api-575ccfcf5f-fbzp5   1/1     Running   0          5m
+api-575ccfcf5f-j7998   1/1     Running   0          6m31s
+api-575ccfcf5f-jx75z   1/1     Running   0          6m50s
+api-575ccfcf5f-l7gfh   1/1     Running   0          5m37s
+api-575ccfcf5f-x44vr   1/1     Running   0          7m8s
+$ kubectl patch configmap rahbar-config -n rahbar --type merge -p '{"data":{"EMBED_MODEL":"BAAI/bge-base-en-v1.5"}}'
+configmap/rahbar-config patched
+$ kubectl rollout restart deployment/api -n rahbar
+deployment.apps/api restarted
+# 75 s later. The new pod is Running but never Ready; maxUnavailable: 0 keeps the old pods serving.
+$ kubectl get pods -n rahbar -l app.kubernetes.io/name=api
+NAME                   READY   STATUS    RESTARTS   AGE
+api-575ccfcf5f-fbzp5   1/1     Running   0          6m15s
+api-575ccfcf5f-j7998   1/1     Running   0          7m46s
+api-575ccfcf5f-jx75z   1/1     Running   0          8m5s
+api-575ccfcf5f-l7gfh   1/1     Running   0          6m52s
+api-575ccfcf5f-x44vr   1/1     Running   0          8m23s
+api-7bc49757cd-g4tkr   0/1     Running   0          75s
+$ kubectl logs pod/api-7bc49757cd-g4tkr -n rahbar | grep 'embedding pin mismatch'
+{"ts": "2026-11-07T08:28:22Z", "level": "ERROR", "logger": "rahbar.api", "msg": "embedding pin mismatch", "request_id": "-", "configured_model": "BAAI/bge-base-en-v1.5", "index_model": "BAAI/bge-small-en-v1.5", "configured_dimension": null, "index_dimension": 384, "collection": "rahbar-v20261106-213100"}
+$ kubectl exec pod/api-7bc49757cd-g4tkr -n rahbar -- python -c "import urllib.request as u, urllib.error as e
+try: u.urlopen('http://localhost:8000/readyz')
+except e.HTTPError as x: print(x.code, x.read().decode())"
+503 {"status":"not_ready","checks":{"chroma":"ok","index_pointer":"ok","collection":"ok","embedding_pin":"mismatch","embedding_model":"error","redis":"ok"},"index":"rahbar-v20261106-213100","failed":"embedding_pin","detail":"embedding_pin: configured BAAI/bge-base-en-v1.5 (None dimensions) but index rahbar-v20261106-213100 was built with BAAI/bge-small-en-v1.5 (384 dimensions)"}
+$ kubectl get endpointslices -n rahbar -l kubernetes.io/service-name=api -o jsonpath='{range .items[*].endpoints[*]}{.targetRef.name}{"  ready="}{.conditions.ready}{"\n"}{end}'
+api-575ccfcf5f-x44vr  ready=true
+api-575ccfcf5f-jx75z  ready=true
+api-575ccfcf5f-j7998  ready=true
+api-575ccfcf5f-l7gfh  ready=true
+api-575ccfcf5f-fbzp5  ready=true
+api-7bc49757cd-g4tkr  ready=false
+# Users are unaffected: the old pods still answer through the Ingress.
+$ curl -s -o /dev/null -w '%{http_code}\n' -X POST http://127.0.0.1:18080/api/ask -H 'Host: rahbar.local' -H 'Content-Type: application/json' -d '{"question": "What is the minimum CGPA to graduate?"}'
+200
+# Restore the pin and roll out again.
+$ kubectl patch configmap rahbar-config -n rahbar --type merge -p '{"data":{"EMBED_MODEL":"BAAI/bge-small-en-v1.5"}}'
+configmap/rahbar-config patched
+$ kubectl rollout restart deployment/api -n rahbar
+deployment.apps/api restarted
+$ kubectl rollout status deployment/api -n rahbar --timeout=600s
+Waiting for deployment "api" rollout to finish: 0 out of 5 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 0 out of 5 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 1 out of 5 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 1 out of 5 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 1 out of 5 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 2 out of 5 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 2 out of 5 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 2 out of 5 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 3 out of 5 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 3 out of 5 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 3 out of 5 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 4 out of 5 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 4 out of 5 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 4 out of 5 new replicas have been updated...
+Waiting for deployment "api" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "api" rollout to finish: 1 old replicas are pending termination...
+deployment "api" successfully rolled out
+$ kubectl get pods -n rahbar -l app.kubernetes.io/name=api
+NAME                   READY   STATUS        RESTARTS   AGE
+api-575ccfcf5f-x44vr   1/1     Terminating   0          10m
+api-789449b484-7snvg   1/1     Running       0          102s
+api-789449b484-gscv9   1/1     Running       0          42s
+api-789449b484-hprzh   1/1     Running       0          21s
+api-789449b484-htjz8   1/1     Running       0          81s
+api-789449b484-t5rf2   1/1     Running       0          61s

@@ -14,9 +14,13 @@ class Completion:
 
 
 class ProviderError(RuntimeError):
-    def __init__(self, kind: str, message: str) -> None:
+    """kind: auth, not_configured, rate_limited, timeout, server or bad_request.
+    retry_after: seconds the provider asked us to wait (rate limits), when it said."""
+
+    def __init__(self, kind: str, message: str, retry_after: float | None = None) -> None:
         super().__init__(message)
         self.kind = kind
+        self.retry_after = retry_after
 
 
 class LLMProvider(Protocol):
