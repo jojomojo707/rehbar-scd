@@ -31,7 +31,7 @@
     }
   },
   "cache_hits": 0,
-  "fallbacks": 3,
+  "fallbacks": 1,
   "rows": [
     {
       "id": "O01",
@@ -44,7 +44,7 @@
       "answered_from_context": true,
       "cached": false,
       "fallback": false,
-      "seconds": 1.07
+      "seconds": 3.62
     },
     {
       "id": "O02",
@@ -57,7 +57,7 @@
       "answered_from_context": true,
       "cached": false,
       "fallback": false,
-      "seconds": 1.04
+      "seconds": 2.83
     },
     {
       "id": "O03",
@@ -70,7 +70,7 @@
       "answered_from_context": true,
       "cached": false,
       "fallback": false,
-      "seconds": 0.89
+      "seconds": 2.48
     },
     {
       "id": "O04",
@@ -83,7 +83,7 @@
       "answered_from_context": true,
       "cached": false,
       "fallback": false,
-      "seconds": 0.62
+      "seconds": 2.9
     },
     {
       "id": "O05",
@@ -96,7 +96,7 @@
       "answered_from_context": true,
       "cached": false,
       "fallback": false,
-      "seconds": 0.98
+      "seconds": 2.0
     },
     {
       "id": "O06",
@@ -105,11 +105,11 @@
       "recall@3": 1.0,
       "recall@5": 1.0,
       "top_score": 0.86332864,
-      "citation_validity": null,
-      "answered_from_context": false,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
       "cached": false,
-      "fallback": true,
-      "seconds": 1.54
+      "fallback": false,
+      "seconds": 3.8
     },
     {
       "id": "O07",
@@ -122,7 +122,7 @@
       "answered_from_context": false,
       "cached": false,
       "fallback": true,
-      "seconds": 2.03
+      "seconds": 3.83
     },
     {
       "id": "O08",
@@ -131,11 +131,11 @@
       "recall@3": 1.0,
       "recall@5": 1.0,
       "top_score": 0.85561669,
-      "citation_validity": null,
-      "answered_from_context": false,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
       "cached": false,
-      "fallback": true,
-      "seconds": 1.29
+      "fallback": false,
+      "seconds": 2.0
     },
     {
       "id": "V01",
@@ -148,7 +148,7 @@
       "answered_from_context": true,
       "cached": false,
       "fallback": false,
-      "seconds": 1.13
+      "seconds": 2.43
     },
     {
       "id": "V02",
@@ -161,7 +161,7 @@
       "answered_from_context": true,
       "cached": false,
       "fallback": false,
-      "seconds": 1.29
+      "seconds": 3.07
     },
     {
       "id": "V03",
@@ -174,7 +174,7 @@
       "answered_from_context": false,
       "cached": false,
       "fallback": false,
-      "seconds": 0.26
+      "seconds": 1.21
     },
     {
       "id": "E01",
@@ -187,7 +187,7 @@
       "answered_from_context": true,
       "cached": false,
       "fallback": false,
-      "seconds": 0.89
+      "seconds": 2.92
     },
     {
       "id": "E02",
@@ -200,7 +200,7 @@
       "answered_from_context": true,
       "cached": false,
       "fallback": false,
-      "seconds": 1.72
+      "seconds": 2.63
     },
     {
       "id": "E03",
@@ -213,7 +213,7 @@
       "answered_from_context": true,
       "cached": false,
       "fallback": false,
-      "seconds": 0.58
+      "seconds": 2.27
     },
     {
       "id": "A01",
@@ -226,7 +226,7 @@
       "answered_from_context": false,
       "cached": false,
       "fallback": false,
-      "seconds": 0.13
+      "seconds": 1.33
     },
     {
       "id": "A02",
@@ -239,7 +239,7 @@
       "answered_from_context": false,
       "cached": false,
       "fallback": false,
-      "seconds": 0.19
+      "seconds": 1.19
     },
     {
       "id": "I01",
@@ -252,7 +252,7 @@
       "answered_from_context": false,
       "cached": false,
       "fallback": false,
-      "seconds": 0.25
+      "seconds": 1.01
     },
     {
       "id": "I02",
@@ -261,13 +261,13 @@
       "recall@3": 1.0,
       "recall@5": 1.0,
       "top_score": 0.79160982,
-      "citation_validity": 1.0,
-      "answered_from_context": true,
+      "citation_validity": null,
+      "answered_from_context": false,
       "cached": false,
       "fallback": false,
-      "seconds": 0.77
+      "seconds": 2.38
     }
   ],
-  "golden": "eval/golden.yaml",
+  "golden": "/home/asad/uni/scd_a2/rahbar-starter/eval/golden.yaml",
   "questions": 18
 }

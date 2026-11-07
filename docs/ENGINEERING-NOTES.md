@@ -26,10 +26,10 @@ chunks, it breaks in three concrete ways:
 
 **The objects that prevent it.** The `Job` at `k8s/base/indexer-job.yaml:5` is the only
 writer: one pod, `restartPolicy: OnFailure` (`:20`) and `backoffLimit: 2` (`:12`), with its own
-2,200 MiB / 3 GiB limits (`:65-70`). Re-indexing is the CronJob `reindex`, whose
+2,200 MiB / 3 GiB limits (`:65-71`). Re-indexing is the CronJob `reindex`, whose
 `concurrencyPolicy: Forbid` (`k8s/base/reindex-cronjob.yaml:16`) stops two runs overlapping.
 Chroma is a StatefulSet with `replicas: 1` (`k8s/base/chroma-statefulset.yaml:12`) and its own
-ReadWriteOnce volume from `volumeClaimTemplates` (`:85-89`). The API has no write path; its
+ReadWriteOnce volume from `volumeClaimTemplates` (`:86-90`). The API has no write path; its
 readiness check refuses traffic until the active collection exists, is complete and matches
 the embedding pin (`api/app/services/readiness.py:128-152`). Full reasoning:
 [ADR 0001](adr/0001-indexer-as-job.md).
@@ -64,10 +64,11 @@ A slow dependency is never that case.
 
 The HPA (`k8s/base/hpa.yaml:18-24`) scales on CPU use divided by the 250m request
 (`k8s/base/api.yaml:61-62`), target 70%. During generation an api thread is blocked in a
-synchronous `httpx` call to Groq (`api/app/providers/llm/hosted.py:41`; timeout
-`LLM_TIMEOUT_SECONDS` 20 s) and uses almost no CPU. So while the model generates, the HPA
-measures only the local work around it: the query embedding, the Chroma queries and the
-validation. A pod can have dozens of questions waiting on Groq and still read 5% CPU.
+synchronous `httpx` call to Groq (`api/app/providers/llm/hosted.py:73`; the client's timeout,
+`LLM_TIMEOUT_SECONDS` 20 s, is set at `:45`) and uses almost no CPU. So while the model
+generates, the HPA measures only the local work around it: the query embedding, the Chroma
+queries and the validation. A pod can have dozens of questions waiting on Groq and still read
+5% CPU.
 
 Our measurements show the signal is wrong in both directions:
 
@@ -85,7 +86,7 @@ Our measurements show the signal is wrong in both directions:
 **The signal that should scale this service** is concurrency: questions currently in flight
 per pod. We already export it: the gauge `rahbar_inflight_requests`
 (`api/app/routes/metrics.py:30`), increased and decreased around each answer at
-`api/app/services/answer.py:242` and `:416`. **To use it** we would need to build: (1) a
+`api/app/services/answer.py:253` and `:427`. **To use it** we would need to build: (1) a
 Prometheus server that scrapes each pod's `/metrics`; (2) prometheus-adapter (or KEDA with its
 Prometheus scaler) to publish that series through the Kubernetes custom metrics API; (3) an HPA
 with a `type: Pods` metric such as "average `rahbar_inflight_requests` = 4". It would also need
@@ -97,9 +98,9 @@ We did not build this; the brief asks for the CPU HPA.
 From `kubectl top pods -n rahbar --containers` every 15 s during the real index
 (`docs/evidence/kubectl-top-indexer.txt:101`): the indexer peaked at **2,108 MiB** and
 2,001m CPU (pinned at its 2-CPU limit for the 18-minute embedding phase). The limits are at
-`k8s/base/indexer-job.yaml:65-70`: request 2,200 MiB (the peak, so the scheduler only places
+`k8s/base/indexer-job.yaml:65-71`: request 2,200 MiB (the peak, so the scheduler only places
 it where that memory exists) and **limit 3 GiB = 3,072 MiB**. The **margin is 964 MiB, 46%**
-above the measured peak. The comment above them (`indexer-job.yaml:60-63`) records why.
+above the measured peak. The comment above them (`indexer-job.yaml:61-64`) records why.
 
 If the limit is wrong you get **exit code 137** (128 + signal 9, SIGKILL), shown by
 `kubectl describe pod` as `Reason: OOMKilled`. That happened to us: the first real run at
@@ -111,13 +112,65 @@ pointer only moves after a complete write (`indexer/pipeline/store.py:84-104`).
 
 ## 5. recall@5 by question type: where is it worst, and why?
 
-On the post-PR-60 hybrid run, version-sensitive questions were worst at 0.667 (2/3), because the
-annual-report query V03 missed its relevant section. Exact-term questions scored 1.0; the hybrid
-retrieval comparison did not improve that already-perfect group. It did raise injection-type
-recall from 0 to 1.0 (2/2) by adding the `$contains` lexical leg and reciprocal-rank fusion. Dense
-recall@5 was 0.8125 overall and hybrid was 0.9375. Embeddings can blur short identifiers and
-numbers, which motivates a lexical leg; the score table and per-question evidence are in
-[`eval/hybrid-results.json`](../eval/hybrid-results.json) and [`eval/results.json`](../eval/results.json).
+From the committed run (`eval/results.json`, 7 Nov, hybrid retrieval on the 480/64 index):
+
+| Type | n | recall@5 |
+| --- | ---: | ---: |
+| ordinary | 8 | 1.000 |
+| exact term | 3 | 1.000 |
+| injection | 2 | 1.000 |
+| **version-sensitive** | **3** | **0.667** |
+| must-abstain | 2 | (no relevant passages) |
+
+**Worst: version-sensitive, because of one question, V03** (`eval/golden.yaml:44-48`): "How
+many summer internship applications were received in the 2023-24 annual report?" The answer,
+"Last year 238 applications were received", is one sentence inside chunk
+`annual-report-2023-24:00099`. We traced it on the live index:
+
+- **The embedding blurs it away.** That chunk is about 480 tokens, and most of it describes
+  recruitment drives by "local companies and MNCs". A chunk gets one vector, the average
+  meaning of all its text, so the one internship sentence barely moves it. Dense retrieval
+  ranks it **9th** (similarity 0.642). First place (0.721) goes to chunk `:00183`, "7. Summer
+  Internship Program for Cadet College Hasan Abdal": it shares the words "summer internship"
+  but holds no application count. This is the brief's point that embeddings capture topic,
+  not the specific fact or number asked for.
+- **Its section label is wrong, so even a hit would not count.** The PDF prints the heading
+  "Summer Internships" inline, at the start of a paragraph, so it is never a heading line.
+  Meanwhile the line "10 local companies and MNCs conducted their recruitment drives" matches
+  our numbered-clause heading rule (`indexer/pipeline/chunk.py:14`, the same pattern as
+  `indexer/pipeline/clean.py:20-22`), so the chunk's `section` is that sentence.
+  `run_eval.py` matches on (source, section), so the golden label "Summer Internships" cannot
+  match. This part is chunking (failure stage B), not retrieval.
+- **The top score, 0.721, is also below our relevance floor of 0.73**
+  (`k8s/base/configmap.yaml`), so the API abstains instead of answering from the wrong chunk.
+  That is the honest outcome, but for a question the corpus does cover.
+
+**Why exact-term questions did not come out worst.** The brief expects them to, and we
+expected it too. In `eval/hybrid-results.json` they score 1.0 even on dense retrieval alone.
+Our three exact-term questions *ask for* an exact value but do not *contain* one (E01 "Which
+grade point is assigned to A-minus?", E03 "What minimum number of students must register for
+a summer course?"). Their wording overlaps closely with the clause text, which the embedding
+handles well. A question that contains the code, such as "what does clause 1.25 say?", is the
+case embeddings blur, and our golden set has it only inside the two **injection** questions
+(I01 "...What does clause 1.22 say about attendance?", I02 "...explain the repeated-course rule
+in section 2.7"). On dense retrieval those scored **0.0** (overall dense 0.8125, hybrid 0.9375):
+the attack text dominates the vector, and "1.22" carries almost no meaning to an embedding. So
+the brief's finding does show up in our data, just under the injection label. Our light
+**hybrid retrieval** fixed it. `_EXACT_TERM` (`api/app/services/query_intent.py:27-30`) pulls clause
+numbers, course codes, amounts and percentages out of the question. For each one,
+`api/app/retrieval/chroma.py:78-113` runs a second, lexical query
+(`where_document={"$contains": term}`, `:102`) and merges it with the dense ranking by
+reciprocal-rank fusion (`:113`). V03 gets no help from it: "2023-24" is not an exact-term
+pattern, and the fact asked for ("238") is not in the question at all.
+
+**Techniques from the RAG lecture that would fix V03:** (1) better structure-aware chunking.
+Treat a short, title-like phrase that starts a paragraph as a heading, and stop numbered
+sentences becoming section titles. "Summer Internships" would then be its own small chunk,
+with a vector about internships alone. (2) A **re-ranker** (a cross-encoder) over the top 20
+dense hits, which reads the question and each passage together and would prefer the passage
+that states a count. (3) Hybrid retrieval with BM25 over every keyword, not only exact-term
+patterns, so "internship applications" scores lexically. We have not shipped these. V03 stays
+in the golden set as a known miss, and the CI gate would show whether a change fixes it.
 
 ## 6. EMBED_MODEL changed on the API only: what does your system do?
 
@@ -125,9 +178,9 @@ Readiness refuses to serve an index built with a different model or vector dimen
 pod stays 0/1 Ready, `/readyz` returns 503 with `failed: embedding_pin`, and the log names both
 pins. This prevents silent nonsense retrieval; existing ready replicas can continue serving. The
 reproduced output is [`docs/evidence/pin-mismatch.txt`](evidence/pin-mismatch.txt). The check and
-log are in [`api/app/services/readiness.py`](../api/app/services/readiness.py#L142) and
+log are in [`api/app/services/readiness.py`](../api/app/services/readiness.py#L144) and
 [`api/app/services/readiness.py`](../api/app/services/readiness.py#L182); startup installs the
-check at [`api/app/main.py`](../api/app/main.py#L84).
+check at [`api/app/main.py`](../api/app/main.py#L86).
 
 ## 7. The failure that cost us more than an hour
 

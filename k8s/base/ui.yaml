@@ -54,7 +54,8 @@ spec:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
-              drop: ["ALL"]
+              drop:
+                - ALL
           volumeMounts:
             - name: tmp           # nginx.conf writes only under /tmp
               mountPath: /tmp

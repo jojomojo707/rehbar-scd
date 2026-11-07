@@ -77,7 +77,8 @@ Each request gets **at most two generation attempts** (R-GEN-02, R-QRY-07).
 | --- | --- |
 | Valid | Respond |
 | `invalid_json`, `schema`, `no_valid_citation`, `no_inline_citation`, provider `bad_request` | Retry once, with the correction turn ([Prompt contract](interfaces.md#prompt-contract)) |
-| Provider `timeout`, `rate_limited`, `server` | Retry once after a 1-second pause, with no correction turn |
+| Provider `timeout`, `server` | Retry once after a 1-second pause, with no correction turn |
+| Provider `rate_limited` | Retry once after the wait the provider asked for (`Retry-After`, or Groq's "try again in Xs"), at most 10 s (`RATE_LIMIT_MAX_WAIT_SECONDS` in `answer.py`), with no correction turn. Groq's free tier allows 8,000 tokens a minute, about five questions |
 | Provider `auth`, `not_configured` | Fall back at once; retrying cannot help |
 | Second attempt fails for any reason | Fall back |
 

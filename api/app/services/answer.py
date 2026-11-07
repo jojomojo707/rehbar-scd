@@ -39,6 +39,7 @@ from .turns import NullTurnLog, Turn, TurnLog
 from .validate import AnswerValidationError, ValidationReport, validate_answer
 
 log = logging.getLogger("rahbar.answer")
+RATE_LIMIT_MAX_WAIT_SECONDS = 10.0
 
 
 def _index_context(retriever: Retriever) -> tuple[object | None, dict[str, object]]:
@@ -92,7 +93,8 @@ def _validated_completion(
     tokens_out = 0
     model = ""
     # Attempt 1, then one retry (section 3.4): with a correction turn after a validation
-    # failure, after a 1 s pause after a timeout, rate limit or server error. Then fall back.
+    # failure, after a 1 s pause after a timeout or server error, after the provider's own
+    # Retry-After (capped) after a rate limit. Then fall back.
     for attempt in range(2):
         try:
             completion = provider.complete(messages, schema, temperature)
@@ -104,11 +106,20 @@ def _validated_completion(
             failure_reason = "provider"
             dependency = "groq" if provider.name == "hosted" else provider.name
             metrics.DEPENDENCY_ERRORS.labels(dependency=dependency).inc()
+            # Which kind (rate_limited, bad_request, timeout, ...) decides the remedy, so log
+            # it on every attempt; the outcome line only says "provider".
+            log.warning("provider error", extra={
+                "attempt": attempt + 1, "kind": exc.kind, "error": str(exc)})
             if exc.kind in {"auth", "not_configured"}:
                 break
             if attempt == 1:
                 break
-            if exc.kind in {"timeout", "rate_limited", "server"}:
+            if exc.kind == "rate_limited":
+                # Wait as long as the provider asked (Groq's free tier allows 8,000 tokens a
+                # minute, about five questions), capped so the request stays well inside the
+                # Ingress's 60 s read timeout. Retrying after 1 s only hit the limit again.
+                time.sleep(min(exc.retry_after or 1.0, RATE_LIMIT_MAX_WAIT_SECONDS))
+            elif exc.kind in {"timeout", "server"}:
                 time.sleep(1)
             elif exc.kind == "bad_request":
                 messages = [*messages, {
@@ -286,7 +297,7 @@ def answer_with_cache_status(
             _record_cache("miss")
             cache_status = "MISS"
         else:
-            _record_cache("skip")
+            _record_cache("skipped")
 
         # 4. Retrieve from the active index; Chroma's adapter applies the source filter.
         retrieval_started = time.perf_counter()

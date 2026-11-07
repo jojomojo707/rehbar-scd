@@ -95,8 +95,23 @@ in [docs/evidence/pod-delete.txt](docs/evidence/pod-delete.txt).
 
 **Open the UI.** Add `$(minikube ip) rahbar.local` to `/etc/hosts` and browse to
 `http://rahbar.local/`. `make ask` does not need this, because it sends the `Host` header
-itself. On macOS or Windows, run `minikube tunnel` in another terminal and pass
-`INGRESS_IP=127.0.0.1` to `make ask`.
+itself.
+
+**When the minikube IP does not answer (Docker Desktop, on any OS).** Docker Desktop runs
+containers inside its own VM, also on Linux (`docker context show` prints `desktop-linux`), so
+`curl http://$(minikube ip)` times out from your machine and so do `make ask` and `make eval`.
+Forward a local port to the ingress controller instead. This still goes through the Ingress
+and needs no `sudo`:
+
+```bash
+kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8080:80   # leave it running
+make ask INGRESS_IP=127.0.0.1:8080 Q="What CGPA puts a student on academic warning?"
+make eval INGRESS_IP=127.0.0.1:8080
+```
+
+For the UI, put `127.0.0.1 rahbar.local` in `/etc/hosts` and open `http://rahbar.local:8080/`.
+`minikube tunnel` with `INGRESS_IP=127.0.0.1` also works, but it binds port 80, which needs
+administrator rights.
 
 ### Things that bit us
 
@@ -112,6 +127,19 @@ itself. On macOS or Windows, run `minikube tunnel` in another terminal and pass
   the previous `:dev` image. Building straight into minikube's Docker is reliable:
   `eval $(minikube docker-env) && docker build -t rahbar-api:dev api`, then
   `kubectl rollout restart deployment/api -n rahbar`.
+- **Some answers say "I couldn't produce a reliable, cited answer right now".** That is the
+  safe fallback. Groq's free tier allows 8,000 tokens a minute, about five questions, and the
+  api retries a rate-limited call once, after the wait Groq asks for (at most 10 s). Asking
+  faster than that gives fallbacks. The api logs say so:
+  `kubectl logs deploy/api -n rahbar | grep '"provider error"'` shows `rate_limit_exceeded`.
+  `make eval` therefore waits 11 s between questions (`EVAL_PAUSE`), as our committed run did.
+- **The indexer Job fails with `changed <file>` in the `fetch-corpus` log.** The university
+  replaced one of the nine documents, so its SHA-256 no longer matches
+  `corpus/MANIFEST.md`, and the Job refuses to index different bytes (the api then never
+  becomes ready). See `kubectl logs job/indexer -n rahbar -c fetch-corpus`. All nine matched
+  on 7 Nov 2026. To accept the new file, run `python corpus/fetch.py --out /tmp/corpus`,
+  replace `corpus/MANIFEST.md` with the generated `/tmp/corpus/MANIFEST.generated.md`, run
+  `make images`, delete the Job, and apply again.
 - **A finished Job cannot be re-applied.** Its pod template is immutable, so after the indexer
   image changes run `kubectl delete job indexer -n rahbar --ignore-not-found` before
   `kubectl apply -k k8s/overlays/dev`. A clean clone never needs this.
@@ -162,7 +190,7 @@ Contract and error mapping: [docs/architecture/interfaces.md](docs/architecture/
 make test           # API and indexer unit tests (stubs only: no cluster, model or network)
 make lint           # ruff and mypy
 make dev            # the API with stub retriever and model on http://localhost:8000, plus the UI
-make eval           # the 18-question golden set through the Ingress, with the CI gate
+make eval           # the 18-question golden set through the Ingress, with the CI gate (~4 min)
 make check          # the submission checker
 ```
 
