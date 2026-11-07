@@ -39,6 +39,7 @@ from .turns import NullTurnLog, Turn, TurnLog
 from .validate import AnswerValidationError, ValidationReport, validate_answer
 
 log = logging.getLogger("rahbar.answer")
+RATE_LIMIT_MAX_WAIT_SECONDS = 10.0
 
 
 def _index_context(retriever: Retriever) -> tuple[object | None, dict[str, object]]:
@@ -92,7 +93,8 @@ def _validated_completion(
     tokens_out = 0
     model = ""
     # Attempt 1, then one retry (section 3.4): with a correction turn after a validation
-    # failure, after a 1 s pause after a timeout, rate limit or server error. Then fall back.
+    # failure, after a 1 s pause after a timeout or server error, after the provider's own
+    # Retry-After (capped) after a rate limit. Then fall back.
     for attempt in range(2):
         try:
             completion = provider.complete(messages, schema, temperature)
@@ -112,7 +114,12 @@ def _validated_completion(
                 break
             if attempt == 1:
                 break
-            if exc.kind in {"timeout", "rate_limited", "server"}:
+            if exc.kind == "rate_limited":
+                # Wait as long as the provider asked (Groq's free tier allows 8,000 tokens a
+                # minute, about five questions), capped so the request stays well inside the
+                # Ingress's 60 s read timeout. Retrying after 1 s only hit the limit again.
+                time.sleep(min(exc.retry_after or 1.0, RATE_LIMIT_MAX_WAIT_SECONDS))
+            elif exc.kind in {"timeout", "server"}:
                 time.sleep(1)
             elif exc.kind == "bad_request":
                 messages = [*messages, {

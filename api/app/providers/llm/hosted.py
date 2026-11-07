@@ -12,6 +12,7 @@ from ...config import Settings
 from .base import Completion, ProviderError
 
 _ORG_ID = re.compile(r"\borg_[A-Za-z0-9]+")
+_TRY_AGAIN = re.compile(r"try again in ([0-9]+(?:\.[0-9]+)?)(ms|s)\b")
 
 
 def strict_json_schema(schema: dict[str, Any]) -> dict[str, Any]:
@@ -85,7 +86,9 @@ class HostedProvider:
             ) from exc
 
         if response.status_code >= 400:
-            raise _provider_error(response.status_code, _error_detail(response))
+            error = _provider_error(response.status_code, _error_detail(response))
+            error.retry_after = _retry_after(response)
+            raise error
         try:
             body = response.json()
             choice = body["choices"][0]
@@ -119,6 +122,23 @@ def _error_detail(response: httpx.Response) -> str:
     if retry_after:
         parts.append(f"retry-after {retry_after}s")
     return "; ".join(parts)
+
+
+def _retry_after(response: httpx.Response) -> float | None:
+    """Seconds to wait before retrying: the Retry-After header, else Groq's "Please try again
+    in 1.5s" (or "850ms") in the error message."""
+    header = response.headers.get("retry-after")
+    try:
+        if header:
+            return max(0.0, float(header))
+        message = str((response.json().get("error") or {}).get("message") or "")
+    except (ValueError, AttributeError):
+        return None
+    match = _TRY_AGAIN.search(message)
+    if not match:
+        return None
+    value = float(match.group(1))
+    return value / 1000 if match.group(2) == "ms" else value
 
 
 def _provider_error(status_code: int, detail: str = "") -> ProviderError:

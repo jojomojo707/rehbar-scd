@@ -351,3 +351,34 @@ def test_provider_failure_is_logged_with_its_kind_then_falls_back(
     assert [(r["attempt"], r["kind"]) for r in logged] == [(1, "rate_limited"),
                                                             (2, "rate_limited")]
     assert "TPM" in logged[0]["error"]
+
+
+@pytest.mark.parametrize(("retry_after", "waited"), [(None, 1.0), (3.5, 3.5), (45.0, 10.0)])
+def test_rate_limited_retry_waits_as_asked_but_capped(
+    monkeypatch: pytest.MonkeyPatch, retry_after: float | None, waited: float
+) -> None:
+    from app.providers.llm.base import ProviderError
+    from app.services import answer as answer_mod
+
+    class LimitedOnce:
+        name = "hosted"
+        calls = 0
+
+        def complete(self, messages, schema, temperature):  # type: ignore[no-untyped-def]
+            self.calls += 1
+            if self.calls == 1:
+                raise ProviderError("rate_limited", "TPM", retry_after=retry_after)
+            return Completion(text=Answer(
+                reasoning="", answer="Warning is below 2.00 [handbook.pdf / 5.4 Academic Warning].",
+                citations=[Citation(source="handbook.pdf", section="5.4 Academic Warning",
+                                    page=31)],
+                answered_from_context=True, confidence="high").model_dump_json(),
+                tokens_in=1, tokens_out=1, model="m")
+
+    sleeps: list[float] = []
+    monkeypatch.setattr(answer_mod.time, "sleep", sleeps.append)
+    answer, reason, *_rest = _validated_completion(
+        "What is academic warning?", [passage()], [], LimitedOnce(), 0.2)
+
+    assert sleeps == [waited]
+    assert reason is None and answer.answered_from_context is True
