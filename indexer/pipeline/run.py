@@ -10,6 +10,7 @@ Kubernetes retries it up to the Job's backoffLimit.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import shutil
@@ -97,12 +98,12 @@ def _persist_verification_artifacts(
     return report_path
 
 
-def run_pipeline(settings: IndexerSettings) -> dict[str, int | float | str]:
+def run_pipeline(settings: IndexerSettings) -> dict[str, object]:
     from .chunk import chunk
     from .clean import clean
     from .embed import embed
     from .extract import extract
-    from .store import store
+    from .store import active_snapshot, get_client, plan_incremental, store
     from .verify import verify_documents
 
     documents = discover(settings.corpus_dir)
@@ -159,8 +160,25 @@ def run_pipeline(settings: IndexerSettings) -> dict[str, int | float | str]:
         all_chunks.extend(pieces)
     if not all_chunks:
         raise ValueError("no indexable text remained after extraction and cleaning")
-    vectors = embed([c.text for c in all_chunks], settings)
-    stored = store(all_chunks, vectors, settings, original_tokens=original_tokens)
+    source_digests = {
+        path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+        for path, _version, _superseded in documents
+    }
+    client = get_client(settings)
+    snapshot = active_snapshot(settings, client)
+    reusable, incremental = plan_incremental(all_chunks, source_digests, settings, snapshot)
+    chunks_to_embed = [chunk for chunk in all_chunks if chunk.id not in reusable]
+    new_vectors = embed([chunk.text for chunk in chunks_to_embed], settings)
+    vector_by_id = dict(reusable)
+    vector_by_id.update({chunk.id: vector for chunk, vector in zip(chunks_to_embed, new_vectors)})
+    vectors = [vector_by_id[chunk.id] for chunk in all_chunks]
+    stored = store(all_chunks, vectors, settings, client=client,
+                   original_tokens=original_tokens, source_digests=source_digests,
+                   incremental=incremental)
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    report["incremental"] = incremental
+    report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n",
+                           encoding="utf-8")
     stored_tokens = sum(item.tokens for item in all_chunks)
     pointer = f"{settings.collection}-active"
     collection = settings.collection
@@ -174,6 +192,7 @@ def run_pipeline(settings: IndexerSettings) -> dict[str, int | float | str]:
     return {
         "collection": collection,
         "verification_report": str(report_path),
+        "incremental": incremental,
         "chunks": stored,
         "documents": len(documents),
         "skipped": skipped,
@@ -186,6 +205,8 @@ def run_pipeline(settings: IndexerSettings) -> dict[str, int | float | str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build the RAHBAR index, then exit.")
     parser.add_argument("--dummy", action="store_true", help="write three fake chunks")
+    parser.add_argument("--restore", action="store_true",
+                        help="restore the previous complete index and exit")
     args = parser.parse_args()
     settings = get_settings()
     log("indexer starting", dummy=args.dummy, embed_model=settings.embed_model,
@@ -193,6 +214,12 @@ def main() -> int:
         pod=os.environ.get("HOSTNAME", "-"))
     started = time.perf_counter()
     try:
+        if args.restore:
+            from .store import restore_previous
+
+            restored = restore_previous(settings)
+            log("previous index restored", collection=restored)
+            return 0
         if args.dummy:
             from .dummy import write_dummy_index
             from .store import get_client

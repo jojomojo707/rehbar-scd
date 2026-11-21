@@ -170,6 +170,14 @@ The api keeps serving the old collection until the new one is complete, then swi
 and storage amplification (`kubectl logs job/indexer -n rahbar -c indexer`). Pipeline details:
 [docs/PIPELINE.md](docs/PIPELINE.md).
 
+The indexer records a SHA-256 digest and chunk count for each source document. On a repeated run,
+it reuses the prior vectors for unchanged documents, embeds changed or added documents only, and
+omits deleted documents from the new active collection. The prior complete collection remains
+available as the rollback target. To switch the active pointer to it, run
+`python -m pipeline.run --restore` in an indexer environment configured with the same Chroma
+settings. The command swaps the active and previous collection names; running it again switches
+back.
+
 ## API
 
 The Ingress forwards only `/api/*` to the api. The health and metrics endpoints are on the
