@@ -70,16 +70,26 @@ def run_pipeline(settings: IndexerSettings) -> dict[str, int | float | str]:
     from .embed import embed
     from .extract import extract
     from .store import store
+    from .verify import verify_documents
 
     documents = discover(settings.corpus_dir)
     if not documents:
         raise SystemExit(f"no documents found in {settings.corpus_dir}")
+    extracted = [extract(str(path), version, superseded)
+                 for path, version, superseded in documents]
+    verification = verify_documents(
+        extracted, embed=lambda texts: embed(texts, settings))
+    failed = [item for item in verification if not item.passed]
+    if failed:
+        reasons = {item.source: {name: result.reason for name, result in item.checks.items()
+                                 if not result.passed} for item in failed}
+        raise ValueError(f"document verification failed: {json.dumps(reasons, sort_keys=True)}")
     all_chunks: list[Chunk] = []
     tokenizer = get_tokenizer(settings.embed_model, settings.embed_cache_dir)
     original_tokens = 0
     skipped = 0
-    for path, doc_version, superseded in documents:
-        doc = clean(extract(str(path), doc_version, superseded))
+    for path, raw_doc in zip((item[0] for item in documents), extracted):
+        doc = clean(raw_doc)
         original_tokens += sum(tokenizer.count(page.text) for page in doc.pages)
         pieces = chunk(doc, settings.chunk_size, settings.chunk_overlap, tokenizer, settings.chunk_strategy)
         log("chunked", source=path.name, chunks=len(pieces))
