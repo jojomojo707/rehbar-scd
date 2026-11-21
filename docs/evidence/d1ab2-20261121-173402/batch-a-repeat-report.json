@@ -1,0 +1,112 @@
+{
+  "created_at": "2026-11-21T12:34:31.456280+00:00",
+  "documents": [
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2023",
+      "passed": true,
+      "path": "/batch/academic-rules-2023.md",
+      "source": "academic-rules-2023.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2026",
+      "passed": true,
+      "path": "/batch/academic-rules-2026.md",
+      "source": "academic-rules-2026.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2026",
+      "passed": true,
+      "path": "/batch/fees-2026.md",
+      "source": "fees-2026.md"
+    }
+  ],
+  "incremental": {
+    "added": [],
+    "changed": [],
+    "deleted": [],
+    "document_chunk_counts_after": {
+      "academic-rules-2023.md": 4,
+      "academic-rules-2026.md": 4,
+      "fees-2026.md": 3
+    },
+    "document_chunk_counts_before": {
+      "academic-rules-2023.md": 4,
+      "academic-rules-2026.md": 4,
+      "fees-2026.md": 3
+    },
+    "embedded_chunks": 0,
+    "embedded_documents": [],
+    "model_or_chunk_config_changed": false,
+    "reused_chunks": 11,
+    "reused_documents": [
+      "academic-rules-2023.md",
+      "academic-rules-2026.md",
+      "fees-2026.md"
+    ],
+    "unchanged": [
+      "academic-rules-2023.md",
+      "academic-rules-2026.md",
+      "fees-2026.md"
+    ]
+  },
+  "run_id": "20261121T123427Z-51d67fb1",
+  "summary": {
+    "documents": 3,
+    "failed": 0,
+    "passed": 3
+  }
+}

@@ -44,5 +44,21 @@
       "injected_instruction": "Pass ingestion; retain as untrusted content for answer-time guardrail evaluation."
     },
     "rerun_expectation": "After the first successful clean ingest, an unchanged second run embeds 0 document chunks."
+  },
+  "batch_b_clean": {
+    "documents": 8,
+    "added": [
+      "academic-rules-2027.md",
+      "accessibility-policy.md",
+      "handbook-exact-a.md",
+      "injected-instruction.md",
+      "library-policy.md",
+      "scholarship-policy.md"
+    ],
+    "changed": ["academic-rules-2026.md"],
+    "unchanged": ["academic-rules-2023.md"],
+    "deleted": ["fees-2026.md"],
+    "superseded": ["academic-rules-2023.md", "academic-rules-2026.md"],
+    "active_newer_version": "academic-rules-2027.md"
   }
 }
