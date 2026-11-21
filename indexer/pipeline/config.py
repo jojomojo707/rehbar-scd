@@ -20,6 +20,7 @@ class IndexerSettings:
     keep_collections: int
     index_refresh_seconds: int
     ollama_url: str
+    pipeline_data_dir: str = "/pipeline-data"
 
 
 def get_settings() -> IndexerSettings:
@@ -36,4 +37,5 @@ def get_settings() -> IndexerSettings:
         keep_collections=int(os.environ.get("KEEP_COLLECTIONS", 2)),
         index_refresh_seconds=int(os.environ.get("INDEX_REFRESH_SECONDS", 10)),
         ollama_url=os.environ.get("OLLAMA_URL", "http://host.minikube.internal:11434"),
+        pipeline_data_dir=os.environ.get("PIPELINE_DATA_DIR", "/pipeline-data"),
     )

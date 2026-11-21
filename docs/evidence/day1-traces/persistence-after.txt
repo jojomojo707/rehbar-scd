@@ -1,0 +1,1 @@
+﻿{"trace_id":"7bcb291e131d4d2da5d6dce89e54975c","query":"Explain attendance eligi

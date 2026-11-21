@@ -1,6 +1,8 @@
-"""JSON logs to stdout, with the request id on every line (section 4.8).
+"""JSON application logs to stdout, with the request id on every line (section 4.8).
 
-A pod's filesystem is ephemeral, so logs go to stdout and nowhere else.
+Full query traces are additionally persisted by `services.tracing` when `TRACE_DIR` is set.
+
+Ordinary application logs go to stdout; traces have their own filtered JSONL writer.
 Pass structured fields with `extra=`:
 
     log.info("answered", extra={"top_k": 5, "chunk_ids": ids})

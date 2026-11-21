@@ -36,6 +36,7 @@ from .query_intent import (
     trim_history,
 )
 from .turns import NullTurnLog, Turn, TurnLog
+from .tracing import make_trace, write_trace
 from .validate import AnswerValidationError, ValidationReport, validate_answer
 
 log = logging.getLogger("rahbar.answer")
@@ -223,6 +224,7 @@ def answer_with_cache_status(
     cache: SemanticCache | None = None,
     turns: TurnLog | None = None,
 ) -> AskResult:
+    request_started = time.perf_counter()
     cache = cache or NullSemanticCache()
     turns = turns or NullTurnLog()
     request_id = request_id_var.get()
@@ -293,6 +295,14 @@ def answer_with_cache_status(
                     "tokens_in": 0,
                     "tokens_out": 0,
                 })
+                write_trace(settings.trace_dir, make_trace(
+                    trace_id=request_id, question=question, retrieval_query=retrieval_text,
+                    passages=[], response=response, settings=settings, index_version=index_version,
+                    cache_status="HIT", stage_ms={"embedding": embed_ms,
+                        "total": round((time.perf_counter() - request_started) * 1000, 1)},
+                    guardrail_actions=["cache_hit"],
+                    generated=False,
+                ))
                 return AskResult(response, "HIT")
             _record_cache("miss")
             cache_status = "MISS"
@@ -422,6 +432,28 @@ def answer_with_cache_status(
                 "generation_ms": generation_ms,
             },
         )
+        retrieval_value = query.text if isinstance(query, RetrievalQuery) else retrieval_text
+        guardrails = []
+        if retrieval_value != retrieval_text:
+            guardrails.append("instruction_override_removed_from_retrieval_query")
+        if should_abstain:
+            guardrails.append("relevance_floor_abstention")
+        if report.dropped:
+            guardrails.append("invalid_citations_dropped")
+        write_trace(settings.trace_dir, make_trace(
+            trace_id=request_id, question=question, retrieval_query=retrieval_value,
+            passages=passages, response=response, settings=settings, index_version=index_version,
+            cache_status=cache_status,
+            stage_ms={"embedding": embed_ms, "retrieval": round(retrieval_seconds * 1000, 1),
+                      "generation": generation_ms,
+                      "total": round((time.perf_counter() - request_started) * 1000, 1)},
+            guardrail_actions=guardrails,
+            history=used_history,
+            generated=not should_abstain,
+            outcome=outcome,
+            fallback_reason=fallback_reason,
+            abstain_reason=abstain_reason,
+        ))
         return AskResult(response, cache_status)
     finally:
         metrics.INFLIGHT.dec()

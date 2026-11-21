@@ -32,8 +32,16 @@ REQUIRED_ABSTENTION = 1.0      # every must-abstain question must be declined
 
 
 def load_golden(path: Path) -> list[dict]:
-    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-    questions = data.get("questions") or []
+    if path.suffix.lower() == ".jsonl":
+        questions = [json.loads(line) for line in path.read_text(encoding="utf-8-sig").splitlines() if line.strip()]
+        for question in questions:
+            question["type"] = question.get("bucket", question.get("type", "ordinary"))
+            question["must_abstain"] = not question.get("answerable", True)
+            question["relevant"] = [{"source": gold["document"], "page": gold.get("page"),
+                                     "section": gold.get("section", "")} for gold in question.get("gold", [])]
+    else:
+        data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        questions = data.get("questions") or []
     if not questions:
         sys.exit(f"no questions in {path}")
     return questions
@@ -125,6 +133,12 @@ def summarise(rows: list[dict]) -> dict:
             "cached": bool(response.get("cached", False)),
             "fallback": _is_fallback(response),
             "seconds": row.get("seconds"),
+            "retrieved": [{"source": item.get("source"), "section": item.get("section"),
+                           "page": item.get("page"), "score": item.get("score")}
+                          for item in retrieved],
+            "relevant": relevant,
+            "answer": response.get("answer", ""),
+            "citations": response.get("citations") or [],
         })
     abstain = [not r["answered_from_context"] for r in slim if r["must_abstain"]]
     by_type = {}
@@ -133,6 +147,11 @@ def summarise(rows: list[dict]) -> dict:
         by_type[kind] = {"n": len(subset),
                          "recall@3": _mean([r["recall@3"] for r in subset]),
                          "recall@5": _mean([r["recall@5"] for r in subset])}
+    latency = sorted(float(row["seconds"]) for row in rows if row.get("seconds") is not None)
+    def percentile(p: float) -> float | None:
+        if not latency:
+            return None
+        return latency[min(len(latency) - 1, round((len(latency) - 1) * p))]
     return {
         "recall@3": _mean([r["recall@3"] for r in slim]),
         "recall@5": _mean([r["recall@5"] for r in slim]),
@@ -141,6 +160,8 @@ def summarise(rows: list[dict]) -> dict:
         "by_type": by_type,
         "cache_hits": sum(r["cached"] for r in slim),
         "fallbacks": sum(r["fallback"] for r in slim),
+        "latency_p50_seconds": percentile(.50),
+        "latency_p95_seconds": percentile(.95),
         "rows": slim,
     }
 
@@ -221,6 +242,7 @@ def main() -> int:
 
     results["golden"] = str(args.golden)
     results["questions"] = len(rows)
+    results["gate_failures"] = failures
     args.out.write_text(json.dumps(results, indent=2), encoding="utf-8")
     print(f"\nresults written to {args.out}")
     if args.update_baseline and not failures:

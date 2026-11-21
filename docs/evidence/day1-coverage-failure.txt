@@ -1,0 +1,71 @@
+{
+  "created_at": "2026-11-21T19:28:24.253067+00:00",
+  "model": "BAAI/bge-small-en-v1.5",
+  "threshold": 1.0,
+  "threshold_rule": "fixed cosine threshold 1.0",
+  "in_scope": {
+    "n": 28,
+    "mean": 0.824931869642857,
+    "min": 0.70565565
+  },
+  "out_of_scope": {
+    "n": 12,
+    "mean": 0.6102988833333333,
+    "max": 0.78788474,
+    "above_threshold": 0,
+    "false_positive_rate": 0.0
+  },
+  "threshold_justification": "User-specified threshold used to demonstrate a nonzero coverage-gate failure.",
+  "uncovered_topics": {
+    "attendance": [
+      "C01",
+      "C02",
+      "C03",
+      "C04",
+      "C05"
+    ],
+    "semester_calendar": [
+      "C06",
+      "C07",
+      "C08",
+      "C09"
+    ],
+    "credit_hours": [
+      "C10",
+      "C11"
+    ],
+    "academic_warning": [
+      "C12",
+      "C13",
+      "C14"
+    ],
+    "course_repeat": [
+      "C15",
+      "C16",
+      "C17"
+    ],
+    "library": [
+      "C18",
+      "C19",
+      "C20"
+    ],
+    "accessibility": [
+      "C21",
+      "C22",
+      "C23"
+    ],
+    "scholarship": [
+      "C24",
+      "C25",
+      "C26"
+    ],
+    "fees": [
+      "C27",
+      "C28"
+    ]
+  },
+  "limitation": "Threshold evidence is synthetic and only 40 queries; use human-reviewed live queries before production use."
+}
+Wrote eval\results\coverage-fail-demo.json
+
+Exit code: 1

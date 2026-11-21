@@ -133,10 +133,13 @@ def run_pipeline(settings: IndexerSettings) -> dict[str, object]:
             "checks": {name: {"passed": check.passed, "reason": check.reason}
                        for name, check in result.checks.items()},
         })
+    data_root = Path(settings.pipeline_data_dir)
     report_path = _persist_verification_artifacts(
         records, run_id=run_id,
-        quarantine_dir=os.environ.get("QUARANTINE_DIR", "/tmp/rahbar/quarantine"),
-        report_dir=os.environ.get("VERIFICATION_REPORT_DIR", "/tmp/rahbar/verification-reports"),
+        quarantine_dir=os.environ.get("QUARANTINE_DIR", str(data_root / "quarantine")),
+        report_dir=os.environ.get(
+            "VERIFICATION_REPORT_DIR", str(data_root / "eval" / "results" / "verification")
+        ),
     )
     log("verification report written", run_id=run_id, report=str(report_path),
         passed=sum(bool(record["passed"]) for record in records),

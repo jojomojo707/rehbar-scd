@@ -1,0 +1,40 @@
+{"id":"C01","scope":"in_scope","topic":"attendance","question":"How much class attendance is needed to take the final?"}
+{"id":"C02","scope":"in_scope","topic":"attendance","question":"What happens after missing too many lectures?"}
+{"id":"C03","scope":"in_scope","topic":"attendance","question":"Can a medical absence count as an exception to the attendance rule?"}
+{"id":"C04","scope":"in_scope","topic":"attendance","question":"What percentage of lectures must a student attend?"}
+{"id":"C05","scope":"in_scope","topic":"attendance","question":"Is documented illness considered for lecture absences?"}
+{"id":"C06","scope":"in_scope","topic":"semester_calendar","question":"How many teaching weeks are in a normal semester?"}
+{"id":"C07","scope":"in_scope","topic":"semester_calendar","question":"When are final exams held in relation to makeup week?"}
+{"id":"C08","scope":"in_scope","topic":"semester_calendar","question":"How many weeks are reserved for final examinations?"}
+{"id":"C09","scope":"in_scope","topic":"semester_calendar","question":"What is the length of a regular teaching term?"}
+{"id":"C10","scope":"in_scope","topic":"credit_hours","question":"What does one theory credit hour mean each week?"}
+{"id":"C11","scope":"in_scope","topic":"credit_hours","question":"How many classroom hours make up a theory credit?"}
+{"id":"C12","scope":"in_scope","topic":"academic_warning","question":"At what CGPA does a student receive an academic warning?"}
+{"id":"C13","scope":"in_scope","topic":"academic_warning","question":"What cumulative GPA triggers academic probation or warning?"}
+{"id":"C14","scope":"in_scope","topic":"academic_warning","question":"When is academic warning assessed?"}
+{"id":"C15","scope":"in_scope","topic":"course_repeat","question":"Which attempt counts when repeating a course?"}
+{"id":"C16","scope":"in_scope","topic":"course_repeat","question":"Can I repeat a class to raise my cumulative GPA?"}
+{"id":"C17","scope":"in_scope","topic":"course_repeat","question":"How does a repeated course affect the recorded grade?"}
+{"id":"C18","scope":"in_scope","topic":"library","question":"How many books can I borrow from the library?"}
+{"id":"C19","scope":"in_scope","topic":"library","question":"For how long can borrowed books be checked out?"}
+{"id":"C20","scope":"in_scope","topic":"library","question":"Can a library book be renewed if someone reserved it?"}
+{"id":"C21","scope":"in_scope","topic":"accessibility","question":"Who should I contact to request academic accommodations?"}
+{"id":"C22","scope":"in_scope","topic":"accessibility","question":"When should accommodation requests be made?"}
+{"id":"C23","scope":"in_scope","topic":"accessibility","question":"Who can see an approved accommodation plan?"}
+{"id":"C24","scope":"in_scope","topic":"scholarship","question":"What documents are needed for a need-based scholarship application?"}
+{"id":"C25","scope":"in_scope","topic":"scholarship","question":"How often does the scholarship committee meet?"}
+{"id":"C26","scope":"in_scope","topic":"scholarship","question":"What is required to renew a need-based award?"}
+{"id":"C27","scope":"in_scope","topic":"fees","question":"How is an overdue library book fine calculated?"}
+{"id":"C28","scope":"in_scope","topic":"fees","question":"What does a student pay if a borrowed library book is lost?"}
+{"id":"C29","scope":"out_of_scope","topic":"healthcare","question":"Does the university clinic offer dental surgery?"}
+{"id":"C30","scope":"out_of_scope","topic":"housing","question":"How do I reserve an on-campus dormitory room?"}
+{"id":"C31","scope":"out_of_scope","topic":"transport","question":"What time does the campus shuttle leave for the airport?"}
+{"id":"C32","scope":"out_of_scope","topic":"employment","question":"How many annual leave days do university employees receive?"}
+{"id":"C33","scope":"out_of_scope","topic":"sports","question":"When does the inter-university cricket tournament start?"}
+{"id":"C34","scope":"out_of_scope","topic":"food","question":"Is the cafeteria open during public holidays?"}
+{"id":"C35","scope":"out_of_scope","topic":"parking","question":"Where can visitors buy a monthly parking permit?"}
+{"id":"C36","scope":"out_of_scope","topic":"finance","question":"Which bank has the lowest home mortgage rate?"}
+{"id":"C37","scope":"out_of_scope","topic":"weather","question":"Will it rain in Islamabad next Monday?"}
+{"id":"C38","scope":"out_of_scope","topic":"technology","question":"How do I reset my personal laptop BIOS password?"}
+{"id":"C39","scope":"out_of_scope","topic":"travel","question":"What are the visa requirements for a Canadian tourist?"}
+{"id":"C40","scope":"out_of_scope","topic":"healthcare","question":"Which pharmacy near campus sells insulin?"}

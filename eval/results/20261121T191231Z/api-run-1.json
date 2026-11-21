@@ -1,0 +1,1980 @@
+{
+  "recall@3": 0.5666666666666667,
+  "recall@5": 0.5833333333333334,
+  "citation_validity": 1.0,
+  "abstention_correctness": 1.0,
+  "by_type": {
+    "answerable": {
+      "n": 25,
+      "recall@3": 0.6,
+      "recall@5": 0.6
+    },
+    "hard": {
+      "n": 5,
+      "recall@3": 0.4,
+      "recall@5": 0.5
+    },
+    "unanswerable": {
+      "n": 5,
+      "recall@3": null,
+      "recall@5": null
+    }
+  },
+  "cache_hits": 1,
+  "fallbacks": 9,
+  "latency_p50_seconds": 2.39,
+  "latency_p95_seconds": 11.57,
+  "rows": [
+    {
+      "id": "O01",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.7518453,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": true,
+      "fallback": false,
+      "seconds": 1.52,
+      "retrieved": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.1 The medium of instruction and examinations for all courses is",
+          "page": 7,
+          "score": 0.7518453
+        },
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "NUMLOGIC 2024",
+          "page": 29,
+          "score": 0.6729199299999999
+        },
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "BRANIAC 2024",
+          "page": 44,
+          "score": 0.67007434
+        },
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "10 local companies and MNCs conducted their recruitment drives, catering to a diverse",
+          "page": 48,
+          "score": 0.6650020999999999
+        },
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "12. Seminar on Opening Up the Horizons An Insight into the World of",
+          "page": 22,
+          "score": 0.65736198
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 7,
+          "section": "1.1"
+        }
+      ],
+      "answer": "English [academic-rules-handbook-jun-2026.pdf / 1.1 The medium of instruction and examinations for all courses is]",
+      "citations": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.1 The medium of instruction and examinations for all courses is",
+          "page": 7
+        }
+      ]
+    },
+    {
+      "id": "O02",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.878241,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 2.79,
+      "retrieved": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.6 A regular semester is spread over 16 weeks of teaching, one",
+          "page": 7,
+          "score": 0.878241
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.7 1-credit hour implies teaching a theory course for one",
+          "page": 7,
+          "score": 0.7500081000000001
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.3 There are two regular semesters, namely, Fall and Spring, in",
+          "page": 7,
+          "score": 0.7376574300000001
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "6. Students are allowed to Add/Drop a course during the",
+          "page": 29,
+          "score": 0.73648226
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "6.1 Summer semester is an 8-week semester and is meant to",
+          "page": 28,
+          "score": 0.73097676
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 7,
+          "section": "1.6"
+        }
+      ],
+      "answer": "There are 16 teaching weeks in a regular semester, excluding the makeup and final examination weeks [academic-rules-handbook-jun-2026.pdf / 1.6 A regular semester is spread over 16 weeks of teaching, one].",
+      "citations": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.6 A regular semester is spread over 16 weeks of teaching, one",
+          "page": 7
+        }
+      ]
+    },
+    {
+      "id": "O03",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.87995833,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.88,
+      "retrieved": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.7 1-credit hour implies teaching a theory course for one",
+          "page": 7,
+          "score": 0.87995833
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.9 A theory course is normally assigned 2 to 4 credit hours,",
+          "page": 8,
+          "score": 0.81837118
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.12 A 4-credit hour course, for example, having 3 credit",
+          "page": 8,
+          "score": 0.7781471600000001
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.11 1-credit hour of lab work is equivalent to 3 hours of",
+          "page": 8,
+          "score": 0.7516160000000001
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.6 A regular semester is spread over 16 weeks of teaching, one",
+          "page": 7,
+          "score": 0.74890625
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 7,
+          "section": "1.7"
+        }
+      ],
+      "answer": "One credit hour of theory represents one classroom\u2011teaching hour each week throughout the semester [academic-rules-handbook-jun-2026.pdf / 1.7 1-credit hour implies teaching a theory course for one].",
+      "citations": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.7 1-credit hour implies teaching a theory course for one",
+          "page": 7
+        }
+      ]
+    },
+    {
+      "id": "O04",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.84089112,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": true,
+      "seconds": 2.39,
+      "retrieved": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "4.3 The normal course load is 5 courses. A final year student may",
+          "page": 19,
+          "score": 0.84089112
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "18. It is generally recommended that students only take the",
+          "page": 11,
+          "score": 0.80344927
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.17 Normal semester course load for undergraduate students,",
+          "page": 9,
+          "score": 0.79071146
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.9 A theory course is normally assigned 2 to 4 credit hours,",
+          "page": 8,
+          "score": 0.7488355600000001
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.6 A regular semester is spread over 16 weeks of teaching, one",
+          "page": 7,
+          "score": 0.73238194
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 19,
+          "section": "4.3"
+        }
+      ],
+      "answer": "I couldn't produce a reliable, cited answer right now. Please try again in a moment.",
+      "citations": []
+    },
+    {
+      "id": "O05",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.85363072,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.72,
+      "retrieved": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.22 Failure to meet attendance requirements in a course will",
+          "page": 10,
+          "score": 0.85363072
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "5.8 Any failed or missed course from a previous semester should",
+          "page": 25,
+          "score": 0.81586242
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "3.32 A new admission is closed if an awaited result does not meet",
+          "page": 18,
+          "score": 0.77535623
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "4.27 Following conditions must be fulfilled before submitting a",
+          "page": 23,
+          "score": 0.75021869
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "8. It is the responsibility of the student to check his/her",
+          "page": 30,
+          "score": 0.74792337
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 10,
+          "section": "1.22"
+        }
+      ],
+      "answer": "If a student fails to meet attendance requirements in a course, the student becomes ineligible to appear in the final examination of that course and will be assigned an F/A grade [academic-rules-handbook-jun-2026.pdf / 1.22 Failure to meet attendance requirements in a course will].",
+      "citations": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.22 Failure to meet attendance requirements in a course will",
+          "page": 10
+        }
+      ]
+    },
+    {
+      "id": "O06",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.86332864,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": true,
+      "seconds": 3.1,
+      "retrieved": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.25 Minimum Cumulative Grade Point Average (CGPA) of 2.00 is",
+          "page": 10,
+          "score": 0.86332864
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "5.4 Minimum CGPA required to avoid academic warning is 2.00",
+          "page": 24,
+          "score": 0.83657205
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "7.1 Following awards have been approved to honor outstanding",
+          "page": 30,
+          "score": 0.8140893
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "3.28 If the CGPA of an undergraduate student fall below the",
+          "page": 17,
+          "score": 0.78928524
+        },
+        {
+          "source": "prospectus-2026-academic-rules-and-regulations.pdf",
+          "section": "13. Registration of Students under",
+          "page": 2,
+          "score": 0.76868874
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 10,
+          "section": "1.25"
+        }
+      ],
+      "answer": "I couldn't produce a reliable, cited answer right now. Please try again in a moment.",
+      "citations": []
+    },
+    {
+      "id": "O07",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.84035647,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": true,
+      "seconds": 4.87,
+      "retrieved": [
+        {
+          "source": "grading-page.html",
+          "section": "Repeating a Course",
+          "page": 1,
+          "score": 0.84035647
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "2.7 In CGPA calculation for the courses that have been repeated,",
+          "page": 12,
+          "score": 0.83716762
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "5.11 If a student repeats a failed course, the new grade will be used",
+          "page": 25,
+          "score": 0.82507646
+        },
+        {
+          "source": "prospectus-2026-academic-rules-and-regulations.pdf",
+          "section": "218 Prospectus 2026",
+          "page": 3,
+          "score": 0.82386339
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "5.7 If the CGPA equals or exceeds 2.00 after the 1st or 2nd",
+          "page": 25,
+          "score": 0.8013420099999999
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 13,
+          "section": "2.7"
+        }
+      ],
+      "answer": "I couldn't produce a reliable, cited answer right now. Please try again in a moment.",
+      "citations": []
+    },
+    {
+      "id": "O08",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.85561669,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": true,
+      "seconds": 5.48,
+      "retrieved": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "4.23 Application for withdrawal from a course must be",
+          "page": 22,
+          "score": 0.85561669
+        },
+        {
+          "source": "prospectus-2026-academic-rules-and-regulations.pdf",
+          "section": "HOD.",
+          "page": 2,
+          "score": 0.80309427
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "4.24 Students are not allowed to withdraw from any course in the",
+          "page": 22,
+          "score": 0.80098504
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "4.6 A student cannot withdraw from either Theory or Lab part of",
+          "page": 20,
+          "score": 0.78962618
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "6.8 A student can withdraw from a summer course on or before",
+          "page": 29,
+          "score": 0.7760130199999999
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 22,
+          "section": "4.23"
+        }
+      ],
+      "answer": "I couldn't produce a reliable, cited answer right now. Please try again in a moment.",
+      "citations": []
+    },
+    {
+      "id": "V01",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.81509864,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 12.05,
+      "retrieved": [
+        {
+          "source": "undergraduate-academic-rules-aug-2023.pdf",
+          "section": "1.17 Normal semester course load for undergraduate students, who are",
+          "page": 7,
+          "score": 0.81509864
+        },
+        {
+          "source": "undergraduate-academic-rules-aug-2023.pdf",
+          "section": "80 to 90 minutes with the approval of the Head of the Department.",
+          "page": 7,
+          "score": 0.7993966299999999
+        },
+        {
+          "source": "undergraduate-academic-rules-aug-2023.pdf",
+          "section": "1.19 A student can register for a maximum of two courses in summer",
+          "page": 7,
+          "score": 0.79452121
+        },
+        {
+          "source": "undergraduate-academic-rules-aug-2023.pdf",
+          "section": "6. Rules for Summer Semester",
+          "page": 20,
+          "score": 0.75309563
+        },
+        {
+          "source": "undergraduate-academic-rules-aug-2023.pdf",
+          "section": "1. IMtrOdUCtION...............ccssesccccccssssecsceccsssccsccesccssscseccssscsssseees 1",
+          "page": 4,
+          "score": 0.75111306
+        }
+      ],
+      "relevant": [
+        {
+          "source": "undergraduate-academic-rules-aug-2023.pdf",
+          "page": 7,
+          "section": "1.17"
+        }
+      ],
+      "answer": "Under clause 1.17 of the August\u202f2023 rules, the normal semester course load for undergraduate students who are not on academic warning/probation is determined according to the university study plan [undergraduate-academic-rules-aug-2023.pdf / 1.17 Normal semester course load for undergraduate students, who are].",
+      "citations": [
+        {
+          "source": "undergraduate-academic-rules-aug-2023.pdf",
+          "section": "1.17 Normal semester course load for undergraduate students, who are",
+          "page": 7
+        }
+      ]
+    },
+    {
+      "id": "V02",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.79093456,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 6.95,
+      "retrieved": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "4.3 The normal course load is 5 courses. A final year student may",
+          "page": 19,
+          "score": 0.79093456
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.17 Normal semester course load for undergraduate students,",
+          "page": 9,
+          "score": 0.78997976
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "6.7 80% attendance rule shall apply to summer courses/labs.",
+          "page": 28,
+          "score": 0.76702344
+        },
+        {
+          "source": "prospectus-2026-academic-rules-and-regulations.pdf",
+          "section": "218 Prospectus 2026",
+          "page": 4,
+          "score": 0.76364869
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "4.28 A core course cannot be replaced by any other course.",
+          "page": 23,
+          "score": 0.76304483
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 19,
+          "section": "4.3"
+        }
+      ],
+      "answer": "The normal undergraduate course load under section 4.3 of the June\u202f2026 rules is five courses, with a final\u2011year student allowed to register in one additional course (inclusive of the Final Year Project) [academic-rules-handbook-jun-2026.pdf / 4.3 The normal course load is 5 courses. A final year student may].",
+      "citations": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "4.3 The normal course load is 5 courses. A final year student may",
+          "page": 19
+        }
+      ]
+    },
+    {
+      "id": "V03",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.72064662,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.07,
+      "retrieved": [
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "7. Summer Internship Program for Cadet College Hasan Abdal",
+          "page": 81,
+          "score": 0.72064662
+        },
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "24 against the findings highlighted by the AT during various AT visits under the process of",
+          "page": 71,
+          "score": 0.6709784999999999
+        },
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "ISB",
+          "page": 18,
+          "score": 0.66887677
+        },
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "2023. The event featured on-spot hiring tests followed by immediate",
+          "page": 79,
+          "score": 0.6475080799999999
+        },
+        {
+          "source": "undergraduate-academic-rules-aug-2023.pdf",
+          "section": "ACADEMIC RULES AND REGULATIONS",
+          "page": 2,
+          "score": 0.64412242
+        }
+      ],
+      "relevant": [
+        {
+          "source": "annual-report-2023-24.pdf",
+          "page": 48,
+          "section": "Summer Internships"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "E01",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.76094365,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 12.07,
+      "retrieved": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "2.3 The points for each letter grade are given as follows:",
+          "page": 12,
+          "score": 0.76094365
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "2. Grading and GPA Calculations",
+          "page": 11,
+          "score": 0.73960233
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "2.2 Interpretation of Letter Grades is as follows:",
+          "page": 11,
+          "score": 0.72967446
+        },
+        {
+          "source": "prospectus-2026-academic-rules-and-regulations.pdf",
+          "section": "prospectus-2026-academic-rules-and-regulations",
+          "page": 1,
+          "score": 0.72256732
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "8.14 The teacher (under intimation to the HoD) can award a \"zero\"",
+          "page": 35,
+          "score": 0.71554255
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 12,
+          "section": "2.3"
+        }
+      ],
+      "answer": "The grade point assigned to A\u2011minus (A\u2011) is 3.67 [academic-rules-handbook-jun-2026.pdf / 2.3 The points for each letter grade are given as follows:].",
+      "citations": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "2.3 The points for each letter grade are given as follows:",
+          "page": 12
+        }
+      ]
+    },
+    {
+      "id": "E02",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.85901713,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 10.33,
+      "retrieved": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.25 Minimum Cumulative Grade Point Average (CGPA) of 2.00 is",
+          "page": 10,
+          "score": 0.85901713
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "5.4 Minimum CGPA required to avoid academic warning is 2.00",
+          "page": 24,
+          "score": 0.80202568
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "7.1 Following awards have been approved to honor outstanding",
+          "page": 30,
+          "score": 0.79897207
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "3.28 If the CGPA of an undergraduate student fall below the",
+          "page": 17,
+          "score": 0.75643289
+        },
+        {
+          "source": "prospectus-2026-academic-rules-and-regulations.pdf",
+          "section": "13. Registration of Students under",
+          "page": 2,
+          "score": 0.75310254
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 10,
+          "section": "1.25"
+        }
+      ],
+      "answer": "The minimum undergraduate CGPA for graduation is defined in section 1.25 [academic-rules-handbook-jun-2026.pdf / 1.25 Minimum Cumulative Grade Point Average (CGPA) of 2.00 is].",
+      "citations": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.25 Minimum Cumulative Grade Point Average (CGPA) of 2.00 is",
+          "page": 10
+        }
+      ]
+    },
+    {
+      "id": "E03",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.91553575,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 5.84,
+      "retrieved": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "6.11 A minimum of TEN (10) students should register in a summer",
+          "page": 29,
+          "score": 0.91553575
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.19 A student can register for a maximum of two courses in",
+          "page": 9,
+          "score": 0.85558605
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "6.1 Summer semester is an 8-week semester and is meant to",
+          "page": 28,
+          "score": 0.79470903
+        },
+        {
+          "source": "prospectus-2026-academic-rules-and-regulations.pdf",
+          "section": "218 Prospectus 2026",
+          "page": 4,
+          "score": 0.78021276
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "6.7 80% attendance rule shall apply to summer courses/labs.",
+          "page": 28,
+          "score": 0.77843648
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 29,
+          "section": "6.11"
+        }
+      ],
+      "answer": "The minimum number of students that must register for a summer course to be offered is TEN (10) [academic-rules-handbook-jun-2026.pdf / 6.11 A minimum of TEN (10) students should register in a summer].",
+      "citations": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "6.11 A minimum of TEN (10) students should register in a summer",
+          "page": 29
+        }
+      ]
+    },
+    {
+      "id": "I01",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.72423744,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.99,
+      "retrieved": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.22 Failure to meet attendance requirements in a course will",
+          "page": 10,
+          "score": 0.69654417
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "6.7 80% attendance rule shall apply to summer courses/labs.",
+          "page": 28,
+          "score": 0.72423744
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "7.12 If there are more than one student on same position, the next",
+          "page": 32,
+          "score": 0.6957245000000001
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.24 When a student is readmitted with credit exemptions from a",
+          "page": 10,
+          "score": 0.69094425
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "3.17 A former student whose admission was closed due to 3rd",
+          "page": 15,
+          "score": 0.6886844599999999
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 10,
+          "section": "1.22"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "I02",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.79160982,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 9.36,
+      "retrieved": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "2.7 In CGPA calculation for the courses that have been repeated,",
+          "page": 12,
+          "score": 0.7460971000000001
+        },
+        {
+          "source": "prospectus-2026-academic-rules-and-regulations.pdf",
+          "section": "218 Prospectus 2026",
+          "page": 3,
+          "score": 0.79160982
+        },
+        {
+          "source": "grading-page.html",
+          "section": "Repeating a Course",
+          "page": 1,
+          "score": 0.78276783
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "5.10 When a student repeats a course whose post-requisite",
+          "page": 25,
+          "score": 0.75457412
+        },
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "1. Course & Teacher Current Students Twice a semester",
+          "page": 73,
+          "score": 0.7517990999999999
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 13,
+          "section": "2.7"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "A01",
+      "type": "unanswerable",
+      "must_abstain": true,
+      "recall@3": null,
+      "recall@5": null,
+      "top_score": 0.72854733,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.78,
+      "retrieved": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "3. Admission Policy",
+          "page": 14,
+          "score": 0.72854733
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "X. STUDENT FACILITIES AT CAMPUSES",
+          "page": 45,
+          "score": 0.7213145999999999
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "3. The student body is advised to regard the campus as a",
+          "page": 9,
+          "score": 0.71552688
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "3. Admission Policy 8",
+          "page": 5,
+          "score": 0.7028589199999999
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "X. STUDENT FACILITIES AT CAMPUSES ................................................. 37",
+          "page": 7,
+          "score": 0.6987833999999999
+        }
+      ],
+      "relevant": [],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "A02",
+      "type": "unanswerable",
+      "must_abstain": true,
+      "recall@3": null,
+      "recall@5": null,
+      "top_score": 0.70738053,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.13,
+      "retrieved": [
+        {
+          "source": "fee-structure-page.html",
+          "section": "Miscellaneous Fees",
+          "page": 1,
+          "score": 0.70738053
+        },
+        {
+          "source": "fee-structure-page.html",
+          "section": "Tuition Fee (w.e.f. Fall 2026 semester)",
+          "page": 1,
+          "score": 0.69866335
+        },
+        {
+          "source": "fee-structure-page.html",
+          "section": "Admission Fee",
+          "page": 1,
+          "score": 0.69009465
+        },
+        {
+          "source": "fee-structure-page.html",
+          "section": "Student Activities Fund",
+          "page": 1,
+          "score": 0.67869568
+        },
+        {
+          "source": "fee-structure-page.html",
+          "section": "Fee Structure",
+          "page": 1,
+          "score": 0.65879732
+        }
+      ],
+      "relevant": [],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "UA03",
+      "type": "unanswerable",
+      "must_abstain": true,
+      "recall@3": null,
+      "recall@5": null,
+      "top_score": 0.6974345399999999,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.72,
+      "retrieved": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "4.19 The request should be made within the first two weeks of a",
+          "page": 22,
+          "score": 0.6974345399999999
+        },
+        {
+          "source": "prospectus-2026-academic-rules-and-regulations.pdf",
+          "section": "220 Prospectus 2026",
+          "page": 5,
+          "score": 0.68553138
+        },
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "SMEC\u201924",
+          "page": 43,
+          "score": 0.68246078
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "X. STUDENT FACILITIES AT CAMPUSES",
+          "page": 45,
+          "score": 0.68074608
+        },
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "BRANIAC 2024",
+          "page": 46,
+          "score": 0.6752585799999999
+        }
+      ],
+      "relevant": [],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "UA04",
+      "type": "unanswerable",
+      "must_abstain": true,
+      "recall@3": null,
+      "recall@5": null,
+      "top_score": 0.6085111999999999,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.93,
+      "retrieved": [
+        {
+          "source": "fee-structure-page.html",
+          "section": "Student Activities Fund",
+          "page": 1,
+          "score": 0.6085111999999999
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "II - FINANCIAL RULES",
+          "page": 18,
+          "score": 0.6031009
+        },
+        {
+          "source": "prospectus-2026-academic-rules-and-regulations.pdf",
+          "section": "218 Prospectus 2026",
+          "page": 3,
+          "score": 0.5949602700000001
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "6.10 Financial assistance, scholarship or fee concession is not",
+          "page": 29,
+          "score": 0.59229493
+        },
+        {
+          "source": "fee-structure-page.html",
+          "section": "Miscellaneous Fees",
+          "page": 1,
+          "score": 0.58573663
+        }
+      ],
+      "relevant": [],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "UA05",
+      "type": "unanswerable",
+      "must_abstain": true,
+      "recall@3": null,
+      "recall@5": null,
+      "top_score": 0.64258707,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.23,
+      "retrieved": [
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "11. Outreach Activities",
+          "page": 83,
+          "score": 0.64258707
+        },
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "12. Special Initiatives",
+          "page": 84,
+          "score": 0.62730497
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "\u2022 IEEE",
+          "page": 43,
+          "score": 0.6255023
+        },
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "12. Special Initiatives",
+          "page": 83,
+          "score": 0.6199705600000001
+        },
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "2023. The session was conducted by Ms. Zartash Naqvi and Ms. Anoosha Rehan,",
+          "page": 22,
+          "score": 0.6154337999999999
+        }
+      ],
+      "relevant": [],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "H01",
+      "type": "hard",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.6663965000000001,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.04,
+      "retrieved": [
+        {
+          "source": "undergraduate-academic-rules-aug-2023.pdf",
+          "section": "ACADEMIC RULES AND REGULATIONS",
+          "page": 2,
+          "score": 0.6663965000000001
+        },
+        {
+          "source": "undergraduate-academic-rules-aug-2023.pdf",
+          "section": "1.19 A student can register for a maximum of two courses in summer",
+          "page": 7,
+          "score": 0.6618470000000001
+        },
+        {
+          "source": "undergraduate-academic-rules-aug-2023.pdf",
+          "section": "1.18 The Head of Department may change the course load keeping in",
+          "page": 7,
+          "score": 0.6332357
+        },
+        {
+          "source": "undergraduate-academic-rules-aug-2023.pdf",
+          "section": "6. Rules for Summer Semester",
+          "page": 20,
+          "score": 0.6307255
+        },
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "1. Course & Teacher Current Students Twice a semester",
+          "page": 73,
+          "score": 0.6027045200000001
+        }
+      ],
+      "relevant": [
+        {
+          "source": "undergraduate-academic-rules-aug-2023.pdf",
+          "page": 7,
+          "section": "1.17"
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 19,
+          "section": "4.3"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "H02",
+      "type": "hard",
+      "must_abstain": false,
+      "recall@3": 0.5,
+      "recall@5": 1.0,
+      "top_score": 0.79376101,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": true,
+      "seconds": 2.69,
+      "retrieved": [
+        {
+          "source": "grading-page.html",
+          "section": "Warning/Probation",
+          "page": 1,
+          "score": 0.79376101
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "5.4 Minimum CGPA required to avoid academic warning is 2.00",
+          "page": 24,
+          "score": 0.76924634
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "4.4 A student under academic warning or probation:",
+          "page": 19,
+          "score": 0.7570325099999999
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.25 Minimum Cumulative Grade Point Average (CGPA) of 2.00 is",
+          "page": 10,
+          "score": 0.74690223
+        },
+        {
+          "source": "prospectus-2026-academic-rules-and-regulations.pdf",
+          "section": "11. Academic Warning/Probation five courses.",
+          "page": 2,
+          "score": 0.7429407800000001
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 10,
+          "section": "1.25"
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 24,
+          "section": "5.4"
+        }
+      ],
+      "answer": "I couldn't produce a reliable, cited answer right now. Please try again in a moment.",
+      "citations": []
+    },
+    {
+      "id": "H03",
+      "type": "hard",
+      "must_abstain": false,
+      "recall@3": 0.5,
+      "recall@5": 0.5,
+      "top_score": 0.7182965299999999,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.02,
+      "retrieved": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "3.17 A former student whose admission was closed due to 3rd",
+          "page": 15,
+          "score": 0.7182965299999999
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "HANDBOOK",
+          "page": 3,
+          "score": 0.70541966
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.22 Failure to meet attendance requirements in a course will",
+          "page": 10,
+          "score": 0.7032414
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.20 A student can only register for courses for which he/she has",
+          "page": 9,
+          "score": 0.69848657
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "3.16 A former student who has been on disciplinary warning shall",
+          "page": 15,
+          "score": 0.69446343
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 10,
+          "section": "1.21"
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 10,
+          "section": "1.22"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "H04",
+      "type": "hard",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.7702663,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": true,
+      "seconds": 6.38,
+      "retrieved": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "6.11 A minimum of TEN (10) students should register in a summer",
+          "page": 29,
+          "score": 0.7702663
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.19 A student can register for a maximum of two courses in",
+          "page": 9,
+          "score": 0.76258802
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "6.1 Summer semester is an 8-week semester and is meant to",
+          "page": 28,
+          "score": 0.7250236299999999
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "6.8 A student can withdraw from a summer course on or before",
+          "page": 29,
+          "score": 0.7146071199999999
+        },
+        {
+          "source": "prospectus-2026-academic-rules-and-regulations.pdf",
+          "section": "218 Prospectus 2026",
+          "page": 3,
+          "score": 0.70080817
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 8,
+          "section": "1.19"
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 29,
+          "section": "6.11"
+        }
+      ],
+      "answer": "I couldn't produce a reliable, cited answer right now. Please try again in a moment.",
+      "citations": []
+    },
+    {
+      "id": "H05",
+      "type": "hard",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.86019856,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": true,
+      "seconds": 11.57,
+      "retrieved": [
+        {
+          "source": "grading-page.html",
+          "section": "Repeating a Course",
+          "page": 1,
+          "score": 0.86019856
+        },
+        {
+          "source": "prospectus-2026-academic-rules-and-regulations.pdf",
+          "section": "218 Prospectus 2026",
+          "page": 3,
+          "score": 0.82438177
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "2.8 \u201cW\u201d will be awarded for withdrawn courses. It will appear on the",
+          "page": 13,
+          "score": 0.82296395
+        },
+        {
+          "source": "undergraduate-academic-rules-aug-2023.pdf",
+          "section": "5.11 Ifa student repeats a failed course, the new grade will be used for",
+          "page": 18,
+          "score": 0.8216795299999999
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "5.11 If a student repeats a failed course, the new grade will be used",
+          "page": 25,
+          "score": 0.8181080199999999
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 13,
+          "section": "2.7"
+        }
+      ],
+      "answer": "I couldn't produce a reliable, cited answer right now. Please try again in a moment.",
+      "citations": []
+    },
+    {
+      "id": "N01",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.76635003,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 2.67,
+      "retrieved": [
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "16. Renewal of borrowed books cannot be claimed as a right.",
+          "page": 32,
+          "score": 0.76635003
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "17. Borrower must return or renew all library material",
+          "page": 33,
+          "score": 0.72640002
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "20. Borrowers shall be responsible for any damage to the",
+          "page": 33,
+          "score": 0.67959785
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "4. All library material must be borrowed out before leaving",
+          "page": 31,
+          "score": 0.6687417600000001
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "3.17 A former student whose admission was closed due to 3rd",
+          "page": 15,
+          "score": 0.66179144
+        }
+      ],
+      "relevant": [
+        {
+          "source": "library-policy.md",
+          "page": null,
+          "section": "Library access policy"
+        }
+      ],
+      "answer": "A student\u2019s borrowing limits vary by patron group:\n- PhD students may borrow up to 7 items for a loan period of 1 month.\n- Graduate students may borrow up to 5 items for a loan period of 1 month.\n- Undergraduate students may borrow up to 4 items for a loan period of 2 weeks [student-handbook-jun-2026.pdf / 16. Renewal of borrowed books cannot be claimed as a right.].",
+      "citations": [
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "16. Renewal of borrowed books cannot be claimed as a right.",
+          "page": 32
+        }
+      ]
+    },
+    {
+      "id": "N02",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.78808987,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 8.51,
+      "retrieved": [
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "16. Renewal of borrowed books cannot be claimed as a right.",
+          "page": 32,
+          "score": 0.78808987
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "17. Borrower must return or renew all library material",
+          "page": 33,
+          "score": 0.7593553
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "6. Seats are not allowed to be reserved. When there is a",
+          "page": 31,
+          "score": 0.6579569599999999
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "4. All library material must be borrowed out before leaving",
+          "page": 31,
+          "score": 0.65211803
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "21. Members must notify the library of any change in their",
+          "page": 33,
+          "score": 0.64412278
+        }
+      ],
+      "relevant": [
+        {
+          "source": "library-policy.md",
+          "page": null,
+          "section": "Library access policy"
+        }
+      ],
+      "answer": "A library book can be renewed only up to the maximum number of renewals specified for the patron\u2019s group (for example, 2 renewals for PhD, Graduate, and Undergraduate students) and only while the item is still within its loan period [student-handbook-jun-2026.pdf / 16. Renewal of borrowed books cannot be claimed as a right.]. The library may also recall the material at any time, and priority is given to those on the waiting list [student-handbook-jun-2026.pdf / 16. Renewal of borrowed books cannot be claimed as a right.].",
+      "citations": [
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "16. Renewal of borrowed books cannot be claimed as a right.",
+          "page": 32
+        }
+      ]
+    },
+    {
+      "id": "N03",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.6827864,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.56,
+      "retrieved": [
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "X. STUDENT FACILITIES AT CAMPUSES",
+          "page": 47,
+          "score": 0.6827864
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "21. Members must notify the library of any change in their",
+          "page": 33,
+          "score": 0.67520285
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "8. It is the responsibility of the student to check his/her",
+          "page": 30,
+          "score": 0.67353725
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "9. Policy on Retake Examination",
+          "page": 39,
+          "score": 0.66972834
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "4.19 The request should be made within the first two weeks of a",
+          "page": 22,
+          "score": 0.65807724
+        }
+      ],
+      "relevant": [
+        {
+          "source": "accessibility-policy.md",
+          "page": null,
+          "section": "Accessibility accommodations"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "N04",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.7076065,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.02,
+      "retrieved": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "3. Admission Policy",
+          "page": 14,
+          "score": 0.7076065
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "7.5 Only those students are included in this list who have",
+          "page": 31,
+          "score": 0.7013737
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "X. STUDENT FACILITIES AT CAMPUSES",
+          "page": 47,
+          "score": 0.6966836000000001
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "9. Policy on Retake Examination",
+          "page": 39,
+          "score": 0.6915285600000001
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.20 A student can only register for courses for which he/she has",
+          "page": 9,
+          "score": 0.6907367
+        }
+      ],
+      "relevant": [
+        {
+          "source": "accessibility-policy.md",
+          "page": null,
+          "section": "Accessibility accommodations"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "N05",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.6782918,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.14,
+      "retrieved": [
+        {
+          "source": "faculty-entrepreneurship-and-technical-start-ups-policy.pdf",
+          "section": "1. Purpose",
+          "page": 1,
+          "score": 0.6782918
+        },
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "1. Merit Scholarships for Bachelor Students",
+          "page": 77,
+          "score": 0.6682287
+        },
+        {
+          "source": "faculty-entrepreneurship-and-technical-start-ups-policy.pdf",
+          "section": "1. Purpose",
+          "page": 2,
+          "score": 0.66805136
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "X. STUDENT FACILITIES AT CAMPUSES",
+          "page": 47,
+          "score": 0.6654474
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "9. Policy on Retake Examination",
+          "page": 37,
+          "score": 0.6653434
+        }
+      ],
+      "relevant": [
+        {
+          "source": "scholarship-policy.md",
+          "page": null,
+          "section": "Need-based scholarship policy"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "N06",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.70948678,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 2.28,
+      "retrieved": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "3.15 A former student of the University seeking readmission in an",
+          "page": 15,
+          "score": 0.70948678
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "3.33 A student can request closure of his/her admission to pursue",
+          "page": 18,
+          "score": 0.69882548
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "4.23 Application for withdrawal from a course must be",
+          "page": 22,
+          "score": 0.6966531300000001
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "3. Admission Policy",
+          "page": 14,
+          "score": 0.69580752
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "5.8 Any failed or missed course from a previous semester should",
+          "page": 25,
+          "score": 0.69382262
+        }
+      ],
+      "relevant": [
+        {
+          "source": "scholarship-policy.md",
+          "page": null,
+          "section": "Need-based scholarship policy"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "N07",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.74912965,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": true,
+      "seconds": 5.93,
+      "retrieved": [
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "14. In case of absence from an exam (e.g. due to illness,",
+          "page": 28,
+          "score": 0.74912965
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "5.13 Late conduct of examination can be held on the",
+          "page": 25,
+          "score": 0.7101842199999999
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "1.21 Students are required to maintain 100% attendance in",
+          "page": 10,
+          "score": 0.68732172
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "7. Students who have missed classes due to any",
+          "page": 30,
+          "score": 0.67896152
+        },
+        {
+          "source": "student-handbook-jun-2026.pdf",
+          "section": "13. Where the Librarian or other Library Staff has reasonable",
+          "page": 32,
+          "score": 0.67397714
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-2027.md",
+          "page": null,
+          "section": "Attendance"
+        }
+      ],
+      "answer": "I couldn't produce a reliable, cited answer right now. Please try again in a moment.",
+      "citations": []
+    },
+    {
+      "id": "N08",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.7971881000000001,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": true,
+      "seconds": 8.26,
+      "retrieved": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "5.6 If CGPA remains below 2.00 for 3 consecutive semesters,",
+          "page": 24,
+          "score": 0.7971881000000001
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "5.5 If at the end of a semester (including summer semester) CGPA",
+          "page": 24,
+          "score": 0.79390907
+        },
+        {
+          "source": "grading-page.html",
+          "section": "Warning/Probation",
+          "page": 1,
+          "score": 0.79216743
+        },
+        {
+          "source": "prospectus-2026-academic-rules-and-regulations.pdf",
+          "section": "11. Academic Warning/Probation five courses.",
+          "page": 2,
+          "score": 0.76807392
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "4.11 A student must have passed all courses shown in the study",
+          "page": 20,
+          "score": 0.75855756
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-2027.md",
+          "page": null,
+          "section": "Academic warning"
+        }
+      ],
+      "answer": "I couldn't produce a reliable, cited answer right now. Please try again in a moment.",
+      "citations": []
+    },
+    {
+      "id": "N09",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.6877563,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.84,
+      "retrieved": [
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "PWR 9 2 36",
+          "page": 72,
+          "score": 0.6877563
+        },
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "3. Research Progress Review Current Students Once a semester",
+          "page": 73,
+          "score": 0.68595004
+        },
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "2. Faculty Course Review Current Students Once a semester",
+          "page": 73,
+          "score": 0.67603385
+        },
+        {
+          "source": "annual-report-2023-24.pdf",
+          "section": "18. Doctor of Philosophy (Software Engineering) ISB, KHI Sanctioned",
+          "page": 71,
+          "score": 0.6706348
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "section": "4.19 The request should be made within the first two weeks of a",
+          "page": 22,
+          "score": 0.65221834
+        }
+      ],
+      "relevant": [
+        {
+          "source": "scholarship-policy.md",
+          "page": null,
+          "section": "Need-based scholarship policy"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    }
+  ],
+  "golden": "C:\\Users\\hp\\Documents\\FA26\\Sw Const\\Assignments\\rehbar-scd\\eval\\golden.jsonl",
+  "questions": 35,
+  "gate_failures": [
+    "recall@5 0.583 is more than 5% below the baseline 0.938"
+  ]
+}

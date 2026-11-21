@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-11-21T19:22:49.070023+00:00",
+  "seed": 20261122,
+  "api": "http://127.0.0.1:18003",
+  "runs": 2,
+  "api_metric_differences": {
+    "recall@3": {
+      "run_1": 0.5666666666666667,
+      "run_2": 0.5666666666666667,
+      "absolute_difference": 0.0
+    },
+    "recall@5": {
+      "run_1": 0.5833333333333334,
+      "run_2": 0.5833333333333334,
+      "absolute_difference": 0.0
+    },
+    "citation_validity": {
+      "run_1": 1.0,
+      "run_2": 1.0,
+      "absolute_difference": 0.0
+    },
+    "abstention_correctness": {
+      "run_1": 1.0,
+      "run_2": 1.0,
+      "absolute_difference": 0.0
+    }
+  },
+  "component_metric_differences": {
+    "recall@3": {
+      "run_1": 0.48333333333333334,
+      "run_2": 0.48333333333333334,
+      "absolute_difference": 0.0
+    },
+    "recall@5": {
+      "run_1": 0.5,
+      "run_2": 0.5,
+      "absolute_difference": 0.0
+    },
+    "mrr": {
+      "run_1": 0.49444444444444446,
+      "run_2": 0.49444444444444446,
+      "absolute_difference": 0.0
+    },
+    "ndcg@5": {
+      "run_1": 0.48568805729851067,
+      "run_2": 0.48568805729851067,
+      "absolute_difference": 0.0
+    }
+  },
+  "latency_differences": {
+    "latency_p50_seconds": {
+      "run_1": 2.39,
+      "run_2": 1.03,
+      "absolute_difference": 1.36
+    },
+    "latency_p95_seconds": {
+      "run_1": 11.57,
+      "run_2": 9.04,
+      "absolute_difference": 2.53
+    }
+  },
+  "module_semantic_differences": {
+    "paraphrase_mean_cosine": {
+      "run_1": 0.85722372,
+      "run_2": 0.85722372,
+      "absolute_difference": 0.0
+    },
+    "unrelated_mean_cosine": {
+      "run_1": 0.55526288,
+      "run_2": 0.55526288,
+      "absolute_difference": 0.0
+    }
+  },
+  "gate_results": [
+    [
+      "recall@5 0.583 is more than 5% below the baseline 0.938"
+    ],
+    [
+      "recall@5 0.583 is more than 5% below the baseline 0.938"
+    ]
+  ],
+  "latency_note": "Run 2 has semantic-cache hits; latency is not a cold-run comparison. Model/provider and retrieval tie-breaking can also vary.",
+  "errors": [],
+  "faithfulness_review": {
+    "score": 1.0,
+    "n": 8,
+    "reviewer": "implementation agent; partner confirmation pending"
+  }
+}
