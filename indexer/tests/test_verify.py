@@ -37,6 +37,14 @@ def test_recency_detects_newer_stored_version():
     assert "2026" in result.checks["recency"].reason
 
 
+def test_versions_of_same_document_are_not_near_duplicates():
+    first = doc("academic-rules-2023.md", version="2023")
+    second = doc("academic-rules-2026.md", version="2026",
+                 text="An updated academic policy with changed content for students.")
+    result = verify_documents([first, second], embed=lambda values: [[1.0, 0.0] for _ in values])[1]
+    assert result.checks["uniqueness"].passed
+
+
 def test_uniqueness_detects_exact_duplicate_and_embedding_near_duplicate():
     first = doc("one.pdf")
     duplicate = doc("copy.pdf")

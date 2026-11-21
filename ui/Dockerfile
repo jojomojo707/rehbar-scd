@@ -1,6 +1,6 @@
 # rahbar-ui: the given chat page, served by non-root nginx on 8080.
 # Build context: ui/   ->   docker build -t rahbar-ui:dev ui
-FROM nginxinc/nginx-unprivileged:1.30.6-alpine3.24
+FROM nginxinc/nginx-unprivileged:1.30.7-alpine3.24
 
 # Alpine security fixes newer than the base image (Trivy, section 6: brotli, curl, expat).
 # apk needs root; the image switches back to the nginx user below.

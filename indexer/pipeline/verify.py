@@ -38,6 +38,12 @@ def _version_key(version: str) -> tuple[int, ...]:
     return tuple(int(number) for number in numbers) or (0,)
 
 
+def _document_identity(source: str) -> str:
+    """Normalize version markers so versions of one source are not dupes."""
+    stem = source.rsplit("/", 1)[-1].rsplit(".", 1)[0].casefold()
+    return re.sub(r"(?:[-_ ]?20\d{2}(?:[-_]\d{2})?)", "", stem).strip("-_ ")
+
+
 def _cosine(left: list[float], right: list[float]) -> float:
     if len(left) != len(right) or not left:
         return 0.0
@@ -103,7 +109,7 @@ def verify_documents(
         near_source = None
         near_score = 0.0
         for previous_index, previous in enumerate(corpus[:index]):
-            if previous.source == document.source:
+            if _document_identity(previous.source) == _document_identity(document.source):
                 continue
             if vectors:
                 score = _cosine(vectors[index], vectors[previous_index])
