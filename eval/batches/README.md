@@ -12,5 +12,9 @@ document ingestion quality checks; it must remain quoted/untrusted and be tested
 answer-time prompt guardrail. The duplicate, near-duplicate, truncated, and incomplete-metadata
 documents are expected to be quarantined.
 
+`batch-b-clean/` is the accepted subset used for the incremental lifecycle run after rejected
+documents are quarantined. It updates the academic-rules supersession flags, adds the 2027 edition
+and clean policy documents, and omits `fees-2026.md` to exercise deletion accounting.
+
 These small text fixtures are deliberately safe to commit and quick to run. They supplement the
 real fetched corpus; they do not replace it or claim to reproduce the source PDFs' OCR behavior.

@@ -28,3 +28,18 @@ def test_batch_b_matches_planted_document_dispositions():
     assert superseded == set(expected["batch_b"]["expected"]["superseded"])
     assert results["injected-instruction.md"].passed
 
+
+def test_clean_batch_b_is_ingestable_and_marks_superseded_versions():
+    root = Path(__file__).resolve().parents[2]
+    batches = root / "eval" / "batches"
+    expected = json.loads((batches / "expected-dispositions.json").read_text(encoding="utf-8"))
+    found = discover(str(batches / "batch-b-clean"))
+    documents = [extract(str(path), version, superseded) for path, version, superseded in found]
+    results = verify_documents(documents)
+
+    assert len(documents) == expected["batch_b_clean"]["documents"]
+    assert all(result.passed for result in results)
+    assert {path.name for path, _version, old in found if old} == set(
+        expected["batch_b_clean"]["superseded"]
+    )
+

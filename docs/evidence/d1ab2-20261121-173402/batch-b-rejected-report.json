@@ -1,0 +1,327 @@
+{
+  "created_at": "2026-11-21T12:34:51.203545+00:00",
+  "documents": [
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2023",
+      "passed": true,
+      "path": "/batch/academic-rules-2023.md",
+      "source": "academic-rules-2023.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2026",
+      "passed": true,
+      "path": "/batch/academic-rules-2026.md",
+      "source": "academic-rules-2026.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2027",
+      "passed": true,
+      "path": "/batch/academic-rules-2027.md",
+      "source": "academic-rules-2027.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2026",
+      "passed": true,
+      "path": "/batch/accessibility-policy.md",
+      "source": "accessibility-policy.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": false,
+          "reason": "extracted text is too short (21 characters)"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2026",
+      "passed": false,
+      "path": "/batch/corrupt-truncated.md",
+      "quarantined_to": "/evidence/d1ab2/quarantine/20261121T123440Z-ebf4626f/0005-corrupt-truncated.md",
+      "source": "corrupt-truncated.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2026",
+      "passed": true,
+      "path": "/batch/fees-2026.md",
+      "source": "fees-2026.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": false,
+          "reason": "near-duplicate of fees-2026.md (similarity 1.000)"
+        }
+      },
+      "doc_version": "2026",
+      "passed": false,
+      "path": "/batch/fees-near-duplicate.md",
+      "quarantined_to": "/evidence/d1ab2/quarantine/20261121T123440Z-ebf4626f/0007-fees-near-duplicate.md",
+      "source": "fees-near-duplicate.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2026",
+      "passed": true,
+      "path": "/batch/handbook-exact-a.md",
+      "source": "handbook-exact-a.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": false,
+          "reason": "exact duplicate of handbook-exact-a.md; near-duplicate of handbook-exact-a.md (similarity 1.000)"
+        }
+      },
+      "doc_version": "2026",
+      "passed": false,
+      "path": "/batch/handbook-exact-b.md",
+      "quarantined_to": "/evidence/d1ab2/quarantine/20261121T123440Z-ebf4626f/0009-handbook-exact-b.md",
+      "source": "handbook-exact-b.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2026",
+      "passed": true,
+      "path": "/batch/injected-instruction.md",
+      "source": "injected-instruction.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2026",
+      "passed": true,
+      "path": "/batch/library-policy.md",
+      "source": "library-policy.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": false,
+          "reason": "missing or invalid date/version"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "unknown",
+      "passed": false,
+      "path": "/batch/missing-metadata.md",
+      "quarantined_to": "/evidence/d1ab2/quarantine/20261121T123440Z-ebf4626f/0012-missing-metadata.md",
+      "source": "missing-metadata.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2026",
+      "passed": true,
+      "path": "/batch/scholarship-policy.md",
+      "source": "scholarship-policy.md"
+    }
+  ],
+  "run_id": "20261121T123440Z-ebf4626f",
+  "summary": {
+    "documents": 13,
+    "failed": 4,
+    "passed": 9
+  }
+}
