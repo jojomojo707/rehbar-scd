@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "model": "BAAI/bge-small-en-v1.5",
+  "seed": 20261121,
+  "paraphrase_pairs": [
+    {"id":"P01","a":"FAST-NUCES teaches and examines its courses in English, except language courses other than English and Islamic Studies.","b":"English is the instruction and examination language for every course unless it is a non-English language course or Islamic Studies.","gold_document":"academic-rules-handbook-jun-2026.pdf","gold_page":7},
+    {"id":"P02","a":"A regular semester has sixteen teaching weeks, one makeup week, and two final-exam weeks.","b":"Regular semesters run for 16 weeks of classes followed by a makeup week and two weeks for final examinations.","gold_document":"academic-rules-handbook-jun-2026.pdf","gold_page":7},
+    {"id":"P03","a":"One theory credit hour means one hour of classroom teaching per week during the semester.","b":"For a theory class, each credit hour corresponds to a weekly classroom-teaching hour throughout the semester.","gold_document":"academic-rules-handbook-jun-2026.pdf","gold_page":7},
+    {"id":"P04","a":"One laboratory credit hour is equivalent to three hours of practical or lab work each week.","b":"Students complete three weekly hours of laboratory or practical work for every lab credit hour.","gold_document":"academic-rules-handbook-jun-2026.pdf","gold_page":8},
+    {"id":"P05","a":"A student may enroll in no more than two courses during the summer semester.","b":"The summer-semester registration limit is a maximum of two courses per student.","gold_document":"academic-rules-handbook-jun-2026.pdf","gold_page":8},
+    {"id":"P06","a":"For genuine reasons, the HoD may excuse absence of up to twenty percent of the required attendance.","b":"A department head can condone a maximum 20% absence when the student has a valid reason such as illness.","gold_document":"academic-rules-handbook-jun-2026.pdf","gold_page":10},
+    {"id":"P07","a":"A student who does not satisfy a course's attendance rule cannot sit its final and receives an F/A grade.","b":"Insufficient attendance makes the student ineligible for the final examination and results in an F/A in that course.","gold_document":"academic-rules-handbook-jun-2026.pdf","gold_page":10},
+    {"id":"P08","a":"A bachelor's degree takes at least four academic years, with a normal maximum completion period of six years.","b":"The minimum bachelor's duration is eight regular semesters; the maximum allowed time is six years.","gold_document":"academic-rules-handbook-jun-2026.pdf","gold_page":10},
+    {"id":"P09","a":"Graduation requires a cumulative GPA of at least 2.00.","b":"The minimum CGPA needed to graduate from an undergraduate degree is 2.00.","gold_document":"academic-rules-handbook-jun-2026.pdf","gold_page":10},
+    {"id":"P10","a":"The grade point value for an A-minus is 3.67.","b":"An A− earns 3.67 grade points under the grading table.","gold_document":"academic-rules-handbook-jun-2026.pdf","gold_page":12},
+    {"id":"P11","a":"For a repeated course, CGPA uses only the most recent grade points, while the earlier grade stays on the transcript.","b":"When a course is repeated, the latest grade-point result counts toward CGPA even though the previous attempt remains recorded.","gold_document":"academic-rules-handbook-jun-2026.pdf","gold_page":13},
+    {"id":"P12","a":"The normal undergraduate semester load is five courses; a final-year student can take one more including FYP.","b":"Students normally register for five courses, and a final-year student may add one extra course with the FYP included.","gold_document":"academic-rules-handbook-jun-2026.pdf","gold_page":19},
+    {"id":"P13","a":"A course-withdrawal request needs a parent or guardian's countersignature and HoD approval.","b":"To withdraw from a course, the student must get the application signed by a parent or guardian and approved by the Head of Department.","gold_document":"academic-rules-handbook-jun-2026.pdf","gold_page":22},
+    {"id":"P14","a":"At least ten students must register for a summer course to be offered.","b":"A summer course requires registration by a minimum of TEN (10) students.","gold_document":"academic-rules-handbook-jun-2026.pdf","gold_page":29},
+    {"id":"P15","a":"The Rector's List requires an SGPA of 4.00 and at least 30 credit hours.","b":"Students qualify for the Rector's List with a 4.00 semester GPA while completing no fewer than 30 credits.","gold_document":"academic-rules-handbook-jun-2026.pdf","gold_page":30}
+  ],
+  "unrelated_pairs": [
+    {"id":"U01","a":"FAST-NUCES teaches and examines its courses in English, except language courses other than English and Islamic Studies.","b":"The grade point value for an A-minus is 3.67."},
+    {"id":"U02","a":"A regular semester has sixteen teaching weeks, one makeup week, and two final-exam weeks.","b":"A course-withdrawal request needs a parent or guardian's countersignature and HoD approval."},
+    {"id":"U03","a":"One theory credit hour means one hour of classroom teaching per week during the semester.","b":"At least ten students must register for a summer course to be offered."},
+    {"id":"U04","a":"One laboratory credit hour is equivalent to three hours of practical or lab work each week.","b":"Graduation requires a cumulative GPA of at least 2.00."},
+    {"id":"U05","a":"A student may enroll in no more than two courses during the summer semester.","b":"The normal undergraduate semester load is five courses; a final-year student can take one more including FYP."},
+    {"id":"U06","a":"For genuine reasons, the HoD may excuse absence of up to twenty percent of the required attendance.","b":"The Rector's List requires an SGPA of 4.00 and at least 30 credit hours."},
+    {"id":"U07","a":"A student who does not satisfy a course's attendance rule cannot sit its final and receives an F/A grade.","b":"The grade point value for an A-minus is 3.67."},
+    {"id":"U08","a":"A bachelor's degree takes at least four academic years, with a normal maximum completion period of six years.","b":"One theory credit hour means one hour of classroom teaching per week during the semester."},
+    {"id":"U09","a":"Graduation requires a cumulative GPA of at least 2.00.","b":"A regular semester has sixteen teaching weeks, one makeup week, and two final-exam weeks."},
+    {"id":"U10","a":"The grade point value for an A-minus is 3.67.","b":"At least ten students must register for a summer course to be offered."},
+    {"id":"U11","a":"For a repeated course, CGPA uses only the most recent grade points, while the earlier grade stays on the transcript.","b":"A student may enroll in no more than two courses during the summer semester."},
+    {"id":"U12","a":"The normal undergraduate semester load is five courses; a final-year student can take one more including FYP.","b":"One laboratory credit hour is equivalent to three hours of practical or lab work each week."},
+    {"id":"U13","a":"A course-withdrawal request needs a parent or guardian's countersignature and HoD approval.","b":"FAST-NUCES teaches and examines its courses in English, except language courses other than English and Islamic Studies."},
+    {"id":"U14","a":"At least ten students must register for a summer course to be offered.","b":"For genuine reasons, the HoD may excuse absence of up to twenty percent of the required attendance."},
+    {"id":"U15","a":"The Rector's List requires an SGPA of 4.00 and at least 30 credit hours.","b":"A student who does not satisfy a course's attendance rule cannot sit its final and receives an F/A grade."}
+  ]
+}

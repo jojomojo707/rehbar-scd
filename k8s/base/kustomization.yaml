@@ -18,6 +18,7 @@ resources:
   - chroma-statefulset.yaml
   - redis.yaml
   - corpus-pvc.yaml
+  - pipeline-data-pvc.yaml
   - indexer-job.yaml
   - reindex-cronjob.yaml
   - ingress.yaml
