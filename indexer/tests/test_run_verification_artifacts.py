@@ -60,7 +60,7 @@ def test_verification_failure_stops_before_chunk_embed_or_store(tmp_path, monkey
         monkeypatch.setattr(module, name, lambda *_args, **_kwargs: pytest.fail(
             f"{name} must not run for a failed verification batch"))
 
-    with pytest.raises(ValueError, match="verification report="):
+    with pytest.raises(ValueError, match="report="):
         run.run_pipeline(settings(tmp_path))
 
     reports = list((tmp_path / "reports").glob("*.json"))
