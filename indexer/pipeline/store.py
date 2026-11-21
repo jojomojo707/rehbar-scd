@@ -25,6 +25,8 @@ def store(
     chunks: list[Chunk], vectors: list[list[float]], settings: IndexerSettings,
     client: Any | None = None,
     original_tokens: int | None = None,
+    source_digests: dict[str, str] | None = None,
+    incremental: dict[str, Any] | None = None,
 ) -> int:
     """Write every chunk with its vector and metadata, and record the embedding model
     and vector dimension in the collection metadata (section 4.4). Return the count."""
@@ -66,6 +68,9 @@ def store(
         "original_tokens": original_tokens if original_tokens is not None else sum(tokens),
         "stored_tokens": sum(tokens),
         "superseded_versions": ",".join(superseded_versions),
+        "source_digests": json.dumps(source_digests or {}, sort_keys=True),
+        "document_chunk_counts": json.dumps(_chunk_counts(chunks), sort_keys=True),
+        "incremental_summary": json.dumps(incremental or {}, sort_keys=True),
         "corpus_digest": _corpus_digest(settings.corpus_dir, chunks),
         "indexer_image": os.environ.get("IMAGE_TAG", ""),
     }
@@ -115,6 +120,133 @@ def store(
 
     _prune(client, prefix, version, previous, max(2, settings.keep_collections))
     return written
+
+
+def _chunk_counts(chunks: list[Chunk]) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for chunk in chunks:
+        counts[chunk.source] = counts.get(chunk.source, 0) + 1
+    return counts
+
+
+def active_snapshot(settings: IndexerSettings, client: Any | None = None) -> dict[str, Any]:
+    """Read the active index's per-document digests, records and vectors."""
+    client = client or get_client(settings)
+    pointer_name = f"{settings.collection}-active"
+    names = {_collection_name(item) for item in client.list_collections()}
+    if pointer_name not in names:
+        return {"metadata": {}, "records": {}, "source_digests": {}, "chunk_counts": {}}
+    pointer = client.get_collection(name=pointer_name, embedding_function=None)
+    active = str((pointer.metadata or {}).get("active", ""))
+    if not active or active not in names:
+        return {"metadata": {}, "records": {}, "source_digests": {}, "chunk_counts": {}}
+    collection = client.get_collection(name=active, embedding_function=None)
+    metadata = dict(collection.metadata or {})
+    rows = collection.get(include=["documents", "metadatas", "embeddings"])
+    records: dict[str, dict[str, Any]] = {}
+    for identifier, document, row_metadata, embedding in zip(
+        rows.get("ids", []), rows.get("documents", []), rows.get("metadatas", []),
+        rows.get("embeddings", []),
+    ):
+        vector = embedding.tolist() if hasattr(embedding, "tolist") else list(embedding)
+        records[str(identifier)] = {
+            "document": document, "metadata": row_metadata or {}, "embedding": vector,
+        }
+    try:
+        digests = json.loads(str(metadata.get("source_digests", "{}")))
+        counts = json.loads(str(metadata.get("document_chunk_counts", "{}")))
+    except (TypeError, json.JSONDecodeError):
+        digests, counts = {}, {}
+    if not counts:
+        for row in records.values():
+            source = str(row["metadata"].get("source", ""))
+            if source:
+                counts[source] = counts.get(source, 0) + 1
+    return {"metadata": metadata, "records": records,
+            "source_digests": digests, "chunk_counts": counts}
+
+
+def plan_incremental(
+    chunks: list[Chunk], source_digests: dict[str, str], settings: IndexerSettings,
+    snapshot: dict[str, Any],
+) -> tuple[dict[str, list[float]], dict[str, Any]]:
+    """Return reusable chunk vectors and a document-level before/after summary."""
+    old_digests: dict[str, str] = snapshot.get("source_digests", {})
+    old_sources, current_sources = set(old_digests), set(source_digests)
+    added = sorted(current_sources - old_sources)
+    deleted = sorted(old_sources - current_sources)
+    changed = sorted(source for source in current_sources & old_sources
+                     if source_digests[source] != old_digests[source])
+    unchanged = sorted((current_sources & old_sources) - set(changed))
+    previous_meta = snapshot.get("metadata", {})
+    compatible = (
+        previous_meta.get("embed_model") == settings.embed_model
+        and previous_meta.get("chunk_size") == settings.chunk_size
+        and previous_meta.get("chunk_overlap") == settings.chunk_overlap
+        and previous_meta.get("chunk_strategy") == settings.chunk_strategy
+    )
+    old_records: dict[str, dict[str, Any]] = snapshot.get("records", {})
+    current_by_source: dict[str, list[Chunk]] = {}
+    old_by_source: dict[str, dict[str, dict[str, Any]]] = {}
+    for chunk in chunks:
+        current_by_source.setdefault(chunk.source, []).append(chunk)
+    for identifier, record in old_records.items():
+        source = str(record["metadata"].get("source", ""))
+        old_by_source.setdefault(source, {})[identifier] = record
+
+    reusable: dict[str, list[float]] = {}
+    reused_documents: list[str] = []
+    for source in unchanged if compatible else []:
+        current_rows = current_by_source.get(source, [])
+        old_rows = old_by_source.get(source, {})
+        if (len(current_rows) != len(old_rows)
+                or any(chunk.id not in old_rows
+                       or old_rows[chunk.id]["document"] != chunk.text
+                       or not old_rows[chunk.id]["embedding"]
+                       for chunk in current_rows)):
+            continue
+        for chunk in current_rows:
+            reusable[chunk.id] = old_rows[chunk.id]["embedding"]
+        reused_documents.append(source)
+
+    new_counts = _chunk_counts(chunks)
+    old_counts: dict[str, int] = snapshot.get("chunk_counts", {})
+    summary = {
+        "added": added,
+        "changed": changed,
+        "unchanged": unchanged,
+        "deleted": deleted,
+        "reused_documents": sorted(reused_documents),
+        "embedded_documents": sorted(set(current_by_source) - set(reused_documents)),
+        "reused_chunks": len(reusable),
+        "embedded_chunks": len(chunks) - len(reusable),
+        "document_chunk_counts_before": old_counts,
+        "document_chunk_counts_after": new_counts,
+        "model_or_chunk_config_changed": not compatible and bool(previous_meta),
+    }
+    return reusable, summary
+
+
+def restore_previous(settings: IndexerSettings, client: Any | None = None) -> str:
+    """Swap the active pointer to its previous complete collection."""
+    client = client or get_client(settings)
+    pointer_name = f"{settings.collection}-active"
+    names = {_collection_name(item) for item in client.list_collections()}
+    if pointer_name not in names:
+        raise ValueError(f"active index pointer {pointer_name} does not exist")
+    pointer = client.get_collection(name=pointer_name, embedding_function=None)
+    metadata = dict(pointer.metadata or {})
+    current, previous = str(metadata.get("active", "")), str(metadata.get("previous", ""))
+    if not previous or previous not in names:
+        raise ValueError("no previous index collection is available to restore")
+    restored = client.get_collection(name=previous, embedding_function=None)
+    if (restored.metadata or {}).get("status") != "complete":
+        raise ValueError(f"previous index {previous} is not complete")
+    pointer.modify(metadata={
+        **metadata, "active": previous, "previous": current,
+        "activated_at": datetime.now(UTC).isoformat(timespec="seconds").replace("+00:00", "Z"),
+    })
+    return previous
 
 
 def _collection_name(item: Any) -> str:

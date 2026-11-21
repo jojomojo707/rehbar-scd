@@ -25,6 +25,14 @@ class FakeCollection:
     def count(self) -> int:
         return len(self.rows)
 
+    def get(self, include=None):
+        return {
+            "ids": list(self.rows),
+            "documents": [row[0] for row in self.rows.values()],
+            "embeddings": [row[1] for row in self.rows.values()],
+            "metadatas": [row[2] for row in self.rows.values()],
+        }
+
     def modify(self, metadata) -> None:
         # Same rule as chromadb-client 1.0.12 (CollectionCommon): the distance function is
         # fixed at creation, and modify() refuses any metadata that still carries hnsw:space.
