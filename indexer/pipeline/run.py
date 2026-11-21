@@ -12,8 +12,11 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
 import sys
 import time
+import uuid
+from datetime import datetime, timezone
 from pathlib import Path
 
 from .config import IndexerSettings, get_settings
@@ -64,6 +67,36 @@ def discover(corpus_dir: str) -> list[tuple[Path, str, bool]]:
     return found
 
 
+def _persist_verification_artifacts(
+    records: list[dict[str, object]], *, run_id: str,
+    quarantine_dir: str, report_dir: str,
+) -> Path:
+    """Copy rejected source files and write a report for this ingestion run."""
+    quarantine_root = Path(quarantine_dir) / run_id
+    for index, record in enumerate(records, start=1):
+        if record["passed"]:
+            continue
+        source_path = Path(str(record["path"]))
+        destination = quarantine_root / f"{index:04d}-{source_path.name}"
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source_path, destination)
+        record["quarantined_to"] = str(destination)
+
+    report_path = Path(report_dir) / f"{run_id}.json"
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    failed = sum(not bool(record["passed"]) for record in records)
+    report = {
+        "run_id": run_id,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "summary": {"documents": len(records), "passed": len(records) - failed,
+                    "failed": failed},
+        "documents": records,
+    }
+    report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n",
+                           encoding="utf-8")
+    return report_path
+
+
 def run_pipeline(settings: IndexerSettings) -> dict[str, int | float | str]:
     from .chunk import chunk
     from .clean import clean
@@ -75,15 +108,44 @@ def run_pipeline(settings: IndexerSettings) -> dict[str, int | float | str]:
     documents = discover(settings.corpus_dir)
     if not documents:
         raise SystemExit(f"no documents found in {settings.corpus_dir}")
-    extracted = [extract(str(path), version, superseded)
-                 for path, version, superseded in documents]
+    run_id = f"{time.strftime('%Y%m%dT%H%M%SZ', time.gmtime())}-{uuid.uuid4().hex[:8]}"
+    records: list[dict[str, object]] = []
+    extracted = []
+    extracted_paths: list[Path] = []
+    for path, version, superseded in documents:
+        try:
+            extracted.append(extract(str(path), version, superseded))
+            extracted_paths.append(path)
+        except Exception as exc:
+            records.append({
+                "source": path.name, "path": str(path), "doc_version": version,
+                "passed": False,
+                "checks": {"extraction": {"passed": False,
+                                             "reason": f"{type(exc).__name__}: {exc}"}},
+            })
     verification = verify_documents(
         extracted, embed=lambda texts: embed(texts, settings))
+    for path, document, result in zip(extracted_paths, extracted, verification):
+        records.append({
+            "source": result.source, "path": str(path), "doc_version": document.doc_version,
+            "passed": result.passed,
+            "checks": {name: {"passed": check.passed, "reason": check.reason}
+                       for name, check in result.checks.items()},
+        })
+    report_path = _persist_verification_artifacts(
+        records, run_id=run_id,
+        quarantine_dir=os.environ.get("QUARANTINE_DIR", "/tmp/rahbar/quarantine"),
+        report_dir=os.environ.get("VERIFICATION_REPORT_DIR", "/tmp/rahbar/verification-reports"),
+    )
+    log("verification report written", run_id=run_id, report=str(report_path),
+        passed=sum(bool(record["passed"]) for record in records),
+        failed=sum(not bool(record["passed"]) for record in records))
     failed = [item for item in verification if not item.passed]
-    if failed:
-        reasons = {item.source: {name: result.reason for name, result in item.checks.items()
-                                 if not result.passed} for item in failed}
-        raise ValueError(f"document verification failed: {json.dumps(reasons, sort_keys=True)}")
+    failed_records = [record for record in records if not record["passed"]]
+    if failed or failed_records:
+        reasons = {str(record["source"]): record["checks"] for record in failed_records}
+        raise ValueError(f"document verification failed; report={report_path}: "
+                         f"{json.dumps(reasons, sort_keys=True)}")
     all_chunks: list[Chunk] = []
     tokenizer = get_tokenizer(settings.embed_model, settings.embed_cache_dir)
     original_tokens = 0
@@ -111,6 +173,7 @@ def run_pipeline(settings: IndexerSettings) -> dict[str, int | float | str]:
         pass
     return {
         "collection": collection,
+        "verification_report": str(report_path),
         "chunks": stored,
         "documents": len(documents),
         "skipped": skipped,
