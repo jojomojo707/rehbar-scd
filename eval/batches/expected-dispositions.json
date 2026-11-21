@@ -1,0 +1,48 @@
+{
+  "batch_a": {
+    "documents": 3,
+    "sources": [
+      "academic-rules-2023.md",
+      "academic-rules-2026.md",
+      "fees-2026.md"
+    ],
+    "purpose": "Baseline copied from the Assignment 02 retrieval fixtures."
+  },
+  "batch_b": {
+    "documents": 13,
+    "cases": {
+      "exact_duplicate": ["handbook-exact-a.md", "handbook-exact-b.md"],
+      "near_duplicate": ["fees-2026.md", "fees-near-duplicate.md"],
+      "corrupt_truncated": "corrupt-truncated.md",
+      "missing_metadata": "missing-metadata.md",
+      "newer_version": {
+        "old": "academic-rules-2026.md",
+        "new": "academic-rules-2027.md"
+      },
+      "injected_instruction": "injected-instruction.md"
+    },
+    "expected": {
+      "pass": [
+        "academic-rules-2023.md",
+        "academic-rules-2026.md",
+        "academic-rules-2027.md",
+        "fees-2026.md",
+        "handbook-exact-a.md",
+        "injected-instruction.md",
+        "library-policy.md",
+        "scholarship-policy.md",
+        "accessibility-policy.md"
+      ],
+      "quarantine": [
+        "handbook-exact-b.md",
+        "fees-near-duplicate.md",
+        "corrupt-truncated.md",
+        "missing-metadata.md"
+      ],
+      "superseded": ["academic-rules-2023.md", "academic-rules-2026.md"],
+      "active_newer_version": "academic-rules-2027.md",
+      "injected_instruction": "Pass ingestion; retain as untrusted content for answer-time guardrail evaluation."
+    },
+    "rerun_expectation": "After the first successful clean ingest, an unchanged second run embeds 0 document chunks."
+  }
+}
