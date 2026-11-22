@@ -33,11 +33,11 @@ This plan extends the existing RAHBAR Assignment 02 repository. It does not repl
 
 ### Phase 1 — 08:30–09:00: sync, split, and establish baseline (AB)
 
-- [ ] `git fetch` and fast-forward the chosen working branch; verify the current branch, clean status, `dev`/`main`, partner identities and the running Minikube context. Do not discard local work.
-- [ ] Read this brief, RAGOps paper sections 3.2, 4.2, Tables 1–2, 5.1 and 6.2, plus current `docs/PLAN.md`, `docs/PIPELINE.md`, `indexer/pipeline/`, `api/app/` and `k8s/`.
-- [ ] Record baseline commit, active embedding/model version, collection, corpus manifest and resource snapshot. Run existing tests and a small baseline query; save outputs before changing behavior.
-- [ ] Create isolated branches: A owns Kubernetes, release gate and deployment integration; B owns verification, incremental ingest, evaluation, traces and coverage. Assign PR reviewers across partners.
-- [ ] Create required directories and agree file interfaces: `eval/results/`, `traces/`, `eval/golden.jsonl`, `k8s/README.md`, report draft and evidence filenames.
+- [~] Fetched and fast-forwarded `dev`; verified `dev`/`main`, collaborator identities and running Minikube. Worktree status is not clean because four untracked D1 evidence directories remain; they were preserved. The untracked `tmp/` contains this session's PDF render checks.
+- [x] Read the Assignment 03 brief, RAGOps sections listed above, `docs/PLAN.md`, `docs/PIPELINE.md`, and the indexer/API/Kubernetes implementation during planning and execution.
+- [x] Recorded the baseline/candidate model, collection, corpus/results and resource captures under `eval/results/day2-20261122/` and `docs/evidence/day2-resources-20261122.txt`; the model is `BAAI/bge-small-en-v1.5`.
+- [x] Split A/B responsibilities into assigned issues and feature branches; cross-partner review was requested on PR #121.
+- [x] Required interfaces exist: `eval/results/`, `traces/`, `eval/golden.jsonl`, `k8s/README.md`, report and evidence artifacts.
 
 ### Phase 2 — 09:00–12:00: verification and incremental data updates
 
@@ -121,17 +121,17 @@ This plan extends the existing RAHBAR Assignment 02 repository. It does not repl
 - [x] Answer report questions from measured evidence: verification catches and blind spots; module vs end-to-end metrics; archive vs deletion; least trusted metric; hardest paper idea and adaptation; Kubernetes responsibility mapping.
 - [x] **D2A6:** README A-F command map and Kubernetes setup/apply instructions are updated.
 - [x] **D2B6:** Result schemas, evaluation/trace commands and timestamped artifacts are in `eval/results/day2-20261122/` and `traces/day2-20261122/`.
-- [ ] **D2AB5:** Terminal outputs and trace evidence are committed; uncropped A-F desktop screenshots are not yet captured because the computer-use `node_repl` tool is unavailable in this session.
+- [ ] **D2AB5:** Terminal outputs and trace evidence are committed. Uncropped A-F desktop screenshots are explicitly deferred per the user's instruction; issue #110 remains open.
 - [x] **D2AB6:** Applied the dev overlay from a clean worktree; all three API pods became Ready and the trace PVC write check passed. Evidence: `docs/evidence/day2-clean-copy.txt`.
-- [~] **D2AB7:** Main report rendered and visually inspected at four pages; the screenshot appendix still needs inspection after capture.
+- [~] **D2AB7:** Main report rendered and visually inspected at four pages; screenshot appendix is deferred per the user's instruction, so issue #112 remains open.
 
 ### Phase 10 — 18:30–20:00: final review and release
 
 - [x] Run tests, lint, manifest validation, ingestion smoke, full evaluation, coverage gate and release-gate fail/pass checks. Root 12, API 146 (90.79% coverage), indexer 43/1 skipped, release gate 3 passed; Batch B and candidate suites completed.
-- [~] Both members have commits on `dev` (Abdullah-SE-bit: 72; jojomojo707: 60). Each member's ability to explain the other's work still needs a partner walkthrough.
+- [~] Both members have commits on `dev` (snapshot after PR #121, before this plan-only PR: Abdullah-SE-bit 73; jojomojo707 60). Each member's ability to explain the other's work still needs a partner walkthrough.
 - [x] Scan reachable Git history and a clean `dev` worktree with Gitleaks v8.30.1; no findings. A separate whole-workspace scan found ignored `.env.local` and third-party `.venv` matches; none were tracked or copied into evidence. Details: `docs/evidence/day2-secret-scan.txt`.
-- [~] Manifests, results and traces are committed; the four-page report PDF is visually checked. The A-F screenshot appendix is still missing.
-- [~] PR #120 passed CI and is merged to `dev`; the repository's `dev` branch is not protected, partner review is still pending, and the repository URL is `https://github.com/jojomojo707/rehbar-scd`.
+- [~] Manifests, results and traces are committed; the four-page report PDF is visually checked. The A-F screenshot appendix is deferred by user instruction.
+- [~] PRs #120 and #121 passed CI and are merged to `dev`; the repository's `dev` branch is not protected, the partner walkthrough/faithfulness confirmation remain pending, and the repository URL is `https://github.com/jojomojo707/rehbar-scd`.
 
 ## Dependency order and checkpoints
 
