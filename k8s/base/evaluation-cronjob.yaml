@@ -1,0 +1,98 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: evaluation
+  labels:
+    app.kubernetes.io/name: rahbar-evaluation
+    app.kubernetes.io/part-of: rahbar
+spec:
+  schedule: "0 4 * * 0"
+  timeZone: Asia/Karachi
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    metadata:
+      labels:
+        app.kubernetes.io/name: rahbar-evaluation
+        app.kubernetes.io/part-of: rahbar
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 7200
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: rahbar-evaluation
+            app.kubernetes.io/part-of: rahbar
+        spec:
+          restartPolicy: Never
+          automountServiceAccountToken: false
+          enableServiceLinks: false
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            fsGroup: 10001
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: evaluation
+              image: rahbar-evaluator:dev
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  set -e
+                  stamp=$(date -u +%Y%m%dT%H%M%SZ)
+                  result="/pipeline-data/eval/results/${stamp}-api.json"
+                  baseline="/pipeline-data/eval/baseline.json"
+                  if [ ! -f "${baseline}" ]; then baseline=/app/eval/baseline.json; fi
+                  if python /app/eval/run_eval.py --api "${EVAL_API_URL}" \
+                    --golden /app/eval/golden.jsonl --baseline "${baseline}" \
+                    --out "${result}"; then eval_status=0; else eval_status=$?; fi
+                  if [ "${eval_status}" -gt 1 ]; then exit "${eval_status}"; fi
+                  cp "${result}" /pipeline-data/eval/results/day2-candidate-api.json
+                  python /app/eval/component_eval.py --input "${result}" \
+                    --out "/pipeline-data/eval/results/${stamp}-component.json"
+                  python /app/eval/run_module_eval.py --seed 20261122 \
+                    --out "/pipeline-data/eval/results/${stamp}-module.json" \
+                    --report "/pipeline-data/eval/results/${stamp}-module.md" \
+                    --cache-dir /models
+                  python /app/eval/release_gate.py --candidate "${result}" \
+                    --baseline "${baseline}" \
+                    --faithfulness /app/eval/faithfulness_review_result.json \
+                    --configmap /gate
+              env:
+                - name: EVAL_API_URL
+                  value: http://api-candidate:8000
+              resources:
+                requests:
+                  cpu: 500m
+                  memory: 1Gi
+                limits:
+                  cpu: "2"
+                  memory: 3Gi
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              volumeMounts:
+                - name: pipeline-data
+                  mountPath: /pipeline-data
+                - name: gate
+                  mountPath: /gate
+                  readOnly: true
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: pipeline-data
+              persistentVolumeClaim:
+                claimName: pipeline-data
+            - name: gate
+              configMap:
+                name: release-gate-thresholds
+            - name: tmp
+              emptyDir:
+                sizeLimit: 1Gi

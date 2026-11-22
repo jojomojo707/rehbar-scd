@@ -52,3 +52,59 @@ The Day 1 baseline passed the indexer suite (42 passed, 1 skipped); live API pod
 | Data-path init | 50m CPU, 64Mi | 200m CPU, 256Mi | Directory creation and write probes |
 
 Record actual peak usage with the full Day 2 evaluation Job before describing estimates as tuned.
+
+## Assignment 03 Day 2: evaluation, gate, candidate, and undo
+
+The `evaluation` CronJob is a reproducible Job template; create a named Job when needed. Its
+evaluator image is built and loaded by `make images`. It calls the candidate Service, writes the
+timestamped API JSON under `/pipeline-data/eval/results/`, then calls `release_gate.py` with the
+baseline, manual faithfulness review, and mounted ConfigMap thresholds. A rejected candidate exits
+1 and is not promoted. Gate thresholds can be edited on the ConfigMap and re-read on each new Job.
+
+```powershell
+make images
+kubectl apply -f k8s/base/namespace.yaml
+kubectl apply -k k8s/overlays/dev
+kubectl -n rahbar rollout status deployment/api-candidate --timeout=10m
+kubectl -n rahbar create job --from=cronjob/evaluation eval-candidate-1
+kubectl -n rahbar wait --for=condition=complete job/eval-candidate-1 --timeout=2h
+kubectl -n rahbar logs job/eval-candidate-1
+```
+
+To show a ConfigMap edit changing the decision without rebuilding, temporarily change
+`MAX_RECALL5_DROP`, rerun the Job under a new name, and restore the committed value (`0.05`). Save
+both complete outputs. Promote only a passing candidate and demonstrate its guarded rollout and
+rollback:
+
+```powershell
+kubectl -n rahbar set env deployment/api TOP_K=7
+kubectl -n rahbar rollout status deployment/api --timeout=10m
+kubectl -n rahbar rollout undo deployment/api
+kubectl -n rahbar rollout status deployment/api --timeout=10m
+```
+
+`api-candidate` is separate; NetworkPolicies allow only the evaluation workload to reach it. It
+uses the same embedding pin and active Chroma collection but overrides `TOP_K` to 7. The normal
+API Deployment retains rolling `maxUnavailable: 0`. For a controlled comparison, save baseline and
+candidate runs from the same cluster, collection, corpus and suite; do not present the older Day 1
+results as a controlled comparison.
+
+### Batch B drift run
+
+Create the input ConfigMap from the committed, verified subset, then explicitly create the suspended
+CronJob template. The Job writes into an isolated collection named `rahbar-day2-batch-b`; it cannot
+replace the collection used by the live API.
+
+```powershell
+kubectl create configmap batch-b-clean --from-file=eval/batches/batch-b-clean -n rahbar `
+  --dry-run=client -o yaml | kubectl apply -f -
+kubectl -n rahbar create job --from=cronjob/batch-b-ingest batch-b-drift-1
+kubectl -n rahbar wait --for=condition=complete job/batch-b-drift-1 --timeout=30m
+kubectl -n rahbar logs job/batch-b-drift-1
+```
+
+To evaluate the isolated collection, update `rahbar-candidate-config` with
+`CHROMA_COLLECTION=rahbar-day2-batch-b`, restart `api-candidate`, and create an evaluation Job.
+Then restore the ConfigMap from `k8s/base/candidate-configmap.yaml` and restart the candidate again.
+Compare module metrics (embedding/model unchanged), component retrieval metrics and end-to-end
+metrics; the Batch B only collection is a deliberate data drift condition, not a production release.

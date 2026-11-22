@@ -91,39 +91,39 @@ This plan extends the existing RAHBAR Assignment 02 repository. It does not repl
 
 | ID | Owner | Work and acceptance evidence |
 | --- | --- | --- |
-| D2B1 | B | Select one controlled change (recommended: chunk size/overlap or top-k). Freeze baseline configuration and run full Part B suite before candidate. Change one variable only. |
-| D2B2 | B | Run the same suite on candidate; compare module, retrieval and end-to-end metrics with timestamped result files. Explain whether the change improves the target metric and what it costs. |
-| D2A1 | A | Put thresholds in a Kubernetes ConfigMap and implement a gate CLI with explicit pass/fail reasons and exit status. Include recall@5 drop, justified faithfulness floor, justified p95 ceiling, and abstention no worse than baseline. |
-| D2AB1 | AB | Demonstrate one deliberately bad candidate that fails and one acceptable candidate that passes. Edit a threshold ConfigMap and rerun to prove outcome changes without rebuilding the image. Capture full terminal outputs. |
+| [x] D2B1 | B | Freeze baseline configuration and run the Part B suite before candidate. Change one variable only: TOP_K 5 to 7. Evidence: `eval/results/day2-20261122/`. |
+| [x] D2B2 | B | Compare module, retrieval and end-to-end results with timestamped artifacts. TOP_K did not improve recall; p95 is cache-confounded and fallback difference is not attributed to TOP_K. |
+| [x] D2A1 | A | ConfigMap thresholds and gate CLI report explicit reasons/exit status for recall drop, faithfulness, p95 and abstention. |
+| [x] D2AB1 | AB | Candidate passed; Batch B drift and temporary strict p95 threshold rejected; restoring thresholds passed without an image rebuild. Evidence: `docs/evidence/day2-gate-outcomes.txt`. |
 
 ### Phase 7 — 10:30–13:30: Kubernetes Jobs, storage, and controlled rollout
 
 | ID | Owner | Work and acceptance evidence |
 | --- | --- | --- |
-| D2A2 | A | Add/adjust ingestion Job and scheduled CronJob; only the Job writes to Chroma. Add an evaluation Job applying the gate and writing timestamped results to PVC-backed storage. |
-| D2A3 | A | Commit manifests for PVC-backed data lake, quarantine, archived versions, evaluation results and traces. Keep API as Deployment and Chroma StatefulSet/PVC. Add resource requests/limits based on measured usage. |
-| D2A4 | A | Create candidate Deployment and Service with candidate collection/config. Run eval Job against it; a rejected candidate must never become live. Configure rolling release with `maxUnavailable: 0`; demonstrate `kubectl rollout status` and `kubectl rollout undo`. |
-| D2B3 | B | Ensure ingestion Job supports an unseen small document batch and writes verification report, and evaluation Job produces expected report/result files and exits nonzero on gate failure. |
-| D2AB2 | AB | Run a full Kubernetes smoke flow: apply fresh manifests, ingest, verify PVC persistence after pod restart, evaluate, reject/pass, release/undo, then capture a new trace proving prior collection and embedding version restored. |
+| [x] D2A2 | A | Existing ingestion Job/CronJob retained; added an evaluation CronJob. The indexer Job remains the only Chroma writer; results persist on PVC. |
+| [x] D2A3 | A | PVC-backed data paths, evaluation, quarantine/archive, traces and measured resource settings are documented in manifests and evidence. |
+| [x] D2A4 | A | Candidate Deployment/Service, gated rollout, `maxUnavailable: 0`, `rollout status` and `rollout undo` demonstrated. Rejected candidates were not promoted. |
+| [x] D2B3 | B | Batch B ConfigMap-fed Job verified an unseen 8-document batch; the evaluation Job wrote reports and exited nonzero on gate rejection. |
+| [x] D2AB2 | AB | Minikube smoke covered apply, ingest, PVC persistence after API pod deletion, gate pass/reject, rollout/undo and a post-rollback trace. |
 
 **13:30 checkpoint:** all A–F work runs on Minikube. If the fresh-cluster path fails, prioritize fixing the README/manifest sequence and capture the failure honestly.
 
 ### Phase 8 — 14:00–16:00: drift, coverage closure, and resource measurements
 
-- [ ] **D2B4:** Ingest Batch B, rerun the full suite, report data drift and its effect on all levels.
-- [ ] **D2B5:** Add at least 6 golden questions drawn from uncovered live-query topics; rerun coverage and show the increase. Verify the below-threshold command fails.
-- [ ] **D2A5:** Capture `kubectl top`, pod/job requests and limits, API/Chroma Services, PVCs, CronJobs, Jobs and ConfigMaps from the live namespace.
-- [ ] **D2AB3:** Ensure changed/deleted/superseded document counts agree across reports, Chroma and traces; prove restore returns the previous version.
+- [x] **D2B4:** Ingest Batch B and rerun the 35-case suite. Recall@5 fell to 0.2333 on the isolated Batch B collection; component and module effects are in the timestamped comparisons.
+- [x] **D2B5:** Coverage rerun at 0.65 found zero uncovered in-scope queries after nine coverage additions; the 0.99 demonstration exited 1. Evidence is under `eval/results/`.
+- [x] **D2A5:** Captured `kubectl top`, resource requests/limits, API/Chroma Services, PVCs, CronJobs, Jobs and ConfigMaps in `docs/evidence/day2-resources-20261122.txt`.
+- [x] **D2AB3:** Reconciled the 11-to-17-chunk D1 change/restore with verification reports and Chroma counts; Day 2 Batch B's eight documents and 17 chunks match Chroma and traces. See `docs/evidence/day2-count-reconciliation.md`.
 
 ### Phase 9 — 16:00–18:30: report, README, clean run, and screenshots
 
-- [ ] **D2AB4:** Draft report (≤8 pages before appendix): lifecycle mapping table (Figure 3), five qualities from Table 2 with measurement/threshold/evidence, results and release decision, five short answers, contribution table, 2–3 line AI statement.
+- [x] **D2AB4:** Drafted a four-page main report with lifecycle mapping, five qualities, measurements, release decision, six short answers, contribution table and AI statement. Partner review is still needed.
 - [ ] Answer report questions from measured evidence: most frequent verification catch and missed problem; module metric vs end-to-end example; archive vs deletion tradeoff; least trusted metric; hardest paper idea and adaptation; Kubernetes responsibility mapping.
-- [ ] **D2A6:** Update `README.md` with exact commands for Parts A–F; add `k8s/README.md` with fresh-cluster apply sequence and prerequisites.
-- [ ] **D2B6:** Add result schema/commands and trace CLI usage; ensure committed run artifacts live under `eval/results/` and `traces/`.
-- [ ] **D2AB5:** Capture uncropped screenshots with command and output visible: A verification and zero re-embed; B summary; C fail/pass; D full trace and prompt reconstruction; E coverage before/after; F resources, completed ingestion/eval Jobs, ConfigMap gate change, rollout/undo and post-undo trace.
-- [ ] **D2AB6:** Follow README from a clean working copy or fresh cluster without deleting the working cluster; verify no uncommitted generated secrets or local-only assumptions.
-- [ ] **D2AB7:** Render report PDF and inspect page count, legibility and screenshots. Keep main report to eight pages maximum, appendix separate.
+- [x] **D2A6:** README A-F command map and Kubernetes setup/apply instructions are updated.
+- [x] **D2B6:** Result schemas, evaluation/trace commands and timestamped artifacts are in `eval/results/day2-20261122/` and `traces/day2-20261122/`.
+- [ ] **D2AB5:** Terminal outputs and trace evidence are committed; uncropped A-F desktop screenshots are not yet captured because the computer-use `node_repl` tool is unavailable in this session.
+- [ ] **D2AB6:** Clean working-copy walkthrough is pending.
+- [~] **D2AB7:** Main report rendered and visually inspected at four pages; the screenshot appendix still needs inspection after capture.
 
 ### Phase 10 — 18:30–20:00: final review and release
 

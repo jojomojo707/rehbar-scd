@@ -1,0 +1,343 @@
+{
+  "created_at": "2026-11-22T10:10:56.102863+00:00",
+  "model": "BAAI/bge-small-en-v1.5",
+  "threshold": 0.65,
+  "threshold_rule": "fixed cosine threshold 0.65",
+  "in_scope": {
+    "n": 28,
+    "mean": 0.824931869642857,
+    "min": 0.70565565
+  },
+  "out_of_scope": {
+    "n": 12,
+    "mean": 0.6102988833333333,
+    "max": 0.78788474,
+    "above_threshold": 2,
+    "false_positive_rate": 0.16666666666666666
+  },
+  "threshold_justification": "On the labeled baseline sample, 0.65 surfaced uncovered in-scope queries; held fixed for comparison. Out-of-scope scores overlap, so this prompts coverage review rather than guaranteeing answerability.",
+  "uncovered_topics": {},
+  "queries": [
+    {
+      "id": "C01",
+      "scope": "in_scope",
+      "topic": "attendance",
+      "question": "How much class attendance is needed to take the final?",
+      "closest_golden_id": "V02",
+      "max_cosine": 0.71634417
+    },
+    {
+      "id": "C02",
+      "scope": "in_scope",
+      "topic": "attendance",
+      "question": "What happens after missing too many lectures?",
+      "closest_golden_id": "O05",
+      "max_cosine": 0.72107842
+    },
+    {
+      "id": "C03",
+      "scope": "in_scope",
+      "topic": "attendance",
+      "question": "Can a medical absence count as an exception to the attendance rule?",
+      "closest_golden_id": "N07",
+      "max_cosine": 0.8820289
+    },
+    {
+      "id": "C04",
+      "scope": "in_scope",
+      "topic": "attendance",
+      "question": "What percentage of lectures must a student attend?",
+      "closest_golden_id": "O04",
+      "max_cosine": 0.70565565
+    },
+    {
+      "id": "C05",
+      "scope": "in_scope",
+      "topic": "attendance",
+      "question": "Is documented illness considered for lecture absences?",
+      "closest_golden_id": "N07",
+      "max_cosine": 0.82357595
+    },
+    {
+      "id": "C06",
+      "scope": "in_scope",
+      "topic": "semester_calendar",
+      "question": "How many teaching weeks are in a normal semester?",
+      "closest_golden_id": "O02",
+      "max_cosine": 0.91183063
+    },
+    {
+      "id": "C07",
+      "scope": "in_scope",
+      "topic": "semester_calendar",
+      "question": "When are final exams held in relation to makeup week?",
+      "closest_golden_id": "O02",
+      "max_cosine": 0.73202337
+    },
+    {
+      "id": "C08",
+      "scope": "in_scope",
+      "topic": "semester_calendar",
+      "question": "How many weeks are reserved for final examinations?",
+      "closest_golden_id": "O02",
+      "max_cosine": 0.77606607
+    },
+    {
+      "id": "C09",
+      "scope": "in_scope",
+      "topic": "semester_calendar",
+      "question": "What is the length of a regular teaching term?",
+      "closest_golden_id": "O02",
+      "max_cosine": 0.76693197
+    },
+    {
+      "id": "C10",
+      "scope": "in_scope",
+      "topic": "credit_hours",
+      "question": "What does one theory credit hour mean each week?",
+      "closest_golden_id": "O03",
+      "max_cosine": 0.9533157
+    },
+    {
+      "id": "C11",
+      "scope": "in_scope",
+      "topic": "credit_hours",
+      "question": "How many classroom hours make up a theory credit?",
+      "closest_golden_id": "O03",
+      "max_cosine": 0.84236362
+    },
+    {
+      "id": "C12",
+      "scope": "in_scope",
+      "topic": "academic_warning",
+      "question": "At what CGPA does a student receive an academic warning?",
+      "closest_golden_id": "N08",
+      "max_cosine": 0.82777017
+    },
+    {
+      "id": "C13",
+      "scope": "in_scope",
+      "topic": "academic_warning",
+      "question": "What cumulative GPA triggers academic probation or warning?",
+      "closest_golden_id": "N08",
+      "max_cosine": 0.89354147
+    },
+    {
+      "id": "C14",
+      "scope": "in_scope",
+      "topic": "academic_warning",
+      "question": "When is academic warning assessed?",
+      "closest_golden_id": "N08",
+      "max_cosine": 0.77854898
+    },
+    {
+      "id": "C15",
+      "scope": "in_scope",
+      "topic": "course_repeat",
+      "question": "Which attempt counts when repeating a course?",
+      "closest_golden_id": "H05",
+      "max_cosine": 0.84299016
+    },
+    {
+      "id": "C16",
+      "scope": "in_scope",
+      "topic": "course_repeat",
+      "question": "Can I repeat a class to raise my cumulative GPA?",
+      "closest_golden_id": "O07",
+      "max_cosine": 0.79363367
+    },
+    {
+      "id": "C17",
+      "scope": "in_scope",
+      "topic": "course_repeat",
+      "question": "How does a repeated course affect the recorded grade?",
+      "closest_golden_id": "H05",
+      "max_cosine": 0.82647455
+    },
+    {
+      "id": "C18",
+      "scope": "in_scope",
+      "topic": "library",
+      "question": "How many books can I borrow from the library?",
+      "closest_golden_id": "N01",
+      "max_cosine": 0.87234118
+    },
+    {
+      "id": "C19",
+      "scope": "in_scope",
+      "topic": "library",
+      "question": "For how long can borrowed books be checked out?",
+      "closest_golden_id": "N01",
+      "max_cosine": 0.82261775
+    },
+    {
+      "id": "C20",
+      "scope": "in_scope",
+      "topic": "library",
+      "question": "Can a library book be renewed if someone reserved it?",
+      "closest_golden_id": "N02",
+      "max_cosine": 0.89771586
+    },
+    {
+      "id": "C21",
+      "scope": "in_scope",
+      "topic": "accessibility",
+      "question": "Who should I contact to request academic accommodations?",
+      "closest_golden_id": "N03",
+      "max_cosine": 0.8840773
+    },
+    {
+      "id": "C22",
+      "scope": "in_scope",
+      "topic": "accessibility",
+      "question": "When should accommodation requests be made?",
+      "closest_golden_id": "N03",
+      "max_cosine": 0.80171616
+    },
+    {
+      "id": "C23",
+      "scope": "in_scope",
+      "topic": "accessibility",
+      "question": "Who can see an approved accommodation plan?",
+      "closest_golden_id": "N04",
+      "max_cosine": 0.90298289
+    },
+    {
+      "id": "C24",
+      "scope": "in_scope",
+      "topic": "scholarship",
+      "question": "What documents are needed for a need-based scholarship application?",
+      "closest_golden_id": "N05",
+      "max_cosine": 0.85382116
+    },
+    {
+      "id": "C25",
+      "scope": "in_scope",
+      "topic": "scholarship",
+      "question": "How often does the scholarship committee meet?",
+      "closest_golden_id": "N09",
+      "max_cosine": 0.91234833
+    },
+    {
+      "id": "C26",
+      "scope": "in_scope",
+      "topic": "scholarship",
+      "question": "What is required to renew a need-based award?",
+      "closest_golden_id": "N06",
+      "max_cosine": 0.84975702
+    },
+    {
+      "id": "C27",
+      "scope": "in_scope",
+      "topic": "fees",
+      "question": "How is an overdue library book fine calculated?",
+      "closest_golden_id": "N02",
+      "max_cosine": 0.72461149
+    },
+    {
+      "id": "C28",
+      "scope": "in_scope",
+      "topic": "fees",
+      "question": "What does a student pay if a borrowed library book is lost?",
+      "closest_golden_id": "N01",
+      "max_cosine": 0.78192976
+    },
+    {
+      "id": "C29",
+      "scope": "out_of_scope",
+      "topic": "healthcare",
+      "question": "Does the university clinic offer dental surgery?",
+      "closest_golden_id": "N03",
+      "max_cosine": 0.6258272
+    },
+    {
+      "id": "C30",
+      "scope": "out_of_scope",
+      "topic": "housing",
+      "question": "How do I reserve an on-campus dormitory room?",
+      "closest_golden_id": "A01",
+      "max_cosine": 0.78788474
+    },
+    {
+      "id": "C31",
+      "scope": "out_of_scope",
+      "topic": "transport",
+      "question": "What time does the campus shuttle leave for the airport?",
+      "closest_golden_id": "UA03",
+      "max_cosine": 0.65499712
+    },
+    {
+      "id": "C32",
+      "scope": "out_of_scope",
+      "topic": "employment",
+      "question": "How many annual leave days do university employees receive?",
+      "closest_golden_id": "V03",
+      "max_cosine": 0.60483921
+    },
+    {
+      "id": "C33",
+      "scope": "out_of_scope",
+      "topic": "sports",
+      "question": "When does the inter-university cricket tournament start?",
+      "closest_golden_id": "A02",
+      "max_cosine": 0.59847819
+    },
+    {
+      "id": "C34",
+      "scope": "out_of_scope",
+      "topic": "food",
+      "question": "Is the cafeteria open during public holidays?",
+      "closest_golden_id": "N03",
+      "max_cosine": 0.64232095
+    },
+    {
+      "id": "C35",
+      "scope": "out_of_scope",
+      "topic": "parking",
+      "question": "Where can visitors buy a monthly parking permit?",
+      "closest_golden_id": "N03",
+      "max_cosine": 0.59873194
+    },
+    {
+      "id": "C36",
+      "scope": "out_of_scope",
+      "topic": "finance",
+      "question": "Which bank has the lowest home mortgage rate?",
+      "closest_golden_id": "N03",
+      "max_cosine": 0.48497461
+    },
+    {
+      "id": "C37",
+      "scope": "out_of_scope",
+      "topic": "weather",
+      "question": "Will it rain in Islamabad next Monday?",
+      "closest_golden_id": "UA03",
+      "max_cosine": 0.56579901
+    },
+    {
+      "id": "C38",
+      "scope": "out_of_scope",
+      "topic": "technology",
+      "question": "How do I reset my personal laptop BIOS password?",
+      "closest_golden_id": "UA03",
+      "max_cosine": 0.54358202
+    },
+    {
+      "id": "C39",
+      "scope": "out_of_scope",
+      "topic": "travel",
+      "question": "What are the visa requirements for a Canadian tourist?",
+      "closest_golden_id": "N04",
+      "max_cosine": 0.60331154
+    },
+    {
+      "id": "C40",
+      "scope": "out_of_scope",
+      "topic": "healthcare",
+      "question": "Which pharmacy near campus sells insulin?",
+      "closest_golden_id": "N03",
+      "max_cosine": 0.61284007
+    }
+  ],
+  "limitation": "Threshold evidence is synthetic and only 40 queries; use human-reviewed live queries before production use."
+}

@@ -1,0 +1,243 @@
+{
+  "created_at": "2026-11-22T10:18:42.557953+00:00",
+  "documents": [
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2023",
+      "passed": true,
+      "path": "/batch-b/academic-rules-2023.md",
+      "source": "academic-rules-2023.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2026",
+      "passed": true,
+      "path": "/batch-b/academic-rules-2026.md",
+      "source": "academic-rules-2026.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2027",
+      "passed": true,
+      "path": "/batch-b/academic-rules-2027.md",
+      "source": "academic-rules-2027.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2026",
+      "passed": true,
+      "path": "/batch-b/accessibility-policy.md",
+      "source": "accessibility-policy.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2026",
+      "passed": true,
+      "path": "/batch-b/handbook-exact-a.md",
+      "source": "handbook-exact-a.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2026",
+      "passed": true,
+      "path": "/batch-b/injected-instruction.md",
+      "source": "injected-instruction.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2026",
+      "passed": true,
+      "path": "/batch-b/library-policy.md",
+      "source": "library-policy.md"
+    },
+    {
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version and page sequence are present"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "extracted text is usable"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of this document exists"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near-duplicate found"
+        }
+      },
+      "doc_version": "2026",
+      "passed": true,
+      "path": "/batch-b/scholarship-policy.md",
+      "source": "scholarship-policy.md"
+    }
+  ],
+  "incremental": {
+    "added": [
+      "academic-rules-2023.md",
+      "academic-rules-2026.md",
+      "academic-rules-2027.md",
+      "accessibility-policy.md",
+      "handbook-exact-a.md",
+      "injected-instruction.md",
+      "library-policy.md",
+      "scholarship-policy.md"
+    ],
+    "changed": [],
+    "deleted": [],
+    "document_chunk_counts_after": {
+      "academic-rules-2023.md": 4,
+      "academic-rules-2026.md": 4,
+      "academic-rules-2027.md": 4,
+      "accessibility-policy.md": 1,
+      "handbook-exact-a.md": 1,
+      "injected-instruction.md": 1,
+      "library-policy.md": 1,
+      "scholarship-policy.md": 1
+    },
+    "document_chunk_counts_before": {},
+    "embedded_chunks": 17,
+    "embedded_documents": [
+      "academic-rules-2023.md",
+      "academic-rules-2026.md",
+      "academic-rules-2027.md",
+      "accessibility-policy.md",
+      "handbook-exact-a.md",
+      "injected-instruction.md",
+      "library-policy.md",
+      "scholarship-policy.md"
+    ],
+    "model_or_chunk_config_changed": false,
+    "reused_chunks": 0,
+    "reused_documents": [],
+    "unchanged": []
+  },
+  "run_id": "20261122T101827Z-17272e44",
+  "summary": {
+    "documents": 8,
+    "failed": 0,
+    "passed": 8
+  }
+}

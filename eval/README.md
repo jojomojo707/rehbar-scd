@@ -43,6 +43,49 @@ The controlled noise condition changed recall@3 from 0.4833 to 0, recall@5 from 
 MRR from 0.4944 to 0.1233, and nDCG@5 from 0.4857 to 0.2033. These are a synthetic insertion
 stress test, not a newly ingested corpus measurement.
 
+## Day 2 Minikube runs (2026-11-22)
+
+The baseline run froze the live `rahbar` collection, the `BAAI/bge-small-en-v1.5` pin and `TOP_K=5`.
+The candidate changed only `TOP_K` to 7. Both used the same 35-question JSONL suite and unchanged
+corpus. The candidate passed the configurable gate against this same-cluster baseline; the previous
+Assignment 02 baseline (`0.9375`) is not comparable because it used a different collection snapshot.
+
+| Level / metric | Baseline (`101513Z`) | Candidate (`103422Z`) | Result |
+| --- | ---: | ---: | --- |
+| Module paraphrase mean cosine | 0.8572 | 0.8572 | unchanged |
+| Module unrelated mean cosine | 0.5553 | 0.5553 | unchanged |
+| Module mean gap | 0.3020 | 0.3020 | unchanged |
+| Component recall@5 | 0.5000 | 0.5000 | unchanged |
+| Component MRR | 0.4944 | 0.4944 | unchanged |
+| End-to-end recall@5 | 0.5833 | 0.5833 | gate pass |
+| Citation validity / abstention | 1.0 / 1.0 | 1.0 / 1.0 | unchanged |
+| p95 latency / cache hits | 2.31s / 15 | 11.10s / 0 | cache states differ; no cold-latency claim |
+| Fallback count | 4 | 8 | observed increase; not attributed to TOP_K because provider/cache state differs |
+
+The `TOP_K` change did not improve recall or component ranking, so it has no measured retrieval
+benefit in this experiment. It met the guardrails and was briefly rolled out to the API Deployment,
+then rolled back; post-rollback trace `68463cbd37164cdb8a9cc208fa676af2` records the restored model
+pin and `rahbar-v20261106-192510` collection. The full comparison is
+`eval/results/day2-20261122/20261122T103706Z-comparison.md`.
+
+The Batch B ingestion Job verified 8 documents and embedded 17 chunks into the isolated
+`rahbar-day2-batch-b-v20261122-101850` collection. The Chroma collection count was 17, matching
+the per-document report. The 35-question run against this Batch B-only collection recorded
+end-to-end recall@5 `0.2333` (baseline `0.5833`), component recall@5 `0.2333` (baseline `0.5000`),
+and the same module means above; the gate rejected it. This deliberately shows data drift degrading
+retrieval while the embedding module stays fixed. Raw files and the 35 query traces are in
+`eval/results/day2-20261122/` and `traces/day2-20261122/`.
+
+The 40-query coverage rerun retained threshold `0.65`: 28 in-scope queries had minimum similarity
+`0.7057` and zero remained uncovered; 2 of 12 out-of-scope queries exceeded the threshold. Running
+the intentionally strict `0.99` threshold exited 1 and grouped the newly uncovered topics. See
+`eval/results/day2-coverage-after.json` and `eval/results/day2-coverage-fail-demo.json`.
+
+`release-gate.py` reads recall drop, faithfulness floor, p95 ceiling and abstention against the
+frozen baseline. ConfigMap values are `0.05`, `0.90`, `15s`, and “no worse than baseline”. On the
+saved candidate, the committed threshold passed; changing only `MAX_P95_SECONDS` to `0.001` rejected
+it; restoring `15` passed again without rebuilding. Evidence: `docs/evidence/day2-gate-outcomes.txt`.
+
 ## Initial Kubernetes resource estimates
 
 See [Kubernetes estimates and commands](../k8s/README.md#initial-job-resource-estimates). Values

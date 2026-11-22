@@ -1,0 +1,2340 @@
+{
+  "recall@3": 0.23333333333333334,
+  "recall@5": 0.23333333333333334,
+  "citation_validity": 1.0,
+  "abstention_correctness": 1.0,
+  "by_type": {
+    "answerable": {
+      "n": 25,
+      "recall@3": 0.28,
+      "recall@5": 0.28
+    },
+    "hard": {
+      "n": 5,
+      "recall@3": 0.0,
+      "recall@5": 0.0
+    },
+    "unanswerable": {
+      "n": 5,
+      "recall@3": null,
+      "recall@5": null
+    }
+  },
+  "cache_hits": 0,
+  "fallbacks": 0,
+  "latency_p50_seconds": 0.8,
+  "latency_p95_seconds": 1.59,
+  "rows": [
+    {
+      "id": "O01",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.55730963,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.03,
+      "retrieved": [
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.55730963
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.5349244
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.52959406
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.50946426
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.5060137
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.49348080000000005
+        },
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.48506439999999995
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 7,
+          "section": "1.1"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "O02",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.69906324,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.7,
+      "retrieved": [
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.69906324
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.6056608
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.5937435600000001
+        },
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.58151668
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.5802664799999999
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.57320547
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.56450117
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 7,
+          "section": "1.6"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "O03",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.59522533,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.6,
+      "retrieved": [
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.59522533
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.58917648
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.58604753
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.5682529199999999
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.56469882
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.5529849499999999
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.5363412000000001
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 7,
+          "section": "1.7"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "O04",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.67850393,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.69,
+      "retrieved": [
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.67850393
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.6363877
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.60833335
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.6062578000000001
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.5979737
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.55458796
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.55306208
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 19,
+          "section": "4.3"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "O05",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.6920836,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.71,
+      "retrieved": [
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.6920836
+        },
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.66253954
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.64201772
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.6403198800000001
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.6342345
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.618663
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.60840273
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 10,
+          "section": "1.22"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "O06",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.61690193,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.56,
+      "retrieved": [
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.61690193
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.6020118
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.6002109
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.5965153000000001
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.56192565
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.5569991000000001
+        },
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.55355632
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 10,
+          "section": "1.25"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "O07",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.765396,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.74,
+      "retrieved": [
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.765396
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.6264044
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.6192764
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.60411572
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.5825756200000001
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.5742929
+        },
+        {
+          "source": "injected-instruction.md",
+          "section": "Deliberately untrusted archived memo",
+          "page": 1,
+          "score": 0.5441952299999999
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 13,
+          "section": "2.7"
+        }
+      ],
+      "answer": "The most recent attempt of a repeated course determines the recorded grade used in the CGPA calculation [academic-rules-2027.md / 3. Repeating a course].",
+      "citations": [
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1
+        }
+      ]
+    },
+    {
+      "id": "O08",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.64402783,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.79,
+      "retrieved": [
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.64402783
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.6350546
+        },
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.6302119500000001
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.62678397
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.61101043
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.6043692199999999
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.59880757
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 22,
+          "section": "4.23"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "V01",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.71743852,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.96,
+      "retrieved": [
+        {
+          "source": "academic-rules-2023.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.71743852
+        },
+        {
+          "source": "academic-rules-2023.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2023 edition)",
+          "page": 1,
+          "score": 0.7048673
+        },
+        {
+          "source": "academic-rules-2023.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.68898284
+        },
+        {
+          "source": "academic-rules-2023.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.6859815
+        }
+      ],
+      "relevant": [
+        {
+          "source": "undergraduate-academic-rules-aug-2023.pdf",
+          "page": 7,
+          "section": "1.17"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "V02",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.73487836,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.54,
+      "retrieved": [
+        {
+          "source": "academic-rules-2026.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2026 edition)",
+          "page": 1,
+          "score": 0.73487836
+        },
+        {
+          "source": "academic-rules-2026.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.69461644
+        },
+        {
+          "source": "academic-rules-2026.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.65048605
+        },
+        {
+          "source": "academic-rules-2026.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.6286058999999999
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.59754854
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.5876156
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.57723373
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 19,
+          "section": "4.3"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "V03",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.57723576,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.7,
+      "retrieved": [
+        {
+          "source": "academic-rules-2023.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2023 edition)",
+          "page": 1,
+          "score": 0.57723576
+        },
+        {
+          "source": "academic-rules-2023.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.5140075
+        },
+        {
+          "source": "academic-rules-2023.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.49107283
+        },
+        {
+          "source": "academic-rules-2023.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.46678850000000005
+        }
+      ],
+      "relevant": [
+        {
+          "source": "annual-report-2023-24.pdf",
+          "page": 48,
+          "section": "Summer Internships"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "E01",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.71913576,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.6,
+      "retrieved": [
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.71913576
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.6499914
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.5964918
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.56770146
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.5588975
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.5566428299999999
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.52261817
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 12,
+          "section": "2.3"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "E02",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.63481253,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.5,
+      "retrieved": [
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.63481253
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.62578964
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.62381816
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.6095974399999999
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.5814390199999999
+        },
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.56392837
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.55803454
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 10,
+          "section": "1.25"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "E03",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.6590772300000001,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.65,
+      "retrieved": [
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.6590772300000001
+        },
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.6362391700000001
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.61890566
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.5891375
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.586765
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.57830393
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.57604325
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 29,
+          "section": "6.11"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "I01",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.6994075799999999,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.54,
+      "retrieved": [
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.6994075799999999
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.63626647
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.6354848
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.62336737
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.6112355
+        },
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.6103990699999999
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.58458304
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 10,
+          "section": "1.22"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "I02",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.7831837500000001,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.41,
+      "retrieved": [
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.7831837500000001
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.6294361399999999
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.62920797
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.6258638999999999
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.6148109399999999
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.60622865
+        },
+        {
+          "source": "injected-instruction.md",
+          "section": "Deliberately untrusted archived memo",
+          "page": 1,
+          "score": 0.6009021999999999
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 13,
+          "section": "2.7"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "A01",
+      "type": "unanswerable",
+      "must_abstain": true,
+      "recall@3": null,
+      "recall@5": null,
+      "top_score": 0.7077158,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.6,
+      "retrieved": [
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.7077158
+        },
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.6955907299999999
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.6536287000000001
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.642923
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.6317406999999999
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.59879565
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.59217215
+        }
+      ],
+      "relevant": [],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "A02",
+      "type": "unanswerable",
+      "must_abstain": true,
+      "recall@3": null,
+      "recall@5": null,
+      "top_score": 0.67029512,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.69,
+      "retrieved": [
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.67029512
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.6418097
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.6120888600000001
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.5932900999999999
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.59134603
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.5668466
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.54446852
+        }
+      ],
+      "relevant": [],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "UA03",
+      "type": "unanswerable",
+      "must_abstain": true,
+      "recall@3": null,
+      "recall@5": null,
+      "top_score": 0.6262121199999999,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.6,
+      "retrieved": [
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.6262121199999999
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.6214033400000001
+        },
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.61344254
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.5932694000000001
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.54129916
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.5374350999999999
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.5369494
+        }
+      ],
+      "relevant": [],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "UA04",
+      "type": "unanswerable",
+      "must_abstain": true,
+      "recall@3": null,
+      "recall@5": null,
+      "top_score": 0.6112404,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.8,
+      "retrieved": [
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.6112404
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.58228177
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.56920028
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.5273558
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.49858314000000004
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.4830495
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.45288969999999995
+        }
+      ],
+      "relevant": [],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "UA05",
+      "type": "unanswerable",
+      "must_abstain": true,
+      "recall@3": null,
+      "recall@5": null,
+      "top_score": 0.64304602,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.91,
+      "retrieved": [
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.64304602
+        },
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.55027187
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.54913652
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.53116757
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.48531866
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.4708169
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.47058433
+        }
+      ],
+      "relevant": [],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "H01",
+      "type": "hard",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.64433903,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.85,
+      "retrieved": [
+        {
+          "source": "academic-rules-2023.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2023 edition)",
+          "page": 1,
+          "score": 0.64433903
+        },
+        {
+          "source": "academic-rules-2023.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.5689963
+        },
+        {
+          "source": "academic-rules-2023.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.5089059
+        },
+        {
+          "source": "academic-rules-2023.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.49310887000000003
+        }
+      ],
+      "relevant": [
+        {
+          "source": "undergraduate-academic-rules-aug-2023.pdf",
+          "page": 7,
+          "section": "1.17"
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 19,
+          "section": "4.3"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "H02",
+      "type": "hard",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.7380274499999999,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.95,
+      "retrieved": [
+        {
+          "source": "academic-rules-2026.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.7380274499999999
+        },
+        {
+          "source": "academic-rules-2026.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.69114137
+        },
+        {
+          "source": "academic-rules-2026.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2026 edition)",
+          "page": 1,
+          "score": 0.68736458
+        },
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.6276610499999999
+        },
+        {
+          "source": "academic-rules-2026.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.62517804
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.6044619
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.6037327
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 10,
+          "section": "1.25"
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 24,
+          "section": "5.4"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "H03",
+      "type": "hard",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.64400375,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.69,
+      "retrieved": [
+        {
+          "source": "academic-rules-2026.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2026 edition)",
+          "page": 1,
+          "score": 0.64400375
+        },
+        {
+          "source": "academic-rules-2026.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.6377227999999999
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.62686205
+        },
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.61451018
+        },
+        {
+          "source": "academic-rules-2026.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.58127105
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.57542336
+        },
+        {
+          "source": "academic-rules-2026.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.55726898
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 10,
+          "section": "1.21"
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 10,
+          "section": "1.22"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "H04",
+      "type": "hard",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.6016741400000001,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.6,
+      "retrieved": [
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.6016741400000001
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.5936634000000001
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.59351593
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.58767575
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.57958883
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.54291093
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.51768953
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 8,
+          "section": "1.19"
+        },
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 29,
+          "section": "6.11"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "H05",
+      "type": "hard",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.89447677,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.1,
+      "retrieved": [
+        {
+          "source": "academic-rules-2026.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.89447677
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.77788901
+        },
+        {
+          "source": "academic-rules-2023.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.77321881
+        },
+        {
+          "source": "academic-rules-2026.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.71703452
+        },
+        {
+          "source": "academic-rules-2023.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.7163704
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.6765682
+        },
+        {
+          "source": "academic-rules-2023.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.6386327700000001
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 13,
+          "section": "2.7"
+        }
+      ],
+      "answer": "For a student repeating a course, the most recent attempt determines the recorded grade for CGPA calculation [academic-rules-2027.md / 3. Repeating a course]. The older attempt does not affect CGPA, but the policy does not specify whether it disappears from the transcript [academic-rules-2027.md / 3. Repeating a course].",
+      "citations": [
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1
+        }
+      ]
+    },
+    {
+      "id": "N01",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.88688558,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.39,
+      "retrieved": [
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.88688558
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.60803443
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.60374987
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.58712935
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.58301604
+        },
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.5561048399999999
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.54830372
+        }
+      ],
+      "relevant": [
+        {
+          "source": "library-policy.md",
+          "page": 1,
+          "section": "Library access policy"
+        }
+      ],
+      "answer": "A student may borrow up to five books for fourteen days [library-policy.md / Library access policy].",
+      "citations": [
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1
+        }
+      ]
+    },
+    {
+      "id": "N02",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.79705954,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.02,
+      "retrieved": [
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.79705954
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.64447153
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.6086560999999999
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.5731524800000001
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.5483678599999999
+        },
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.5291071
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.52059978
+        }
+      ],
+      "relevant": [
+        {
+          "source": "library-policy.md",
+          "page": 1,
+          "section": "Library access policy"
+        }
+      ],
+      "answer": "A library book can be renewed once when another reader has not reserved the item [library-policy.md / Library access policy].",
+      "citations": [
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1
+        }
+      ]
+    },
+    {
+      "id": "N03",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.80579042,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.48,
+      "retrieved": [
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.80579042
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.69666505
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.64720684
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.5860806700000001
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.5843529700000001
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.54245877
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.5277449000000001
+        }
+      ],
+      "relevant": [
+        {
+          "source": "accessibility-policy.md",
+          "page": 1,
+          "section": "Accessibility accommodations"
+        }
+      ],
+      "answer": "The student support office handles academic accommodation requests [accessibility-policy.md / Accessibility accommodations].",
+      "citations": [
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1
+        }
+      ]
+    },
+    {
+      "id": "N04",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.82042766,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.3,
+      "retrieved": [
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.82042766
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.69085145
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.66146505
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.5907281600000001
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.57957953
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.57487595
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.5418169500000001
+        }
+      ],
+      "relevant": [
+        {
+          "source": "accessibility-policy.md",
+          "page": 1,
+          "section": "Accessibility accommodations"
+        }
+      ],
+      "answer": "Only instructors who need to arrange the listed accommodations may receive details of an approved academic accommodation plan [accessibility-policy.md / Accessibility accommodations].",
+      "citations": [
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1
+        }
+      ]
+    },
+    {
+      "id": "N05",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.80545574,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.31,
+      "retrieved": [
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.80545574
+        },
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.61641276
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.58750534
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.58353502
+        },
+        {
+          "source": "injected-instruction.md",
+          "section": "Deliberately untrusted archived memo",
+          "page": 1,
+          "score": 0.56904024
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.56483722
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.5603358700000001
+        }
+      ],
+      "relevant": [
+        {
+          "source": "scholarship-policy.md",
+          "page": 1,
+          "section": "Need-based scholarship policy"
+        }
+      ],
+      "answer": "Applicants submit the scholarship form with household income evidence and the latest transcript [scholarship-policy.md / Need-based scholarship policy].",
+      "citations": [
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1
+        }
+      ]
+    },
+    {
+      "id": "N06",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.78949827,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.59,
+      "retrieved": [
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.78949827
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.6874566
+        },
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.6604082
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.6399495
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.62897468
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.62253195
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.6172731
+        }
+      ],
+      "relevant": [
+        {
+          "source": "scholarship-policy.md",
+          "page": 1,
+          "section": "Need-based scholarship policy"
+        }
+      ],
+      "answer": "A student must maintain satisfactory academic progress [scholarship-policy.md / Need-based scholarship policy].",
+      "citations": [
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1
+        }
+      ]
+    },
+    {
+      "id": "N07",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.72337896,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "cached": false,
+      "fallback": false,
+      "seconds": 0.56,
+      "retrieved": [
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.72337896
+        },
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.6070470800000001
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.59919667
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.57262605
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.55619025
+        },
+        {
+          "source": "injected-instruction.md",
+          "section": "Deliberately untrusted archived memo",
+          "page": 1,
+          "score": 0.5489192
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.52283466
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-2027.md",
+          "page": 1,
+          "section": "Attendance"
+        }
+      ],
+      "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+      "citations": []
+    },
+    {
+      "id": "N08",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "top_score": 0.855551,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.44,
+      "retrieved": [
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1,
+          "score": 0.855551
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.6482383
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.64571846
+        },
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.61729884
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.61063862
+        },
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.6029850800000001
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.58652002
+        }
+      ],
+      "relevant": [
+        {
+          "source": "academic-rules-2027.md",
+          "page": 1,
+          "section": "Academic warning"
+        }
+      ],
+      "answer": "A cumulative GPA below 2.00 places a student on academic warning at the end of a regular semester [academic-rules-2027.md / 2. Academic warning].",
+      "citations": [
+        {
+          "source": "academic-rules-2027.md",
+          "section": "2. Academic warning",
+          "page": 1
+        }
+      ]
+    },
+    {
+      "id": "N09",
+      "type": "answerable",
+      "must_abstain": false,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "top_score": 0.81312567,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "cached": false,
+      "fallback": false,
+      "seconds": 1.11,
+      "retrieved": [
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1,
+          "score": 0.81312567
+        },
+        {
+          "source": "library-policy.md",
+          "section": "Library access policy",
+          "page": 1,
+          "score": 0.60990387
+        },
+        {
+          "source": "handbook-exact-a.md",
+          "section": "Student Handbook: Conduct",
+          "page": 1,
+          "score": 0.60036182
+        },
+        {
+          "source": "accessibility-policy.md",
+          "section": "Accessibility accommodations",
+          "page": 1,
+          "score": 0.5897384999999999
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "1. Attendance",
+          "page": 1,
+          "score": 0.5761488699999999
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+          "page": 1,
+          "score": 0.56730646
+        },
+        {
+          "source": "academic-rules-2027.md",
+          "section": "3. Repeating a course",
+          "page": 1,
+          "score": 0.53270847
+        }
+      ],
+      "relevant": [
+        {
+          "source": "scholarship-policy.md",
+          "page": 1,
+          "section": "Need-based scholarship policy"
+        }
+      ],
+      "answer": "The need\u2011based scholarship review committee meets once each semester [scholarship-policy.md / Need-based scholarship policy].",
+      "citations": [
+        {
+          "source": "scholarship-policy.md",
+          "section": "Need-based scholarship policy",
+          "page": 1
+        }
+      ]
+    }
+  ],
+  "golden": "/app/eval/golden.jsonl",
+  "questions": 35,
+  "gate_failures": [
+    "recall@5 0.233 is more than 5% below the baseline 0.583"
+  ]
+}
