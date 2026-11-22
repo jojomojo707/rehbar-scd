@@ -78,10 +78,10 @@ This plan extends the existing RAHBAR Assignment 02 repository. It does not repl
 
 ### Phase 5 — 18:30–20:00: Day 1 integration and handoff
 
-- [ ] Merge reviewed Day 1 PRs into the integration branch; run existing A02 checks plus new tests.
-- [ ] Save actual run artifacts and resource observations; update `docs/AI-USAGE.md` with specific assistance and human review.
-- [ ] Each member explains the other's changes and the data/query lifecycle in a short walkthrough.
-- [ ] Record open issues and a Day 2 cut list. Do not silently drop rubric requirements.
+- [x] Merge reviewed Day 1 work into `dev`; rerun the root/API/indexer suites (12/146/43 passed; one indexer test skipped).
+- [x] Save actual run artifacts/resource observations and update `docs/AI-USAGE.md` with Day 2 assistance and human-review needs.
+- [~] Prepare the cross-team explanation guide; the actual partner walkthrough remains pending.
+- [x] Record remaining screenshot issues #110/#112 and the explicit screenshot deferral; keep their evidence gap visible.
 
 ## Day 2 — Monday 23 November: gate, Kubernetes, report, and evidence
 
