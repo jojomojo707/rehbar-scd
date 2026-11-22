@@ -80,7 +80,8 @@ This plan extends the existing RAHBAR Assignment 02 repository. It does not repl
 
 - [x] Merge reviewed Day 1 work into `dev`; rerun the root/API/indexer suites (12/146/43 passed; one indexer test skipped).
 - [x] Save actual run artifacts/resource observations and update `docs/AI-USAGE.md` with Day 2 assistance and human-review needs.
-- [~] Prepare the cross-team explanation guide; the actual partner walkthrough remains pending.
+- [x] Prepare the cross-team explanation guide and cross-explanation rehearsal checklist in `docs/report/Assignment03-Day2-walkthrough.md`.
+- [~] Complete the live partner walkthrough and confirm the manual faithfulness labels; both remain pending human review.
 - [x] Record remaining screenshot issues #110/#112 and the explicit screenshot deferral; keep their evidence gap visible.
 
 ## Day 2 — Monday 23 November: gate, Kubernetes, report, and evidence
@@ -131,7 +132,7 @@ This plan extends the existing RAHBAR Assignment 02 repository. It does not repl
 - [~] Both members have commits on `dev` (snapshot at `b70f8f7`, after PR #122: Abdullah-SE-bit 74; jojomojo707 60; Demidoga 113). Each member's ability to explain the other's work still needs a partner walkthrough.
 - [x] Scan reachable Git history and a clean `dev` worktree with Gitleaks v8.30.1; no findings. A separate whole-workspace scan found ignored `.env.local` and third-party `.venv` matches; none were tracked or copied into evidence. Details: `docs/evidence/day2-secret-scan.txt`.
 - [~] Manifests, results and traces are committed; the four-page report PDF is visually checked. The A-F screenshot appendix is deferred by user instruction.
-- [~] PRs #120, #121 and #122 passed CI and are merged to `dev`; the repository's `dev` branch is not protected, the partner walkthrough/faithfulness confirmation remain pending, and the repository URL is `https://github.com/jojomojo707/rehbar-scd`.
+- [~] Assignment implementation PRs #120, #121 and #122, and plan reconciliation PR #123, passed CI and are merged to `dev`; the repository's `dev` branch is not protected, the partner walkthrough/faithfulness confirmation remain pending, and the repository URL is `https://github.com/jojomojo707/rehbar-scd`.
 
 ## Dependency order and checkpoints
 
@@ -171,7 +172,7 @@ The key integration checkpoint is **Day 1 at 12:00**: evaluation needs stable do
 | Resource measurements and limits | D2A5 |
 | README A–F commands and Kubernetes setup instructions | D2A6 |
 | Report tables, results, answers, contributions, AI statement, page limit | D2AB4, D2AB7 |
-| Required uncropped screenshots and committed run artifacts | D2AB5–D2AB6 |
+| Required uncropped screenshots (deferred) and committed run artifacts | D2AB5–D2AB6, D2AB7; screenshot issues #110/#112 remain open |
 
 ## Risk and cut list
 
