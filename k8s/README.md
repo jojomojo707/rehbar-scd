@@ -22,7 +22,7 @@ From the repository root, with Docker and Minikube running:
 ```powershell
 kubectl config current-context
 kubectl apply -k k8s/overlays/dev
-kubectl -n rahbar wait --for=condition=Ready pod -l app=api --timeout=240s
+kubectl -n rahbar wait --for=condition=Ready pod -l app.kubernetes.io/name=api --timeout=240s
 kubectl -n rahbar exec deploy/api -- sh -c 'test -w /pipeline-data/traces && echo trace-volume-writable'
 kubectl -n rahbar port-forward svc/api 8000:8000
 ```
