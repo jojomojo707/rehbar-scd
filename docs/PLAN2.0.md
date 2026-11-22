@@ -78,10 +78,10 @@ This plan extends the existing RAHBAR Assignment 02 repository. It does not repl
 
 ### Phase 5 — 18:30–20:00: Day 1 integration and handoff
 
-- [ ] Merge reviewed Day 1 PRs into the integration branch; run existing A02 checks plus new tests.
-- [ ] Save actual run artifacts and resource observations; update `docs/AI-USAGE.md` with specific assistance and human review.
-- [ ] Each member explains the other's changes and the data/query lifecycle in a short walkthrough.
-- [ ] Record open issues and a Day 2 cut list. Do not silently drop rubric requirements.
+- [x] Merge reviewed Day 1 work into `dev`; rerun the root/API/indexer suites (12/146/43 passed; one indexer test skipped).
+- [x] Save actual run artifacts/resource observations and update `docs/AI-USAGE.md` with Day 2 assistance and human-review needs.
+- [~] Prepare the cross-team explanation guide; the actual partner walkthrough remains pending.
+- [x] Record remaining screenshot issues #110/#112 and the explicit screenshot deferral; keep their evidence gap visible.
 
 ## Day 2 — Monday 23 November: gate, Kubernetes, report, and evidence
 
@@ -128,10 +128,10 @@ This plan extends the existing RAHBAR Assignment 02 repository. It does not repl
 ### Phase 10 — 18:30–20:00: final review and release
 
 - [x] Run tests, lint, manifest validation, ingestion smoke, full evaluation, coverage gate and release-gate fail/pass checks. Root 12, API 146 (90.79% coverage), indexer 43/1 skipped, release gate 3 passed; Batch B and candidate suites completed.
-- [ ] Confirm both members have commits and can explain all modules, metrics, thresholds and Kubernetes objects.
-- [ ] Run secret scan on tracked files and history; never include API keys or real `.env` content in evidence.
-- [ ] Confirm all manifests are committed under `k8s/`, results under `eval/results/`, traces under `traces/`, and report PDF plus screenshots are ready.
-- [ ] Review branch protection, partner approvals, CI results and final repository URL. Merge only with required checks and approvals.
+- [~] Both members have commits on `dev` (Abdullah-SE-bit: 72; jojomojo707: 60). Each member's ability to explain the other's work still needs a partner walkthrough.
+- [x] Scan reachable Git history and a clean `dev` worktree with Gitleaks v8.30.1; no findings. A separate whole-workspace scan found ignored `.env.local` and third-party `.venv` matches; none were tracked or copied into evidence. Details: `docs/evidence/day2-secret-scan.txt`.
+- [~] Manifests, results and traces are committed; the four-page report PDF is visually checked. The A-F screenshot appendix is still missing.
+- [~] PR #120 passed CI and is merged to `dev`; the repository's `dev` branch is not protected, partner review is still pending, and the repository URL is `https://github.com/jojomojo707/rehbar-scd`.
 
 ## Dependency order and checkpoints
 

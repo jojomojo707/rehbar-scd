@@ -227,7 +227,7 @@ The full A–F walkthrough is:
 | A - verify and ingest | `kubectl -n rahbar create job --from=cronjob/batch-b-ingest batch-b-demo`; inspect its verification report under `/pipeline-data/eval/results/verification/` and the Job log. |
 | B - evaluate | `kubectl -n rahbar create job --from=cronjob/evaluation eval-demo`; results, component metrics and module metrics persist under `/pipeline-data/eval/results/`. |
 | C - release gate | `kubectl -n rahbar create job --from=cronjob/release-gate-check gate-demo`; see `PASS`/`REJECT` and each failed reason in its log. |
-| D - traces | `python eval/trace.py summary --trace-dir docs/evidence/day1-traces`; reconstruct an individual request with `python eval/trace.py trace <trace-id> --trace-dir docs/evidence/day1-traces`. |
+| D - traces | `python eval/trace.py summary --trace-dir traces/day2-20261122`; reconstruct an individual request with `python eval/trace.py trace <trace-id> --trace-dir traces/day2-20261122`. |
 | E - coverage | `python eval/coverage.py --threshold 0.65 --out eval/results/coverage-after.json`; use `--threshold 0.99` to demonstrate a nonzero failure. |
 | F - cluster resources | `kubectl -n rahbar top pods`; `kubectl -n rahbar get services,pvc,cronjobs,jobs,configmaps`; see [Day 2 resource capture](docs/evidence/day2-resources-20261122.txt). |
 
