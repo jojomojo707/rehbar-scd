@@ -128,10 +128,10 @@ This plan extends the existing RAHBAR Assignment 02 repository. It does not repl
 ### Phase 10 — 18:30–20:00: final review and release
 
 - [x] Run tests, lint, manifest validation, ingestion smoke, full evaluation, coverage gate and release-gate fail/pass checks. Root 12, API 146 (90.79% coverage), indexer 43/1 skipped, release gate 3 passed; Batch B and candidate suites completed.
-- [ ] Confirm both members have commits and can explain all modules, metrics, thresholds and Kubernetes objects.
-- [ ] Run secret scan on tracked files and history; never include API keys or real `.env` content in evidence.
-- [ ] Confirm all manifests are committed under `k8s/`, results under `eval/results/`, traces under `traces/`, and report PDF plus screenshots are ready.
-- [ ] Review branch protection, partner approvals, CI results and final repository URL. Merge only with required checks and approvals.
+- [~] Both members have commits on `dev` (Abdullah-SE-bit: 72; jojomojo707: 60). Each member's ability to explain the other's work still needs a partner walkthrough.
+- [x] Scan reachable Git history and a clean `dev` worktree with Gitleaks v8.30.1; no findings. A separate whole-workspace scan found ignored `.env.local` and third-party `.venv` matches; none were tracked or copied into evidence. Details: `docs/evidence/day2-secret-scan.txt`.
+- [~] Manifests, results and traces are committed; the four-page report PDF is visually checked. The A-F screenshot appendix is still missing.
+- [~] PR #120 passed CI and is merged to `dev`; the repository's `dev` branch is not protected, partner review is still pending, and the repository URL is `https://github.com/jojomojo707/rehbar-scd`.
 
 ## Dependency order and checkpoints
 
