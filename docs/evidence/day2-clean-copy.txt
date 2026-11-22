@@ -1,0 +1,18 @@
+﻿Assignment 03 Day 2 clean-worktree walkthrough
+Date: 2026-11-22
+Worktree commit: 4151ca413771f8fb2491bd57b49ad173d00c547e
+
+From a separate clean Git worktree, followed the Kubernetes README setup against the running Minikube cluster:
+
+  kubectl apply -k k8s/overlays/dev
+  kubectl -n rahbar wait --for=condition=Ready pod -l app.kubernetes.io/name=api --timeout=240s
+  kubectl -n rahbar exec deployment/api -- sh -c 'test -w /pipeline-data/traces && echo trace-volume-writable'
+
+Results:
+  - Kustomize applied successfully; existing resources were unchanged.
+  - api-6f9d99d4f8-72k9w: Ready
+  - api-6f9d99d4f8-ds7jf: Ready
+  - api-6f9d99d4f8-fzsb7: Ready
+  - PVC write probe: trace-volume-writable
+
+The walkthrough did not delete or reset the cluster or its persistent data.

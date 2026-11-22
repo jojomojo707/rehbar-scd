@@ -118,16 +118,16 @@ This plan extends the existing RAHBAR Assignment 02 repository. It does not repl
 ### Phase 9 — 16:00–18:30: report, README, clean run, and screenshots
 
 - [x] **D2AB4:** Drafted a four-page main report with lifecycle mapping, five qualities, measurements, release decision, six short answers, contribution table and AI statement. Partner review is still needed.
-- [ ] Answer report questions from measured evidence: most frequent verification catch and missed problem; module metric vs end-to-end example; archive vs deletion tradeoff; least trusted metric; hardest paper idea and adaptation; Kubernetes responsibility mapping.
+- [x] Answer report questions from measured evidence: verification catches and blind spots; module vs end-to-end metrics; archive vs deletion; least trusted metric; hardest paper idea and adaptation; Kubernetes responsibility mapping.
 - [x] **D2A6:** README A-F command map and Kubernetes setup/apply instructions are updated.
 - [x] **D2B6:** Result schemas, evaluation/trace commands and timestamped artifacts are in `eval/results/day2-20261122/` and `traces/day2-20261122/`.
 - [ ] **D2AB5:** Terminal outputs and trace evidence are committed; uncropped A-F desktop screenshots are not yet captured because the computer-use `node_repl` tool is unavailable in this session.
-- [ ] **D2AB6:** Clean working-copy walkthrough is pending.
+- [x] **D2AB6:** Applied the dev overlay from a clean worktree; all three API pods became Ready and the trace PVC write check passed. Evidence: `docs/evidence/day2-clean-copy.txt`.
 - [~] **D2AB7:** Main report rendered and visually inspected at four pages; the screenshot appendix still needs inspection after capture.
 
 ### Phase 10 — 18:30–20:00: final review and release
 
-- [ ] Run tests, lint, manifest validation, ingestion smoke, full evaluation, coverage gate and release-gate fail/pass checks.
+- [x] Run tests, lint, manifest validation, ingestion smoke, full evaluation, coverage gate and release-gate fail/pass checks. Root 12, API 146 (90.79% coverage), indexer 43/1 skipped, release gate 3 passed; Batch B and candidate suites completed.
 - [ ] Confirm both members have commits and can explain all modules, metrics, thresholds and Kubernetes objects.
 - [ ] Run secret scan on tracked files and history; never include API keys or real `.env` content in evidence.
 - [ ] Confirm all manifests are committed under `k8s/`, results under `eval/results/`, traces under `traces/`, and report PDF plus screenshots are ready.
