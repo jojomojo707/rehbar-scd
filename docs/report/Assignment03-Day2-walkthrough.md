@@ -43,6 +43,17 @@ We extended RAHBAR with a controlled release process for a RAG pipeline. We froz
 | E - coverage | At threshold 0.65 there were zero uncovered in-scope queries; threshold 0.99 exits nonzero and groups misses. | `eval/results/day2-coverage-after.json`; `eval/results/day2-coverage-fail-demo.json` |
 | F - operations | PVCs persist data, Jobs perform work, ConfigMaps set gate values, and rollout undo restores the prior API config. | `docs/evidence/day2-resources-20261122.txt`; `docs/evidence/day2-rollout-undo.txt` |
 
+## Partner cross-explanation rehearsal
+
+Run this together before the TA demo. The partner who did not implement a section explains it back, points to its evidence, and answers a follow-up. This checklist prepares the rehearsal; do not mark it complete until both partners have actually done it.
+
+1. **Person A explains Person B's data and evaluation work:** describe verification, quarantine, idempotent ingestion, version archive/restore, the three evaluation levels, Batch B drift, and why TOP_K=7 was rolled back. Point to the verification report, timestamped comparison, and count reconciliation.
+2. **Person B explains Person A's Kubernetes and release work:** identify the API Deployment/Service, Chroma StatefulSet/PVC, ingestion/evaluation Jobs, CronJobs, ConfigMap thresholds, and the ingestion Job as the only Chroma writer. Explain the gate result, rollout status, undo, and post-undo trace. Point to the manifests and rollout evidence.
+3. **Both explain observability and coverage:** reconstruct one answer from its trace, name the trace fields used to diagnose it, explain the coverage threshold and nonzero failure, and distinguish monitorability (thresholds) from observability (investigating a specific query).
+4. **Both state the limits honestly:** TOP_K did not improve retrieval; p95 is cache-confounded; the faithfulness sample is eight manually reviewed answers and still needs partner confirmation; the screenshot appendix is deferred and issues #110/#112 remain open.
+
+The command for each live demo part is in the repository README's A-F section. Have each partner run the command or navigate to the cited artifact rather than relying on the other person's narration.
+
 ## Numbers and limitations to state accurately
 
 - Baseline and candidate module means were unchanged: paraphrase 0.8572, unrelated 0.5553, gap 0.3020.
