@@ -11,6 +11,12 @@ resources:
   - namespace.yaml
   - serviceaccounts.yaml
   - configmap.yaml
+  - release-gate-configmap.yaml
+  - candidate-configmap.yaml
+  - api-candidate.yaml
+  - evaluation-cronjob.yaml
+  - release-gate-check-cronjob.yaml
+  - batch-b-ingest-cronjob.yaml
   - api.yaml
   - hpa.yaml
   - ui.yaml

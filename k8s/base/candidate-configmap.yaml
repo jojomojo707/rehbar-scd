@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rahbar-candidate-config
+  labels:
+    app.kubernetes.io/name: api-candidate
+    app.kubernetes.io/part-of: rahbar
+data:
+  # Controlled experiment: change only TOP_K from the frozen baseline value of 5 to 7.
+  TOP_K: "7"
+  CHROMA_COLLECTION: "rahbar"

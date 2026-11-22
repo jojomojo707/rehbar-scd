@@ -1,0 +1,106 @@
+
+> kubectl -n rahbar top pods
+NAME                             CPU(cores)   MEMORY(bytes)
+api-6f9d99d4f8-72k9w             7m           249Mi
+api-6f9d99d4f8-ds7jf             8m           248Mi
+api-6f9d99d4f8-fzsb7             8m           262Mi
+api-candidate-6fbc5d47c5-5gqqv   7m           269Mi
+chroma-0                         6m           135Mi
+redis-55db9bf8d9-p4zbd           25m          12Mi
+ui-6b9d5f5cfd-zdwjf              1m           6Mi
+
+> kubectl -n rahbar get deployments api api-candidate -o wide
+NAME            READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES           SELECTOR
+api             3/3     3            3           16d   api          rahbar-api:dev   app.kubernetes.io/name=api
+api-candidate   1/1     1            1           40m   api          rahbar-api:dev   app.kubernetes.io/name=api-candidate
+
+> kubectl -n rahbar get services api api-candidate chroma
+NAME            TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+api             ClusterIP   10.104.75.59     <none>        8000/TCP   16d
+api-candidate   ClusterIP   10.97.28.67      <none>        8000/TCP   40m
+chroma          ClusterIP   10.104.242.227   <none>        8000/TCP   16d
+
+> kubectl -n rahbar get pvc
+NAME            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+corpus          Bound    pvc-803783eb-9038-4fb3-9537-3a160d347ee0   1Gi        RWO            standard       <unset>                 16d
+data-chroma-0   Bound    pvc-2d0f4111-ad28-44e2-a62e-f09191455904   2Gi        RWO            standard       <unset>                 16d
+pipeline-data   Bound    pvc-a6ece3d0-b0e8-48db-96ba-8d12525081bd   2Gi        RWO            standard       <unset>                 15h
+redis-data      Bound    pvc-a5cc4c13-0e87-40b1-ab6f-9788d0ae51b0   1Gi        RWO            standard       <unset>                 16d
+
+> kubectl -n rahbar get cronjobs,jobs
+NAME                               SCHEDULE    TIMEZONE       SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+cronjob.batch/batch-b-ingest       0 0 1 1 *   <none>         True      0        <none>          25m
+cronjob.batch/evaluation           0 4 * * 0   Asia/Karachi   False     0        <none>          40m
+cronjob.batch/reindex              0 3 * * 0   Asia/Karachi   False     0        <none>          16d
+cronjob.batch/release-gate-check   0 5 * * 0   Asia/Karachi   True      0        <none>          18m
+
+NAME                                                   STATUS     COMPLETIONS   DURATION   AGE
+job.batch/batch-b-ingest-day2                          Complete   1/1           33s        25m
+job.batch/config-256-20261106                          Complete   1/1           8m58s      15d
+job.batch/config-384-20261107                          Complete   1/1           9m59s      15d
+job.batch/config-480-20261107                          Complete   1/1           10m        15d
+job.batch/d1ab2-batch-a-first-20261121-172018          Failed     0/1           22h        22h
+job.batch/d1ab2-batch-a-first-20261121-172332          Complete   1/1           11s        22h
+job.batch/d1ab2-batch-a-first-20261121-172519          Complete   1/1           10s        22h
+job.batch/d1ab2-batch-a-first-20261121-172654          Complete   1/1           13s        22h
+job.batch/d1ab2-batch-a-first-20261121-173402          Complete   1/1           16s        22h
+job.batch/d1ab2-batch-a-repeat-20261121-172654         Complete   1/1           10s        22h
+job.batch/d1ab2-batch-a-repeat-20261121-173402         Complete   1/1           10s        22h
+job.batch/d1ab2-batch-b-clean-update-20261121-172654   Complete   1/1           19s        22h
+job.batch/d1ab2-batch-b-clean-update-20261121-173402   Complete   1/1           19s        22h
+job.batch/d1ab2-batch-b-rejected-20261121-172654       Failed     0/1           22h        22h
+job.batch/d1ab2-batch-b-rejected-20261121-173402       Failed     0/1           22h        22h
+job.batch/d1ab2-restore-20261121-172654                Complete   1/1           7s         22h
+job.batch/d1ab2-restore-20261121-173402                Complete   1/1           7s         22h
+job.batch/d1ab2-restore-original-20261121-172654       Complete   1/1           9s         22h
+job.batch/d2-baseline-run                              Failed     0/1           39m        39m
+job.batch/d2-baseline-run-2                            Failed     0/1           38m        38m
+job.batch/d2-baseline-run-3                            Complete   1/1           47s        28m
+job.batch/d2-batch-b-evaluation                        Failed     0/1           20m        20m
+job.batch/d2-candidate-topk7-2                         Complete   1/1           82s        30m
+job.batch/d2-candidate-topk7-final                     Complete   1/1           2m21s      9m7s
+job.batch/day2-gate-pass                               Complete   1/1           8s         17m
+job.batch/day2-gate-restored-pass                      Complete   1/1           10s        16m
+job.batch/day2-gate-threshold-fail                     Failed     0/1           17m        17m
+job.batch/indexer                                      Failed     0/1           15h        15h
+job.batch/pipeline-data-permission-probe               Complete   1/1           5s         15h
+
+> kubectl -n rahbar get configmaps
+NAME                        DATA   AGE
+assignment3-batch-a         3      22h
+assignment3-batch-b         13     22h
+assignment3-batch-b-clean   8      22h
+batch-b-clean               8      25m
+kube-root-ca.crt            1      16d
+rahbar-candidate-config     2      40m
+rahbar-config               38     16d
+release-gate-thresholds     3      40m
+
+> Deployment CPU/memory requests and limits; maxUnavailable
+{"deployment":null,"requests":null,"limits":null,"maxUnavailable":null}
+
+> Deployment CPU/memory requests and limits; maxUnavailable
+{"deployment":"api","requests":{"cpu":"250m","memory":"448Mi"},"limits":{"cpu":"1","memory":"640Mi"},"maxUnavailable":0}
+{"deployment":"api-candidate","requests":{"cpu":"250m","memory":"448Mi"},"limits":{"cpu":"1","memory":"640Mi"},"maxUnavailable":0}
+
+> Release gate ConfigMap
+apiVersion: v1
+data:
+  MAX_P95_SECONDS: "15"
+  MAX_RECALL5_DROP: "0.05"
+  MIN_FAITHFULNESS: "0.90"
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"MAX_P95_SECONDS":"15","MAX_RECALL5_DROP":"0.05","MIN_FAITHFULNESS":"0.90"},"kind":"ConfigMap","metadata":{"annotations":{},"labels":{"app.kubernetes.io/name":"rahbar-evaluation","app.kubernetes.io/part-of":"rahbar"},"name":"release-gate-thresholds","namespace":"rahbar"}}
+  creationTimestamp: "2026-11-22T10:03:01Z"
+  labels:
+    app.kubernetes.io/name: rahbar-evaluation
+    app.kubernetes.io/part-of: rahbar
+  name: release-gate-thresholds
+  namespace: rahbar
+  resourceVersion: "53411"
+  uid: 0286ed74-d6d1-49cd-89ff-1b25e92578e0
+{"deployment":"api","requests":{"cpu":"250m","memory":"448Mi"},"limits":{"cpu":"1","memory":"640Mi"},"maxUnavailable":0}
+{"deployment":"api-candidate","requests":{"cpu":"250m","memory":"448Mi"},"limits":{"cpu":"1","memory":"640Mi"},"maxUnavailable":0}

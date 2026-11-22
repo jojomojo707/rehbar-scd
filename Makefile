@@ -50,9 +50,11 @@ images: ## build the three images and load them into minikube (needs yours: Dock
 	docker build -t rahbar-api:$(TAG) api
 	docker build --build-context corpus=corpus --build-context fixtures=eval/fixtures \
 	  -t rahbar-indexer:$(TAG) indexer
+	docker build -t rahbar-evaluator:$(TAG) -f eval/Dockerfile .
 	docker build -t rahbar-ui:$(TAG) ui
 	minikube image load rahbar-api:$(TAG)
 	minikube image load rahbar-indexer:$(TAG)
+	minikube image load rahbar-evaluator:$(TAG)
 	minikube image load rahbar-ui:$(TAG)
 
 apply: ## apply the dev overlay (needs yours: manifests)

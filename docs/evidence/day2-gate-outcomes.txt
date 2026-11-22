@@ -1,0 +1,13 @@
+Committed threshold ConfigMap: MAX_RECALL5_DROP=0.05, MIN_FAITHFULNESS=0.90, MAX_P95_SECONDS=15
+
+> kubectl -n rahbar logs job/day2-gate-pass
+PASS: candidate meets recall@5, faithfulness, p95 latency, and abstention gates
+
+> kubectl -n rahbar logs job/day2-gate-threshold-fail
+REJECT
+- p95 latency 8.200s exceeds maximum 0.001s
+
+> kubectl -n rahbar logs job/day2-gate-restored-pass
+PASS: candidate meets recall@5, faithfulness, p95 latency, and abstention gates
+
+Temporary ConfigMap used MAX_P95_SECONDS=0.001; restored by kubectl apply -k k8s/overlays/dev.

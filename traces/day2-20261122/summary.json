@@ -1,0 +1,14 @@
+{
+  "requests": 1,
+  "mean_top1_similarity": 0.83395433,
+  "abstention_rate": 0.0,
+  "cache_hits": 0,
+  "stage_p95_ms": {
+    "embedding": 1078.5,
+    "retrieval": 148.6,
+    "generation": 1499.1,
+    "total": 2781.4
+  },
+  "flagged_injections": 0,
+  "since": "1970-01-01T00:00:00+00:00"
+}

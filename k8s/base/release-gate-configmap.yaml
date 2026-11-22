@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: release-gate-thresholds
+  labels:
+    app.kubernetes.io/name: rahbar-evaluation
+    app.kubernetes.io/part-of: rahbar
+data:
+  # Recall may fall by at most five percentage points; the other floors are explicit release SLOs.
+  MAX_RECALL5_DROP: "0.05"
+  MIN_FAITHFULNESS: "0.90"
+  MAX_P95_SECONDS: "15"

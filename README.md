@@ -51,7 +51,7 @@ Design details: [ARCHITECTURE.md](ARCHITECTURE.md), which routes to every file i
 | Tool | Why |
 | --- | --- |
 | minikube (docker driver), 4 CPUs, and Docker with at least 7.5 GB of memory | The local cluster. `make cluster` starts it with 7168 MB and also enables Calico (NetworkPolicy), metrics-server (HPA, `kubectl top`) and ingress-nginx |
-| Docker 23+ with buildx | Builds the three images |
+| Docker 23+ with buildx | Builds the API, indexer, UI and evaluator images |
 | kubectl (with built-in kustomize) | `kubectl apply -k` |
 | Python 3.12 and GNU make (bash) | Tests, the eval and the helper targets |
 | A Groq API key | Generation. Free at console.groq.com. It goes only into the Kubernetes Secret |
@@ -208,6 +208,73 @@ drops more than 5 points below the baseline. Merging to `main` runs `cd.yml`: th
 the three images pushed to Docker Hub tagged with the commit SHA, then a deploy of exactly
 those images into a fresh kind cluster with a smoke test through the Ingress. `main` needs one
 approval and all ten checks.
+
+## Assignment 03: Day 2 gate and candidate release
+
+Build and load the evaluation image along with the app images, then apply the manifests:
+
+```bash
+make images
+kubectl apply -f k8s/base/namespace.yaml
+kubectl apply -k k8s/overlays/dev
+kubectl -n rahbar rollout status deployment/api-candidate --timeout=10m
+```
+
+The full A–F walkthrough is:
+
+| Part | Command and evidence |
+| --- | --- |
+| A - verify and ingest | `kubectl -n rahbar create job --from=cronjob/batch-b-ingest batch-b-demo`; inspect its verification report under `/pipeline-data/eval/results/verification/` and the Job log. |
+| B - evaluate | `kubectl -n rahbar create job --from=cronjob/evaluation eval-demo`; results, component metrics and module metrics persist under `/pipeline-data/eval/results/`. |
+| C - release gate | `kubectl -n rahbar create job --from=cronjob/release-gate-check gate-demo`; see `PASS`/`REJECT` and each failed reason in its log. |
+| D - traces | `python eval/trace.py summary --trace-dir docs/evidence/day1-traces`; reconstruct an individual request with `python eval/trace.py trace <trace-id> --trace-dir docs/evidence/day1-traces`. |
+| E - coverage | `python eval/coverage.py --threshold 0.65 --out eval/results/coverage-after.json`; use `--threshold 0.99` to demonstrate a nonzero failure. |
+| F - cluster resources | `kubectl -n rahbar top pods`; `kubectl -n rahbar get services,pvc,cronjobs,jobs,configmaps`; see [Day 2 resource capture](docs/evidence/day2-resources-20261122.txt). |
+
+Before running the Batch B job, create its ConfigMap from the committed clean batch:
+
+```bash
+kubectl create configmap batch-b-clean --from-file=eval/batches/batch-b-clean -n rahbar \
+  --dry-run=client -o yaml | kubectl apply -f -
+```
+
+The candidate uses the same pinned model and active collection as baseline, changing only `TOP_K`
+from 5 to 7. It is reachable only from the evaluation Job. Start a timestamped run and inspect its
+metrics and release decision:
+
+```bash
+kubectl -n rahbar create job --from=cronjob/evaluation eval-candidate-$(date -u +%H%M%S)
+kubectl -n rahbar get jobs -w
+kubectl -n rahbar logs job/eval-candidate-<timestamp>
+kubectl -n rahbar exec deploy/api -- ls -l /pipeline-data/eval/results
+```
+
+The Job saves raw results to the `pipeline-data` PVC and exits 1 when the release gate rejects.
+Thresholds are mounted from `release-gate-thresholds`; changing them takes effect on the next
+gate-check Job without rebuilding an image. Restore the committed thresholds after a fail/pass
+demonstration.
+The gate checks recall@5 drop, manually reviewed faithfulness, p95 latency, and abstention against
+the frozen baseline. Run the local CLI with:
+
+```bash
+python eval/release_gate.py --candidate eval/results/20261121T191231Z/api-run-1.json \
+  --baseline eval/baseline.json --faithfulness eval/faithfulness_review_result.json \
+  --configmap k8s/base/release-gate-configmap.yaml
+```
+
+Promote only a gate-passing candidate, then verify and demonstrate undo:
+
+```bash
+kubectl -n rahbar set env deployment/api TOP_K=7
+kubectl -n rahbar rollout status deployment/api --timeout=10m
+kubectl -n rahbar rollout undo deployment/api
+kubectl -n rahbar rollout status deployment/api --timeout=10m
+```
+
+Save the post-rollback trace and verify the previous config, collection and embedding pin. The
+faithfulness labels currently need partner confirmation before their score is treated as final.
+Use the evaluation and coverage commands in [eval/README.md](eval/README.md) for Parts B and E;
+the full Part A–F run sequence is in [k8s/README.md](k8s/README.md).
 
 ## Further reading
 
