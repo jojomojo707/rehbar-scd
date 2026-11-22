@@ -121,17 +121,17 @@ This plan extends the existing RAHBAR Assignment 02 repository. It does not repl
 - [x] Answer report questions from measured evidence: verification catches and blind spots; module vs end-to-end metrics; archive vs deletion; least trusted metric; hardest paper idea and adaptation; Kubernetes responsibility mapping.
 - [x] **D2A6:** README A-F command map and Kubernetes setup/apply instructions are updated.
 - [x] **D2B6:** Result schemas, evaluation/trace commands and timestamped artifacts are in `eval/results/day2-20261122/` and `traces/day2-20261122/`.
-- [ ] **D2AB5:** Terminal outputs and trace evidence are committed. Uncropped A-F desktop screenshots are explicitly deferred per the user's instruction; issue #110 remains open.
+- [x] **D2AB5:** Terminal outputs and trace evidence are committed. Uncropped A-F desktop screenshots are explicitly deferred per the user's instruction; screenshot capture remains open in issue #110.
 - [x] **D2AB6:** Applied the dev overlay from a clean worktree; all three API pods became Ready and the trace PVC write check passed. Evidence: `docs/evidence/day2-clean-copy.txt`.
 - [~] **D2AB7:** Main report rendered and visually inspected at four pages; screenshot appendix is deferred per the user's instruction, so issue #112 remains open.
 
 ### Phase 10 — 18:30–20:00: final review and release
 
 - [x] Run tests, lint, manifest validation, ingestion smoke, full evaluation, coverage gate and release-gate fail/pass checks. Root 12, API 146 (90.79% coverage), indexer 43/1 skipped, release gate 3 passed; Batch B and candidate suites completed.
-- [~] Both members have commits on `dev` (snapshot after PR #121, before this plan-only PR: Abdullah-SE-bit 73; jojomojo707 60). Each member's ability to explain the other's work still needs a partner walkthrough.
+- [~] Both members have commits on `dev` (snapshot at `b70f8f7`, after PR #122: Abdullah-SE-bit 74; jojomojo707 60; Demidoga 113). Each member's ability to explain the other's work still needs a partner walkthrough.
 - [x] Scan reachable Git history and a clean `dev` worktree with Gitleaks v8.30.1; no findings. A separate whole-workspace scan found ignored `.env.local` and third-party `.venv` matches; none were tracked or copied into evidence. Details: `docs/evidence/day2-secret-scan.txt`.
 - [~] Manifests, results and traces are committed; the four-page report PDF is visually checked. The A-F screenshot appendix is deferred by user instruction.
-- [~] PRs #120 and #121 passed CI and are merged to `dev`; the repository's `dev` branch is not protected, the partner walkthrough/faithfulness confirmation remain pending, and the repository URL is `https://github.com/jojomojo707/rehbar-scd`.
+- [~] PRs #120, #121 and #122 passed CI and are merged to `dev`; the repository's `dev` branch is not protected, the partner walkthrough/faithfulness confirmation remain pending, and the repository URL is `https://github.com/jojomojo707/rehbar-scd`.
 
 ## Dependency order and checkpoints
 
@@ -175,7 +175,7 @@ The key integration checkpoint is **Day 1 at 12:00**: evaluation needs stable do
 
 ## Risk and cut list
 
-The two-day schedule is very compressed. Preserve every mandatory rubric item. If time slips, first reduce polish and optional visualizations, reuse the existing A02 UI/API and Kubernetes base, and keep reports concise. Simplify the chosen pipeline change to one variable and use a transparent deterministic test subset only for debugging; final reported metrics must still come from the required complete run. Never cut verification, idempotency/deletion/version restore, the 25-question suite, all three test levels, gate fail/pass, trace reconstruction, 40-query coverage, Kubernetes Jobs/PVCs, rollback evidence, report or screenshots.
+The two-day schedule is very compressed. Preserve every mandatory rubric item. If time slips, first reduce polish and optional visualizations, reuse the existing A02 UI/API and Kubernetes base, and keep reports concise. Simplify the chosen pipeline change to one variable and use a transparent deterministic test subset only for debugging; final reported metrics must still come from the required complete run. Never cut verification, idempotency/deletion/version restore, the 25-question suite, all three test levels, gate fail/pass, trace reconstruction, 40-query coverage, Kubernetes Jobs/PVCs, rollback evidence or report. Screenshots are rubric-required, but their capture is explicitly deferred by the user; keep issues #110/#112 open and disclose the gap.
 
 ## Paper concepts applied
 
