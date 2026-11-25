@@ -13,4 +13,4 @@ data:
   EVAL_API_URL: "http://api-candidate:8000"
   EVAL_LABEL: "candidate"
   EVAL_RUNS: "2"                 # repetitions (stochasticity); 1 saves hosted-LLM tokens
-  EVAL_PAUSE: "0.5"              # seconds between questions; ~20 under an 8k tokens/min limit
+  EVAL_PAUSE: "20"               # seconds between questions: the free-tier LLM allows 8k tokens/min
