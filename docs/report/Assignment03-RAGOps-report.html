@@ -19,7 +19,7 @@ li { margin-bottom: 2px; }
 .pb { page-break-before: always; }
 figure { margin: 0 0 8px; page-break-inside: avoid; }
 figcaption { font-weight: bold; margin-bottom: 2px; }
-figure img { width: 100%; max-height: 255mm; object-fit: contain; border: 1px solid #ccc; }
+figure img { width: 100%; max-height: 250mm; object-fit: contain; border: 1px solid #ccc; }
 </style></head><body>
 
 <h1>RAHBAR: a RAGOps layer on Kubernetes (CS4032 Assignment 03)</h1>
@@ -133,25 +133,25 @@ figure img { width: 100%; max-height: 255mm; object-fit: contain; border: 1px so
 
 <div class="pb"></div>
 <h2>Appendix: screenshots (our minikube cluster, 25 November 2026)</h2>
-<figure><figcaption>A1 - Batch B verification report: pass/fail per check with reasons (ingestion Job log)</figcaption><img src="../evidence/screenshots/A1-batch-b-verification-report.png"></figure>
-<figure><figcaption>A2 - second ingestion on the unchanged corpus: 0 chunks embedded, collection kept</figcaption><img src="../evidence/screenshots/A2-unchanged-rerun-zero-embedded.png"></figure>
-<figure><figcaption>A2 - a changed document re-embeds only its own 3 chunks; old version archived</figcaption><img src="../evidence/screenshots/A2-changed-document-own-chunks-only.png"></figure>
-<figure><figcaption>A2 - deleting a document: count by document id = 0 chunks (no orphans)</figcaption><img src="../evidence/screenshots/A2-delete-no-orphans.png"></figure>
-<figure><figcaption>A2 - restoring the archived document: 3 chunks back</figcaption><img src="../evidence/screenshots/A2-restore-deleted-document.png"></figure>
-<figure><figcaption>A2 - rollback: the archived 2022 policy restored as current</figcaption><img src="../evidence/screenshots/A2-rollback-superseded-version.png"></figure>
-<figure><figcaption>B/C2 - evaluation summary with all three levels; gate REJECT for the TOP_K=1 candidate (Job Failed)</figcaption><img src="../evidence/screenshots/C2-gate-fails-bad-candidate.png"></figure>
-<figure><figcaption>C2 - gate PASS for the chunk-384 candidate (committed thresholds)</figcaption><img src="../evidence/screenshots/C2-gate-passes-candidate-chunk384.png"></figure>
-<figure><figcaption>F2 - ConfigMap threshold edit (p95 12 to 8 s): same candidate REJECTED, no rebuild</figcaption><img src="../evidence/screenshots/F2-configmap-edit-gate-rejects.png"></figure>
-<figure><figcaption>F2 - threshold restored: PASS again</figcaption><img src="../evidence/screenshots/F2-configmap-restored-gate-passes.png"></figure>
-<figure><figcaption>D1 - one full trace record (JSON line as stored)</figcaption><img src="../evidence/screenshots/D1-full-trace-record.png"></figure>
-<figure><figcaption>D2 - trace tool: context and rebuilt prompt for a trace id, hash checked</figcaption><img src="../evidence/screenshots/D2-trace-tool-rebuilds-prompt.png"></figure>
-<figure><figcaption>D3 - trace metrics over a time window</figcaption><img src="../evidence/screenshots/D3-trace-metrics-window.png"></figure>
-<figure><figcaption>D4 - Batch B injected document: context rail action written to the trace</figcaption><img src="../evidence/screenshots/D4-injection-guardrail-in-trace.png"></figure>
-<figure><figcaption>E2 - coverage before: 47.5 percent, exit 1</figcaption><img src="../evidence/screenshots/E2-coverage-before.png"></figure>
-<figure><figcaption>E4 - coverage after adding 15 questions: 92.5 percent, exit 0</figcaption><img src="../evidence/screenshots/E4-coverage-after.png"></figure>
-<figure><figcaption>E4 - coverage script exits non-zero below its threshold</figcaption><img src="../evidence/screenshots/E4-coverage-gate-fails-below-threshold.png"></figure>
-<figure><figcaption>F1 - kubectl get all,pvc,configmap,cronjob,job</figcaption><img src="../evidence/screenshots/F1-get-all-pvc-configmap-cronjob-job.png"></figure>
-<figure><figcaption>F3 - release of the gated candidate: rolling update (maxUnavailable 0), rollout status, trace on rahbar-candidate</figcaption><img src="../evidence/screenshots/F3-release-candidate-rollout-status.png"></figure>
-<figure><figcaption>F3 - rollout undo: new trace shows the previous collection and embedding version</figcaption><img src="../evidence/screenshots/F3-rollout-undo-trace-previous-collection.png"></figure>
-<figure><figcaption>F4 - metrics endpoint through kubectl port-forward</figcaption><img src="../evidence/screenshots/F4-metrics-port-forward.png"></figure>
+<figure><figcaption>A1 - Batch B verification report: pass/fail per check with reasons (ingestion Job log)</figcaption><img src="appendix/A1-batch-b-verification-report.png"></figure>
+<figure><figcaption>A2 - second ingestion on the unchanged corpus: 0 chunks embedded, collection kept</figcaption><img src="appendix/A2-unchanged-rerun-zero-embedded.png"></figure>
+<figure><figcaption>A2 - a changed document re-embeds only its own 3 chunks; old version archived</figcaption><img src="appendix/A2-changed-document-own-chunks-only.png"></figure>
+<figure><figcaption>A2 - deleting a document: count by document id = 0 chunks (no orphans)</figcaption><img src="appendix/A2-delete-no-orphans.png"></figure>
+<figure><figcaption>A2 - restoring the archived document: 3 chunks back</figcaption><img src="appendix/A2-restore-deleted-document.png"></figure>
+<figure><figcaption>A2 - rollback: the archived 2022 policy restored as current</figcaption><img src="appendix/A2-rollback-superseded-version.png"></figure>
+<figure><figcaption>B/C2 - evaluation summary with all three levels; gate REJECT for the TOP_K=1 candidate (Job Failed)</figcaption><img src="appendix/C2-gate-fails-bad-candidate.png"></figure>
+<figure><figcaption>C2 - gate PASS for the chunk-384 candidate (committed thresholds)</figcaption><img src="appendix/C2-gate-passes-candidate-chunk384.png"></figure>
+<figure><figcaption>F2 - ConfigMap threshold edit (p95 12 to 8 s): same candidate REJECTED, no rebuild</figcaption><img src="appendix/F2-configmap-edit-gate-rejects.png"></figure>
+<figure><figcaption>F2 - threshold restored: PASS again</figcaption><img src="appendix/F2-configmap-restored-gate-passes.png"></figure>
+<figure><figcaption>D1 - one full trace record (JSON line as stored)</figcaption><img src="appendix/D1-full-trace-record.png"></figure>
+<figure><figcaption>D2 - trace tool: context and rebuilt prompt for a trace id, hash checked</figcaption><img src="appendix/D2-trace-tool-rebuilds-prompt.png"></figure>
+<figure><figcaption>D3 - trace metrics over a time window</figcaption><img src="appendix/D3-trace-metrics-window.png"></figure>
+<figure><figcaption>D4 - Batch B injected document: context rail action written to the trace</figcaption><img src="appendix/D4-injection-guardrail-in-trace.png"></figure>
+<figure><figcaption>E2 - coverage before: 47.5 percent, exit 1</figcaption><img src="appendix/E2-coverage-before.png"></figure>
+<figure><figcaption>E4 - coverage after adding 15 questions: 92.5 percent, exit 0</figcaption><img src="appendix/E4-coverage-after.png"></figure>
+<figure><figcaption>E4 - coverage script exits non-zero below its threshold</figcaption><img src="appendix/E4-coverage-gate-fails-below-threshold.png"></figure>
+<figure><figcaption>F1 - kubectl get all,pvc,configmap,cronjob,job</figcaption><img src="appendix/F1-get-all-pvc-configmap-cronjob-job.png"></figure>
+<figure><figcaption>F3 - release of the gated candidate: rolling update (maxUnavailable 0), rollout status, trace on rahbar-candidate</figcaption><img src="appendix/F3-release-candidate-rollout-status.png"></figure>
+<figure><figcaption>F3 - rollout undo: new trace shows the previous collection and embedding version</figcaption><img src="appendix/F3-rollout-undo-trace-previous-collection.png"></figure>
+<figure><figcaption>F4 - metrics endpoint through kubectl port-forward</figcaption><img src="appendix/F4-metrics-port-forward.png"></figure>
 </body></html>

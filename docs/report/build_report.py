@@ -129,6 +129,28 @@ def e3_row(metric: str) -> tuple[str, str]:
     return "n/a", "n/a"
 
 
+def trimmed(name: str) -> str:
+    """Copy of a screenshot with the empty terminal area below the last output line removed
+    (content is never cut); the original stays in docs/evidence/screenshots."""
+    from PIL import Image
+
+    src = SHOTS / f"{name}.png"
+    dst_dir = Path(__file__).with_name("appendix")
+    dst_dir.mkdir(exist_ok=True)
+    dst = dst_dir / f"{name}.png"
+    img = Image.open(src).convert("RGB")
+    width, height = img.size
+    gray = img.convert("L")
+    last = 0
+    for y in range(int(height * 0.08), height):      # skip the title bar
+        row = gray.crop((int(width * 0.05), y, int(width * 0.95), y + 1))
+        if row.getextrema()[1] > 120:                 # any text pixel on this row
+            last = y
+    bottom = min(height, last + 40)
+    img.crop((0, 0, width, bottom)).save(dst, optimize=True)
+    return f"appendix/{name}.png"
+
+
 def shots() -> str:
     labels_map = [
         ("A1-batch-b-verification-report", "A1 - Batch B verification report: pass/fail per check with reasons (ingestion Job log)"),
@@ -161,7 +183,7 @@ def shots() -> str:
             continue
         seen.add(name)
         parts.append(f'<figure><figcaption>{esc(caption)}</figcaption>'
-                     f'<img src="../evidence/screenshots/{name}.png"></figure>')
+                     f'<img src="{trimmed(name)}"></figure>')
     return "\n".join(parts)
 
 
@@ -197,7 +219,7 @@ li {{ margin-bottom: 2px; }}
 .pb {{ page-break-before: always; }}
 figure {{ margin: 0 0 8px; page-break-inside: avoid; }}
 figcaption {{ font-weight: bold; margin-bottom: 2px; }}
-figure img {{ width: 100%; max-height: 255mm; object-fit: contain; border: 1px solid #ccc; }}
+figure img {{ width: 100%; max-height: 250mm; object-fit: contain; border: 1px solid #ccc; }}
 </style></head><body>
 
 <h1>RAHBAR: a RAGOps layer on Kubernetes (CS4032 Assignment 03)</h1>
