@@ -25,6 +25,14 @@ class FakeCollection:
     def count(self) -> int:
         return len(self.rows)
 
+    def get(self, include=None):
+        return {
+            "ids": list(self.rows),
+            "documents": [row[0] for row in self.rows.values()],
+            "embeddings": [row[1] for row in self.rows.values()],
+            "metadatas": [row[2] for row in self.rows.values()],
+        }
+
     def modify(self, metadata) -> None:
         # Same rule as chromadb-client 1.0.12 (CollectionCommon): the distance function is
         # fixed at creation, and modify() refuses any metadata that still carries hnsw:space.
@@ -99,6 +107,7 @@ def test_fake_vectors_are_deterministic_unit_vectors() -> None:
 
 def test_discover_reads_fixture_front_matter() -> None:
     fixtures = Path(__file__).resolve().parents[2] / "eval" / "fixtures"
-    found = {p.name: (version, old) for p, version, old in discover(str(fixtures))}
-    assert found["academic-rules-2023.md"] == ("2023", True)
-    assert found["academic-rules-2026.md"] == ("2026", False)
+    found = {doc.source: doc for doc in discover(str(fixtures))}
+    assert found["academic-rules-2023.md"].doc_version == "2023"
+    assert found["academic-rules-2023.md"].doc_id == found["academic-rules-2026.md"].doc_id
+    assert found["academic-rules-2026.md"].title.startswith("Margalla Institute")

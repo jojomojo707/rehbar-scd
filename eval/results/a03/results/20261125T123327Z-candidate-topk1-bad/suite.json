@@ -1,0 +1,207 @@
+{
+  "stamp": "20261125T123327Z",
+  "label": "candidate-topk1-bad",
+  "api": "http://api-candidate:8000",
+  "seed": 20261125,
+  "golden": "/app/eval/golden.jsonl",
+  "questions": 32,
+  "serving": {
+    "collection": "rahbar-candidate",
+    "collection_version": "rahbar-candidate-v20261125-122317",
+    "embedding_model": "BAAI/bge-small-en-v1.5",
+    "embedding_version": "BAAI/bge-small-en-v1.5@aa8f8b060edb/onnx-sha256:51f1bd0addd6e859",
+    "model_parameters": {
+      "provider": "hosted",
+      "model": "openai/gpt-oss-20b",
+      "temperature": 0.2,
+      "top_k": 1,
+      "max_tokens": 1024,
+      "reasoning_effort": "low",
+      "seed": null
+    }
+  },
+  "runs": [
+    {
+      "module": {
+        "paraphrase_mean_cosine": 0.85722372,
+        "unrelated_mean_cosine": 0.55526288,
+        "gap": 0.30196084,
+        "embed_seconds_per_chunk_mean": 0.01532398,
+        "embed_seconds_per_chunk_p95": 0.01879558,
+        "determinism_max_abs_diff": 0.0
+      },
+      "component": {
+        "n_answerable": 27,
+        "recall@3": 0.5,
+        "recall@5": 0.5,
+        "mrr": 0.518519,
+        "ndcg@5": 0.504191,
+        "noise_recall@3": 0.425926,
+        "noise_recall@5": 0.425926,
+        "noise_mrr": 0.444444,
+        "noise_ndcg@5": 0.430117,
+        "noise_delta_recall@3": -0.074074,
+        "noise_delta_recall@5": -0.074074,
+        "noise_delta_mrr": -0.074075,
+        "noise_delta_ndcg@5": -0.074074
+      },
+      "end_to_end": {
+        "questions": 32,
+        "abstention_correctness": 1.0,
+        "answer_rate_answerable": 0.518519,
+        "citation_validity": 1.0,
+        "e2e_recall@5": 0.5,
+        "fallbacks": 0,
+        "cache_hits": 0,
+        "latency_p50_seconds": 0.803,
+        "latency_p95_seconds": 1.195,
+        "answered": 14,
+        "judged": 14,
+        "faithful": 14,
+        "faithfulness": 1.0,
+        "judge_model": "openai/gpt-oss-120b",
+        "human_labelled": 0,
+        "judge_human_agreement": null
+      }
+    },
+    {
+      "module": {
+        "paraphrase_mean_cosine": 0.85722372,
+        "unrelated_mean_cosine": 0.55526288,
+        "gap": 0.30196084,
+        "embed_seconds_per_chunk_mean": 0.01346248,
+        "embed_seconds_per_chunk_p95": 0.01603083,
+        "determinism_max_abs_diff": 0.0
+      },
+      "component": {
+        "n_answerable": 27,
+        "recall@3": 0.5,
+        "recall@5": 0.5,
+        "mrr": 0.518519,
+        "ndcg@5": 0.504191,
+        "noise_recall@3": 0.425926,
+        "noise_recall@5": 0.425926,
+        "noise_mrr": 0.444444,
+        "noise_ndcg@5": 0.430117,
+        "noise_delta_recall@3": -0.074074,
+        "noise_delta_recall@5": -0.074074,
+        "noise_delta_mrr": -0.074075,
+        "noise_delta_ndcg@5": -0.074074
+      },
+      "end_to_end": {
+        "questions": 32,
+        "abstention_correctness": 1.0,
+        "answer_rate_answerable": 0.518519,
+        "citation_validity": 1.0,
+        "e2e_recall@5": 0.5,
+        "fallbacks": 0,
+        "cache_hits": 0,
+        "latency_p50_seconds": 0.795,
+        "latency_p95_seconds": 1.194,
+        "answered": 14,
+        "judged": 14,
+        "faithful": 13,
+        "faithfulness": 0.928571,
+        "judge_model": "openai/gpt-oss-120b",
+        "human_labelled": 0,
+        "judge_human_agreement": null
+      }
+    }
+  ],
+  "mean": {
+    "module": {
+      "paraphrase_mean_cosine": 0.857224,
+      "unrelated_mean_cosine": 0.555263,
+      "gap": 0.301961,
+      "embed_seconds_per_chunk_mean": 0.014393,
+      "embed_seconds_per_chunk_p95": 0.017413,
+      "determinism_max_abs_diff": 0.0
+    },
+    "component": {
+      "n_answerable": 27.0,
+      "recall@3": 0.5,
+      "recall@5": 0.5,
+      "mrr": 0.518519,
+      "ndcg@5": 0.504191,
+      "noise_recall@3": 0.425926,
+      "noise_recall@5": 0.425926,
+      "noise_mrr": 0.444444,
+      "noise_ndcg@5": 0.430117,
+      "noise_delta_recall@3": -0.074074,
+      "noise_delta_recall@5": -0.074074,
+      "noise_delta_mrr": -0.074075,
+      "noise_delta_ndcg@5": -0.074074
+    },
+    "end_to_end": {
+      "questions": 32.0,
+      "abstention_correctness": 1.0,
+      "answer_rate_answerable": 0.518519,
+      "citation_validity": 1.0,
+      "e2e_recall@5": 0.5,
+      "fallbacks": 0.0,
+      "cache_hits": 0.0,
+      "latency_p50_seconds": 0.799,
+      "latency_p95_seconds": 1.1945,
+      "answered": 14.0,
+      "judged": 14.0,
+      "faithful": 13.5,
+      "faithfulness": 0.964286,
+      "judge_model": "openai/gpt-oss-120b",
+      "human_labelled": 0.0,
+      "judge_human_agreement": null
+    }
+  },
+  "difference_run1_run2": {
+    "module.paraphrase_mean_cosine": 0.0,
+    "module.unrelated_mean_cosine": 0.0,
+    "module.gap": 0.0,
+    "module.embed_seconds_per_chunk_mean": 0.001861,
+    "module.embed_seconds_per_chunk_p95": 0.002765,
+    "module.determinism_max_abs_diff": 0.0,
+    "component.n_answerable": 0,
+    "component.recall@3": 0.0,
+    "component.recall@5": 0.0,
+    "component.mrr": 0.0,
+    "component.ndcg@5": 0.0,
+    "component.noise_recall@3": 0.0,
+    "component.noise_recall@5": 0.0,
+    "component.noise_mrr": 0.0,
+    "component.noise_ndcg@5": 0.0,
+    "component.noise_delta_recall@3": 0.0,
+    "component.noise_delta_recall@5": 0.0,
+    "component.noise_delta_mrr": 0.0,
+    "component.noise_delta_ndcg@5": 0.0,
+    "end_to_end.questions": 0,
+    "end_to_end.abstention_correctness": 0.0,
+    "end_to_end.answer_rate_answerable": 0.0,
+    "end_to_end.citation_validity": 0.0,
+    "end_to_end.e2e_recall@5": 0.0,
+    "end_to_end.fallbacks": 0,
+    "end_to_end.cache_hits": 0,
+    "end_to_end.latency_p50_seconds": 0.008,
+    "end_to_end.latency_p95_seconds": 0.001,
+    "end_to_end.answered": 0,
+    "end_to_end.judged": 0,
+    "end_to_end.faithful": 1,
+    "end_to_end.faithfulness": 0.071429,
+    "end_to_end.human_labelled": 0
+  },
+  "gate": {
+    "baseline": "/pipeline-data/eval/baseline/suite.json",
+    "failures": [
+      "recall@5 0.500 dropped 0.185 below the baseline 0.685 (allowed drop 0.020)"
+    ],
+    "thresholds": {
+      "MAX_RECALL5_DROP": 0.02,
+      "MIN_FAITHFULNESS": 0.85,
+      "MAX_P95_SECONDS": 12.0,
+      "MIN_ABSTENTION_MARGIN": 0.0
+    },
+    "decision": "REJECT",
+    "failures_at_run_time": [
+      "recall@5 0.500 dropped 0.130 below the baseline 0.630 (allowed drop 0.020)"
+    ],
+    "rescored_note": "failures recomputed after the gold-page correction; decision unchanged"
+  },
+  "rescored_component": "nDCG@5 dedup fix and gold pages re-read from the corrected golden set, 25 Nov 2026 (eval/rescore_component.py --golden)"
+}

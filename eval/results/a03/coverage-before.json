@@ -1,0 +1,482 @@
+{
+  "created_at": "2026-11-25T13:01:14.273173+00:00",
+  "model": "BAAI/bge-small-en-v1.5",
+  "golden": "/home/asad/uni/scd_a2/rahbar-starter/eval/golden.jsonl",
+  "golden_questions": 32,
+  "live_queries": 40,
+  "threshold": 0.7332,
+  "threshold_rule": "auto: midpoint of max unrelated-pair cosine 0.720 and min paraphrase-pair cosine 0.747 (15 + 15 pairs in module_pairs.json)",
+  "covered": 19,
+  "coverage_share": 0.475,
+  "min_share": 0.85,
+  "decision": "FAIL: expand the golden set",
+  "by_scope": {
+    "in_scope": {
+      "n": 28,
+      "covered": 18,
+      "mean_max_cosine": 0.776
+    },
+    "out_of_scope": {
+      "n": 12,
+      "covered": 1,
+      "mean_max_cosine": 0.6003
+    }
+  },
+  "uncovered_by_topic": {
+    "academic_warning": [
+      "C13 (0.714) What cumulative GPA triggers academic probation or warning?",
+      "C14 (0.693) When is academic warning assessed?"
+    ],
+    "attendance": [
+      "C01 (0.716) How much class attendance is needed to take the final?",
+      "C02 (0.721) What happens after missing too many lectures?",
+      "C04 (0.706) What percentage of lectures must a student attend?",
+      "C05 (0.686) Is documented illness considered for lecture absences?"
+    ],
+    "employment": [
+      "C32 (0.605) How many annual leave days do university employees receive?"
+    ],
+    "fees": [
+      "C27 (0.677) How is an overdue library book fine calculated?"
+    ],
+    "finance": [
+      "C36 (0.471) Which bank has the lowest home mortgage rate?"
+    ],
+    "food": [
+      "C34 (0.616) Is the cafeteria open during public holidays?"
+    ],
+    "healthcare": [
+      "C29 (0.578) Does the university clinic offer dental surgery?",
+      "C40 (0.570) Which pharmacy near campus sells insulin?"
+    ],
+    "library": [
+      "C20 (0.712) Can a library book be renewed if someone reserved it?"
+    ],
+    "parking": [
+      "C35 (0.564) Where can visitors buy a monthly parking permit?"
+    ],
+    "scholarship": [
+      "C25 (0.616) How often does the scholarship committee meet?"
+    ],
+    "semester_calendar": [
+      "C07 (0.732) When are final exams held in relation to makeup week?"
+    ],
+    "sports": [
+      "C33 (0.599) When does the inter-university cricket tournament start?"
+    ],
+    "technology": [
+      "C38 (0.579) How do I reset my personal laptop BIOS password?"
+    ],
+    "transport": [
+      "C31 (0.655) What time does the campus shuttle leave for the airport?"
+    ],
+    "travel": [
+      "C39 (0.614) What are the visa requirements for a Canadian tourist?"
+    ],
+    "weather": [
+      "C37 (0.566) Will it rain in Islamabad next Monday?"
+    ]
+  },
+  "queries": [
+    {
+      "id": "C01",
+      "scope": "in_scope",
+      "topic": "attendance",
+      "question": "How much class attendance is needed to take the final?",
+      "closest_golden_id": "V02",
+      "closest_golden_question": "What is the normal undergraduate course load under section 4.3 of the June 2026 rules?",
+      "max_cosine": 0.7163,
+      "covered": false
+    },
+    {
+      "id": "C02",
+      "scope": "in_scope",
+      "topic": "attendance",
+      "question": "What happens after missing too many lectures?",
+      "closest_golden_id": "O05",
+      "closest_golden_question": "What happens when a student fails to meet course attendance requirements?",
+      "max_cosine": 0.7211,
+      "covered": false
+    },
+    {
+      "id": "C03",
+      "scope": "in_scope",
+      "topic": "attendance",
+      "question": "Can a medical absence count as an exception to the attendance rule?",
+      "closest_golden_id": "H03",
+      "closest_golden_question": "What does the 2026 handbook say about permitted absence and the consequence of not meeting attendance requirements?",
+      "max_cosine": 0.7421,
+      "covered": true
+    },
+    {
+      "id": "C04",
+      "scope": "in_scope",
+      "topic": "attendance",
+      "question": "What percentage of lectures must a student attend?",
+      "closest_golden_id": "O04",
+      "closest_golden_question": "How many courses is the normal undergraduate course load?",
+      "max_cosine": 0.7057,
+      "covered": false
+    },
+    {
+      "id": "C05",
+      "scope": "in_scope",
+      "topic": "attendance",
+      "question": "Is documented illness considered for lecture absences?",
+      "closest_golden_id": "O05",
+      "closest_golden_question": "What happens when a student fails to meet course attendance requirements?",
+      "max_cosine": 0.6864,
+      "covered": false
+    },
+    {
+      "id": "C06",
+      "scope": "in_scope",
+      "topic": "semester_calendar",
+      "question": "How many teaching weeks are in a normal semester?",
+      "closest_golden_id": "O02",
+      "closest_golden_question": "How many teaching weeks are in a regular semester, excluding makeup and final examination weeks?",
+      "max_cosine": 0.9118,
+      "covered": true
+    },
+    {
+      "id": "C07",
+      "scope": "in_scope",
+      "topic": "semester_calendar",
+      "question": "When are final exams held in relation to makeup week?",
+      "closest_golden_id": "O02",
+      "closest_golden_question": "How many teaching weeks are in a regular semester, excluding makeup and final examination weeks?",
+      "max_cosine": 0.732,
+      "covered": false
+    },
+    {
+      "id": "C08",
+      "scope": "in_scope",
+      "topic": "semester_calendar",
+      "question": "How many weeks are reserved for final examinations?",
+      "closest_golden_id": "O02",
+      "closest_golden_question": "How many teaching weeks are in a regular semester, excluding makeup and final examination weeks?",
+      "max_cosine": 0.7761,
+      "covered": true
+    },
+    {
+      "id": "C09",
+      "scope": "in_scope",
+      "topic": "semester_calendar",
+      "question": "What is the length of a regular teaching term?",
+      "closest_golden_id": "O02",
+      "closest_golden_question": "How many teaching weeks are in a regular semester, excluding makeup and final examination weeks?",
+      "max_cosine": 0.7669,
+      "covered": true
+    },
+    {
+      "id": "C10",
+      "scope": "in_scope",
+      "topic": "credit_hours",
+      "question": "What does one theory credit hour mean each week?",
+      "closest_golden_id": "O03",
+      "closest_golden_question": "What does one credit hour of theory represent each week?",
+      "max_cosine": 0.9533,
+      "covered": true
+    },
+    {
+      "id": "C11",
+      "scope": "in_scope",
+      "topic": "credit_hours",
+      "question": "How many classroom hours make up a theory credit?",
+      "closest_golden_id": "O03",
+      "closest_golden_question": "What does one credit hour of theory represent each week?",
+      "max_cosine": 0.8424,
+      "covered": true
+    },
+    {
+      "id": "C12",
+      "scope": "in_scope",
+      "topic": "academic_warning",
+      "question": "At what CGPA does a student receive an academic warning?",
+      "closest_golden_id": "H02",
+      "closest_golden_question": "What CGPA does the 2026 handbook require to graduate, and what CGPA is stated as the minimum to avoid academic warning? Cite both rules rather than treating them as one clause.",
+      "max_cosine": 0.7833,
+      "covered": true
+    },
+    {
+      "id": "C13",
+      "scope": "in_scope",
+      "topic": "academic_warning",
+      "question": "What cumulative GPA triggers academic probation or warning?",
+      "closest_golden_id": "H02",
+      "closest_golden_question": "What CGPA does the 2026 handbook require to graduate, and what CGPA is stated as the minimum to avoid academic warning? Cite both rules rather than treating them as one clause.",
+      "max_cosine": 0.7139,
+      "covered": false
+    },
+    {
+      "id": "C14",
+      "scope": "in_scope",
+      "topic": "academic_warning",
+      "question": "When is academic warning assessed?",
+      "closest_golden_id": "H02",
+      "closest_golden_question": "What CGPA does the 2026 handbook require to graduate, and what CGPA is stated as the minimum to avoid academic warning? Cite both rules rather than treating them as one clause.",
+      "max_cosine": 0.6934,
+      "covered": false
+    },
+    {
+      "id": "C15",
+      "scope": "in_scope",
+      "topic": "course_repeat",
+      "question": "Which attempt counts when repeating a course?",
+      "closest_golden_id": "H05",
+      "closest_golden_question": "For a student repeating a course, which attempt affects CGPA, and does the older attempt disappear from the transcript?",
+      "max_cosine": 0.843,
+      "covered": true
+    },
+    {
+      "id": "C16",
+      "scope": "in_scope",
+      "topic": "course_repeat",
+      "question": "Can I repeat a class to raise my cumulative GPA?",
+      "closest_golden_id": "O07",
+      "closest_golden_question": "How are repeated courses treated in the CGPA calculation?",
+      "max_cosine": 0.7936,
+      "covered": true
+    },
+    {
+      "id": "C17",
+      "scope": "in_scope",
+      "topic": "course_repeat",
+      "question": "How does a repeated course affect the recorded grade?",
+      "closest_golden_id": "H05",
+      "closest_golden_question": "For a student repeating a course, which attempt affects CGPA, and does the older attempt disappear from the transcript?",
+      "max_cosine": 0.8265,
+      "covered": true
+    },
+    {
+      "id": "C18",
+      "scope": "in_scope",
+      "topic": "library",
+      "question": "How many books can I borrow from the library?",
+      "closest_golden_id": "B01",
+      "closest_golden_question": "How many books can an undergraduate borrow at once from the library, and for how long?",
+      "max_cosine": 0.9044,
+      "covered": true
+    },
+    {
+      "id": "C19",
+      "scope": "in_scope",
+      "topic": "library",
+      "question": "For how long can borrowed books be checked out?",
+      "closest_golden_id": "B01",
+      "closest_golden_question": "How many books can an undergraduate borrow at once from the library, and for how long?",
+      "max_cosine": 0.8205,
+      "covered": true
+    },
+    {
+      "id": "C20",
+      "scope": "in_scope",
+      "topic": "library",
+      "question": "Can a library book be renewed if someone reserved it?",
+      "closest_golden_id": "B01",
+      "closest_golden_question": "How many books can an undergraduate borrow at once from the library, and for how long?",
+      "max_cosine": 0.7121,
+      "covered": false
+    },
+    {
+      "id": "C21",
+      "scope": "in_scope",
+      "topic": "accessibility",
+      "question": "Who should I contact to request academic accommodations?",
+      "closest_golden_id": "B03",
+      "closest_golden_question": "Who receives a student's approved academic accommodation plan, and is the diagnosis shared?",
+      "max_cosine": 0.8104,
+      "covered": true
+    },
+    {
+      "id": "C22",
+      "scope": "in_scope",
+      "topic": "accessibility",
+      "question": "When should accommodation requests be made?",
+      "closest_golden_id": "A02",
+      "closest_golden_question": "What are the hostel accommodation fees for the current academic year?",
+      "max_cosine": 0.7461,
+      "covered": true
+    },
+    {
+      "id": "C23",
+      "scope": "in_scope",
+      "topic": "accessibility",
+      "question": "Who can see an approved accommodation plan?",
+      "closest_golden_id": "B03",
+      "closest_golden_question": "Who receives a student's approved academic accommodation plan, and is the diagnosis shared?",
+      "max_cosine": 0.8147,
+      "covered": true
+    },
+    {
+      "id": "C24",
+      "scope": "in_scope",
+      "topic": "scholarship",
+      "question": "What documents are needed for a need-based scholarship application?",
+      "closest_golden_id": "B02",
+      "closest_golden_question": "What CGPA must a student keep for a need-based scholarship to be renewed?",
+      "max_cosine": 0.8121,
+      "covered": true
+    },
+    {
+      "id": "C25",
+      "scope": "in_scope",
+      "topic": "scholarship",
+      "question": "How often does the scholarship committee meet?",
+      "closest_golden_id": "O03",
+      "closest_golden_question": "What does one credit hour of theory represent each week?",
+      "max_cosine": 0.6159,
+      "covered": false
+    },
+    {
+      "id": "C26",
+      "scope": "in_scope",
+      "topic": "scholarship",
+      "question": "What is required to renew a need-based award?",
+      "closest_golden_id": "B02",
+      "closest_golden_question": "What CGPA must a student keep for a need-based scholarship to be renewed?",
+      "max_cosine": 0.8158,
+      "covered": true
+    },
+    {
+      "id": "C27",
+      "scope": "in_scope",
+      "topic": "fees",
+      "question": "How is an overdue library book fine calculated?",
+      "closest_golden_id": "B01",
+      "closest_golden_question": "How many books can an undergraduate borrow at once from the library, and for how long?",
+      "max_cosine": 0.6771,
+      "covered": false
+    },
+    {
+      "id": "C28",
+      "scope": "in_scope",
+      "topic": "fees",
+      "question": "What does a student pay if a borrowed library book is lost?",
+      "closest_golden_id": "B01",
+      "closest_golden_question": "How many books can an undergraduate borrow at once from the library, and for how long?",
+      "max_cosine": 0.7919,
+      "covered": true
+    },
+    {
+      "id": "C29",
+      "scope": "out_of_scope",
+      "topic": "healthcare",
+      "question": "Does the university clinic offer dental surgery?",
+      "closest_golden_id": "B03",
+      "closest_golden_question": "Who receives a student's approved academic accommodation plan, and is the diagnosis shared?",
+      "max_cosine": 0.5777,
+      "covered": false
+    },
+    {
+      "id": "C30",
+      "scope": "out_of_scope",
+      "topic": "housing",
+      "question": "How do I reserve an on-campus dormitory room?",
+      "closest_golden_id": "A01",
+      "closest_golden_question": "What is the hostel room allocation policy for undergraduate students?",
+      "max_cosine": 0.7879,
+      "covered": true
+    },
+    {
+      "id": "C31",
+      "scope": "out_of_scope",
+      "topic": "transport",
+      "question": "What time does the campus shuttle leave for the airport?",
+      "closest_golden_id": "UA03",
+      "closest_golden_question": "How do I submit a FAST-NUCES hostel application, and what is the deadline?",
+      "max_cosine": 0.655,
+      "covered": false
+    },
+    {
+      "id": "C32",
+      "scope": "out_of_scope",
+      "topic": "employment",
+      "question": "How many annual leave days do university employees receive?",
+      "closest_golden_id": "V03",
+      "closest_golden_question": "How many summer internship applications were received in the 2023-24 annual report?",
+      "max_cosine": 0.6048,
+      "covered": false
+    },
+    {
+      "id": "C33",
+      "scope": "out_of_scope",
+      "topic": "sports",
+      "question": "When does the inter-university cricket tournament start?",
+      "closest_golden_id": "A02",
+      "closest_golden_question": "What are the hostel accommodation fees for the current academic year?",
+      "max_cosine": 0.5985,
+      "covered": false
+    },
+    {
+      "id": "C34",
+      "scope": "out_of_scope",
+      "topic": "food",
+      "question": "Is the cafeteria open during public holidays?",
+      "closest_golden_id": "UA04",
+      "closest_golden_question": "Does the student hostel provide meals, and what is the monthly meal-plan price?",
+      "max_cosine": 0.6163,
+      "covered": false
+    },
+    {
+      "id": "C35",
+      "scope": "out_of_scope",
+      "topic": "parking",
+      "question": "Where can visitors buy a monthly parking permit?",
+      "closest_golden_id": "UA03",
+      "closest_golden_question": "How do I submit a FAST-NUCES hostel application, and what is the deadline?",
+      "max_cosine": 0.5639,
+      "covered": false
+    },
+    {
+      "id": "C36",
+      "scope": "out_of_scope",
+      "topic": "finance",
+      "question": "Which bank has the lowest home mortgage rate?",
+      "closest_golden_id": "UA03",
+      "closest_golden_question": "How do I submit a FAST-NUCES hostel application, and what is the deadline?",
+      "max_cosine": 0.4708,
+      "covered": false
+    },
+    {
+      "id": "C37",
+      "scope": "out_of_scope",
+      "topic": "weather",
+      "question": "Will it rain in Islamabad next Monday?",
+      "closest_golden_id": "UA03",
+      "closest_golden_question": "How do I submit a FAST-NUCES hostel application, and what is the deadline?",
+      "max_cosine": 0.5658,
+      "covered": false
+    },
+    {
+      "id": "C38",
+      "scope": "out_of_scope",
+      "topic": "technology",
+      "question": "How do I reset my personal laptop BIOS password?",
+      "closest_golden_id": "B06",
+      "closest_golden_question": "Are students allowed to share their university email password?",
+      "max_cosine": 0.5792,
+      "covered": false
+    },
+    {
+      "id": "C39",
+      "scope": "out_of_scope",
+      "topic": "travel",
+      "question": "What are the visa requirements for a Canadian tourist?",
+      "closest_golden_id": "B02",
+      "closest_golden_question": "What CGPA must a student keep for a need-based scholarship to be renewed?",
+      "max_cosine": 0.6138,
+      "covered": false
+    },
+    {
+      "id": "C40",
+      "scope": "out_of_scope",
+      "topic": "healthcare",
+      "question": "Which pharmacy near campus sells insulin?",
+      "closest_golden_id": "UA04",
+      "closest_golden_question": "Does the student hostel provide meals, and what is the monthly meal-plan price?",
+      "max_cosine": 0.5699,
+      "covered": false
+    }
+  ]
+}

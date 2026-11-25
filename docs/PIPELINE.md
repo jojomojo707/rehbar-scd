@@ -62,6 +62,23 @@ manifest, and mounts the corpus read-only into the indexing container. The corpu
 runtime rather than baked into the image so public source PDFs are not copied into the image and
 manifest drift fails the job before indexing.
 
+## Incremental document updates and restore
+
+The active collection stores a JSON map of source-file SHA-256 digests and a per-source chunk
+count. Before embedding, the indexer compares those values with the current corpus. For an
+unchanged source whose chunks and pinned model/chunk settings still match, it reuses the existing
+vectors; changed and new sources are embedded, and deleted sources are omitted from the next
+collection. The new collection is still built completely before the active pointer moves, so a
+failed write leaves the serving collection untouched. Each run reports added, changed, unchanged,
+and deleted document IDs, reused/embedded chunk counts, and before/after chunk counts in its
+verification report and the `indexer finished` log.
+
+Superseded sources remain in the collection with `superseded=true`; the API excludes them from
+ordinary retrieval and can include them for historical questions. Versioned collections retain
+the previous completed index for rollback. In an indexer environment with Chroma access, run
+`python -m pipeline.run --restore` to switch the active pointer to that previous index. This
+swaps the active and previous pointers, so invoking it again switches back.
+
 ## Semantic cache
 
 We tested 0.88, 0.92, 0.95, and 0.96 against 11 paraphrase pairs and 11 near misses. Threshold

@@ -1,0 +1,42 @@
+[
+  {
+    "id": "E03",
+    "answer_sha": "1bc1edff4a717950",
+    "question": "What minimum number of students must register for a summer course to be offered?",
+    "answer": "A minimum of TEN (10) students must register for a summer course to be offered [academic-rules-handbook-jun-2026.pdf / 6.11 A minimum of TEN (10) students should register in a summer].",
+    "context": [
+      {
+        "document": "academic-rules-handbook-jun-2026.pdf",
+        "section": "6.11 A minimum of TEN (10) students should register in a summer",
+        "page": 29,
+        "text": "6.11 A minimum of TEN (10) students should register in a summer\ncourse.\nOtherwise, the course shall be dropped."
+      },
+      {
+        "document": "academic-rules-handbook-jun-2026.pdf",
+        "section": "1.19 A student can register for a maximum of two courses in",
+        "page": 9,
+        "text": "1.19 A student can register for a maximum of two courses in\nsummer semester in accordance with the rules for summer semester.\nFor more details, please see rule no 6: Rules for Summer Semester."
+      },
+      {
+        "document": "academic-rules-handbook-jun-2026.pdf",
+        "section": "6.1 Summer semester is an 8-week semester and is meant to",
+        "page": 28,
+        "text": "6.1 Summer semester is an 8-week semester and is meant to\nfacilitate students who are in one of the following four categories.\nA.\nAcademic Warning I/II B.\nGraduating C.\nEligible for registering FYP-I in Fall by earning minimum required credits in the summer D.\nEligible for registering a course/lab in Fall by passing its pre-requisite in summer"
+      },
+      {
+        "document": "prospectus-2026-academic-rules-and-regulations.pdf",
+        "section": "218 Prospectus 2026",
+        "page": 4,
+        "text": "218 Prospectus 2026\nin summer course. Student must obtain, following situations: a) Any course(s) offered can a) On the recommendations of in writing, prior permission only be a repeat course. No the Disciplinary Committee from Director of the parent new courses are allowed for campus. Prospectus 2026 219 | |\nAcademic Rules & Regulations FAST-NUCES b) Unsettled financial or other c) Only credits of relevant shall recommend each case matters with the University. courses, which have been with full details to the c) Not completing registration earned within the last five Controller of Examinations formalities in time. years with at-least B grade are for approval. transferable."
+      },
+      {
+        "document": "academic-rules-handbook-jun-2026.pdf",
+        "section": "6.7 80% attendance rule shall apply to summer courses/labs.",
+        "page": 28,
+        "text": "6.7 80% attendance rule shall apply to summer courses/labs.\n| 22 | Undergraduate Academic Rules and Regulations 2026 |\n| --- | --- |"
+      }
+    ],
+    "faithful": null,
+    "labeller": ""
+  }
+]

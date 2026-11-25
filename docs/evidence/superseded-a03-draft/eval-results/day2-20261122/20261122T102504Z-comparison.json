@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-11-22T10:25:04.646857+00:00",
+  "controlled_change": "TOP_K 5 to 7; same Batch A collection, golden set, and model pin",
+  "gate_result": "PASS",
+  "baseline_files": {
+    "api": "eval\\results\\day2-20261122\\20261122T101513Z-api.json",
+    "component": "eval\\results\\day2-20261122\\20261122T101513Z-component.json",
+    "module": "eval\\results\\day2-20261122\\20261122T101513Z-module.json"
+  },
+  "candidate_files": {
+    "api": "eval\\results\\day2-20261122\\20261122T101318Z-api.json",
+    "component": "eval\\results\\day2-20261122\\20261122T101318Z-component.json",
+    "module": "eval\\results\\day2-20261122\\20261122T101318Z-module.json"
+  },
+  "api": {
+    "recall@3": {
+      "baseline": 0.5666666666666667,
+      "candidate": 0.5666666666666667,
+      "delta_candidate_minus_baseline": 0.0
+    },
+    "recall@5": {
+      "baseline": 0.5833333333333334,
+      "candidate": 0.5833333333333334,
+      "delta_candidate_minus_baseline": 0.0
+    },
+    "citation_validity": {
+      "baseline": 1.0,
+      "candidate": 1.0,
+      "delta_candidate_minus_baseline": 0.0
+    },
+    "abstention_correctness": {
+      "baseline": 1.0,
+      "candidate": 1.0,
+      "delta_candidate_minus_baseline": 0.0
+    },
+    "latency_p50_seconds": {
+      "baseline": 0.6,
+      "candidate": 0.7,
+      "delta_candidate_minus_baseline": 0.1
+    },
+    "latency_p95_seconds": {
+      "baseline": 2.31,
+      "candidate": 8.2,
+      "delta_candidate_minus_baseline": 5.89
+    },
+    "cache_hits": {
+      "baseline": 15,
+      "candidate": 11,
+      "delta_candidate_minus_baseline": -4.0
+    },
+    "fallbacks": {
+      "baseline": 4,
+      "candidate": 5,
+      "delta_candidate_minus_baseline": 1.0
+    }
+  },
+  "retrieval_component": {
+    "recall@3": {
+      "baseline": 0.48333333333333334,
+      "candidate": 0.48333333333333334,
+      "delta_candidate_minus_baseline": 0.0
+    },
+    "recall@5": {
+      "baseline": 0.5,
+      "candidate": 0.5,
+      "delta_candidate_minus_baseline": 0.0
+    },
+    "mrr": {
+      "baseline": 0.49444444444444446,
+      "candidate": 0.49444444444444446,
+      "delta_candidate_minus_baseline": 0.0
+    },
+    "ndcg@5": {
+      "baseline": 0.48568805729851067,
+      "candidate": 0.48568805729851067,
+      "delta_candidate_minus_baseline": 0.0
+    }
+  },
+  "embedding_module": {
+    "paraphrase_mean_cosine": {
+      "baseline": 0.85722372,
+      "candidate": 0.85722372,
+      "delta_candidate_minus_baseline": 0.0
+    },
+    "unrelated_mean_cosine": {
+      "baseline": 0.55526288,
+      "candidate": 0.55526288,
+      "delta_candidate_minus_baseline": 0.0
+    },
+    "mean_gap_paraphrase_minus_unrelated": {
+      "baseline": 0.30196084,
+      "candidate": 0.30196084,
+      "delta_candidate_minus_baseline": 0.0
+    }
+  },
+  "notes": [
+    "Module metrics should remain unchanged because the embedding model and module are not the varied parameter.",
+    "Latency comparisons are cache-sensitive; inspect cache_hits and use cold runs before making a latency claim."
+  ]
+}

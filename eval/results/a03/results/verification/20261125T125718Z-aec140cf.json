@@ -1,0 +1,343 @@
+{
+  "chunking": {
+    "overlap": 64,
+    "size": 480,
+    "strategy": "structure"
+  },
+  "collection": "rahbar-v20261125-125724",
+  "collection_prefix": "rahbar",
+  "created_at": "2026-11-25T12:57:26.354457+00:00",
+  "documents": [
+    {
+      "change": "new",
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version 2026-11 and 1 page(s) present; text complete"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "usable text (634 characters, 80% alphanumeric)"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of fast-examination-conduct-draft"
+        },
+        "uniqueness": {
+          "passed": false,
+          "reason": "near-duplicate of examination-conduct-guidelines.md (similarity 0.998 >= 0.95)"
+        }
+      },
+      "disposition": "quarantine",
+      "doc_id": "fast-examination-conduct-draft",
+      "doc_version": "2026-11",
+      "moved_to": "/pipeline-data/quarantine/20261125T125718Z-aec140cf/examination-conduct-guidelines_draft.md",
+      "origin": "batch",
+      "passed": false,
+      "sha256": "c418ac0127a42bcf1e9dc8978e2994445e47407c6be7878466cd5f6cbf5b9109",
+      "source": "examination-conduct-guidelines_draft.md",
+      "title": "FAST-NUCES Examination Conduct Guidelines Draft (Batch B test document)"
+    },
+    {
+      "change": "new",
+      "checks": {
+        "completeness": {
+          "passed": false,
+          "reason": "missing title; missing date/version; missing page count (no pages extracted); truncated: PDF file has no %%EOF end marker"
+        },
+        "quality": {
+          "passed": false,
+          "reason": "extraction failed: PdfminerException: Unexpected EOF"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of examination-timetable-fall"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near duplicate"
+        }
+      },
+      "disposition": "quarantine",
+      "doc_id": "examination-timetable-fall",
+      "doc_version": "unknown",
+      "moved_to": "/pipeline-data/quarantine/20261125T125718Z-aec140cf/examination-timetable-fall-2026.pdf",
+      "origin": "batch",
+      "passed": false,
+      "sha256": "a6a6a812a74874629a42a7e8472165e6ee317e4342699118b2d9456269acc742",
+      "source": "examination-timetable-fall-2026.pdf",
+      "title": ""
+    },
+    {
+      "change": "changed",
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version 2026-11 and 1 page(s) present; text complete"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "usable text (618 characters, 77% alphanumeric)"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of fast-library-policy"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near duplicate; closest other document accessibility-policy.md at 0.751"
+        }
+      },
+      "disposition": "accept",
+      "doc_id": "fast-library-policy",
+      "doc_version": "2026-11",
+      "lake_status": "current",
+      "moved_to": "/pipeline-data/lake/docs/library-policy.md",
+      "origin": "batch",
+      "passed": true,
+      "sha256": "5a1f14bbda3be45f19ccfbb29af8f79e3a99dcd0400c38b59668c04e83c54526",
+      "source": "library-policy.md",
+      "title": "FAST-NUCES Library Borrowing and Access Policy (Batch B test document)"
+    },
+    {
+      "change": "new",
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version 2026-11 and 1 page(s) present; text complete"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "usable text (617 characters, 76% alphanumeric)"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of fast-library-policy"
+        },
+        "uniqueness": {
+          "passed": false,
+          "reason": "near-duplicate of library-policy.md (similarity 1.000 >= 0.95)"
+        }
+      },
+      "disposition": "quarantine",
+      "doc_id": "fast-library-policy",
+      "doc_version": "2026-11",
+      "moved_to": "/pipeline-data/quarantine/20261125T125718Z-aec140cf/library-policy_copy.md",
+      "origin": "batch",
+      "passed": false,
+      "sha256": "ee52f5df674d5a6cd31ac8927ad11156ab8c068af47cf592e53543f2bda69208",
+      "source": "library-policy_copy.md",
+      "title": "FAST-NUCES Library Borrowing and Access Policy (Batch B test document)"
+    },
+    {
+      "change": "new",
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version 2026-11 and 1 page(s) present; text complete"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "usable text (618 characters, 80% alphanumeric)"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of fast-need-based-scholarship"
+        },
+        "uniqueness": {
+          "passed": false,
+          "reason": "exact duplicate of scholarship-policy.md (same text hash e7be07a9c757)"
+        }
+      },
+      "disposition": "quarantine",
+      "doc_id": "fast-need-based-scholarship",
+      "doc_version": "2026-11",
+      "moved_to": "/pipeline-data/quarantine/20261125T125718Z-aec140cf/scholarship-policy_mirror.md",
+      "origin": "batch",
+      "passed": false,
+      "sha256": "864dbfedf1c25ab033bc63672b3c347706849fbea40da4c303615e2c0fe02bb5",
+      "source": "scholarship-policy_mirror.md",
+      "title": "FAST-NUCES Need-Based Scholarship Policy (Batch B test document)"
+    },
+    {
+      "change": "new",
+      "checks": {
+        "completeness": {
+          "passed": false,
+          "reason": "missing title; missing date/version"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "usable text (405 characters, 81% alphanumeric)"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of fast-student-clubs"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near duplicate; closest other document examination-conduct-guidelines.md at 0.717"
+        }
+      },
+      "disposition": "quarantine",
+      "doc_id": "fast-student-clubs",
+      "doc_version": "unknown",
+      "moved_to": "/pipeline-data/quarantine/20261125T125718Z-aec140cf/student-clubs-guide.md",
+      "origin": "batch",
+      "passed": false,
+      "sha256": "134f1bed880eabae345cc0b1abb725921066e12e0a434195f28fd66c764529fb",
+      "source": "student-clubs-guide.md",
+      "title": ""
+    },
+    {
+      "change": "new",
+      "checks": {
+        "completeness": {
+          "passed": false,
+          "reason": "truncated: text ends mid-sentence (...' now serves the sectors of G-9, G-10 and')"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "usable text (297 characters, 75% alphanumeric)"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of fast-transport-notice"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near duplicate; closest other document examination-conduct-guidelines.md at 0.677"
+        }
+      },
+      "disposition": "quarantine",
+      "doc_id": "fast-transport-notice",
+      "doc_version": "2026-11",
+      "moved_to": "/pipeline-data/quarantine/20261125T125718Z-aec140cf/transport-route-notice.md",
+      "origin": "batch",
+      "passed": false,
+      "sha256": "0d3d59da33494513dc9899ae743aaf3f66aeea8f909fee6c0fe4e660e6e3a0fa",
+      "source": "transport-route-notice.md",
+      "title": "FAST-NUCES Transport Route Notice (Batch B test document)"
+    }
+  ],
+  "embed_model": "BAAI/bge-small-en-v1.5",
+  "incremental": {
+    "added": [],
+    "changed": [
+      "library-policy.md"
+    ],
+    "deleted": [],
+    "document_chunk_counts_after": {
+      "academic-rules-handbook-jun-2026.pdf": 201,
+      "accessibility-policy.md": 3,
+      "annual-report-2019-20.pdf": 59,
+      "annual-report-2023-24.pdf": 192,
+      "examination-conduct-guidelines.md": 3,
+      "faculty-entrepreneurship-and-technical-start-ups-policy.pdf": 18,
+      "faculty-entrepreneurship-policy-revision-2026.md": 3,
+      "fee-structure-page.html": 9,
+      "grading-page.html": 7,
+      "it-acceptable-use-policy.md": 3,
+      "library-policy.md": 3,
+      "prospectus-2026-academic-rules-and-regulations.pdf": 21,
+      "scholarship-policy.md": 3,
+      "student-handbook-jun-2026.pdf": 135,
+      "undergraduate-academic-rules-aug-2023.pdf": 122
+    },
+    "document_chunk_counts_before": {
+      "academic-rules-handbook-jun-2026.pdf": 201,
+      "accessibility-policy.md": 3,
+      "annual-report-2019-20.pdf": 59,
+      "annual-report-2023-24.pdf": 192,
+      "examination-conduct-guidelines.md": 3,
+      "faculty-entrepreneurship-and-technical-start-ups-policy.pdf": 18,
+      "faculty-entrepreneurship-policy-revision-2026.md": 3,
+      "fee-structure-page.html": 9,
+      "grading-page.html": 7,
+      "it-acceptable-use-policy.md": 3,
+      "library-policy.md": 3,
+      "prospectus-2026-academic-rules-and-regulations.pdf": 21,
+      "scholarship-policy.md": 3,
+      "student-handbook-jun-2026.pdf": 135,
+      "undergraduate-academic-rules-aug-2023.pdf": 122
+    },
+    "embedded_chunks": 3,
+    "embedded_documents": [
+      "library-policy.md"
+    ],
+    "model_or_chunk_config_changed": false,
+    "published": true,
+    "reused_chunks": 779,
+    "reused_documents": [
+      "academic-rules-handbook-jun-2026.pdf",
+      "accessibility-policy.md",
+      "annual-report-2019-20.pdf",
+      "annual-report-2023-24.pdf",
+      "examination-conduct-guidelines.md",
+      "faculty-entrepreneurship-and-technical-start-ups-policy.pdf",
+      "faculty-entrepreneurship-policy-revision-2026.md",
+      "fee-structure-page.html",
+      "grading-page.html",
+      "it-acceptable-use-policy.md",
+      "prospectus-2026-academic-rules-and-regulations.pdf",
+      "scholarship-policy.md",
+      "student-handbook-jun-2026.pdf",
+      "undergraduate-academic-rules-aug-2023.pdf"
+    ],
+    "superseded_flag_changes": [],
+    "unchanged": [
+      "academic-rules-handbook-jun-2026.pdf",
+      "accessibility-policy.md",
+      "annual-report-2019-20.pdf",
+      "annual-report-2023-24.pdf",
+      "examination-conduct-guidelines.md",
+      "faculty-entrepreneurship-and-technical-start-ups-policy.pdf",
+      "faculty-entrepreneurship-policy-revision-2026.md",
+      "fee-structure-page.html",
+      "grading-page.html",
+      "it-acceptable-use-policy.md",
+      "prospectus-2026-academic-rules-and-regulations.pdf",
+      "scholarship-policy.md",
+      "student-handbook-jun-2026.pdf",
+      "undergraduate-academic-rules-aug-2023.pdf"
+    ]
+  },
+  "inputs": {
+    "batch_dir": "/batch",
+    "corpus_dir": "/corpus"
+  },
+  "lake_actions": [
+    "archived replaced library-policy.md 2026-11",
+    "moved library-policy.md into the lake"
+  ],
+  "run_id": "20261125T125718Z-aec140cf",
+  "summary": {
+    "archived_superseded_on_arrival": 0,
+    "documents_seen": 21,
+    "embedded_chunks": 3,
+    "lake_current": 12,
+    "lake_deleted": 0,
+    "lake_superseded": 3,
+    "passed": 1,
+    "quarantined": 6,
+    "reused_chunks": 779,
+    "unchanged": 14,
+    "verified": 7
+  },
+  "unchanged_documents": [
+    "undergraduate-academic-rules-aug-2023.pdf",
+    "academic-rules-handbook-jun-2026.pdf",
+    "prospectus-2026-academic-rules-and-regulations.pdf",
+    "student-handbook-jun-2026.pdf",
+    "annual-report-2019-20.pdf",
+    "annual-report-2023-24.pdf",
+    "fee-structure-page.html",
+    "grading-page.html",
+    "faculty-entrepreneurship-and-technical-start-ups-policy.pdf",
+    "accessibility-policy.md",
+    "examination-conduct-guidelines.md",
+    "faculty-entrepreneurship-policy-revision-2026.md",
+    "it-acceptable-use-policy.md",
+    "scholarship-policy.md"
+  ]
+}

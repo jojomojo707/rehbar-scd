@@ -1,0 +1,44 @@
+{
+  "window": {
+    "since": "2026-11-25T12:04:00Z",
+    "until": "2026-11-25T12:14:10Z",
+    "requests": 118
+  },
+  "top1_similarity": {
+    "n": 118,
+    "min": 0.5944236,
+    "p10": 0.6625,
+    "p50": 0.7559,
+    "p90": 0.859,
+    "max": 0.91553575,
+    "histogram": {
+      "0.0-0.5": 0,
+      "0.5-0.6": 2,
+      "0.6-0.7": 24,
+      "0.7-0.8": 58,
+      "0.8-0.9": 32,
+      "0.9-1.0": 2
+    }
+  },
+  "abstention_rate": 0.6271,
+  "cache": {
+    "hits": 0,
+    "lookups": 0,
+    "hit_rate": null,
+    "bypassed": 118
+  },
+  "stage_p95_ms": {
+    "embedding": 201.2,
+    "retrieval": 198.2,
+    "generation": 10779.1,
+    "total": 11000.5
+  },
+  "injection_attempts_flagged": {
+    "query_rail": 8,
+    "context_rail": 0,
+    "total": 8
+  },
+  "collections_seen": [
+    "rahbar-v20261125-120258"
+  ]
+}

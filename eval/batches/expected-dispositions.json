@@ -1,0 +1,38 @@
+{
+  "batch_a": {
+    "description": "Batch A is the real FAST-NUCES corpus (9 documents, corpus/sources.yaml), ingested from the corpus PVC.",
+    "expected": {
+      "accept": 9,
+      "superseded_on_arrival": ["undergraduate-academic-rules-aug-2023.pdf", "annual-report-2019-20.pdf"],
+      "second_unchanged_run_embedded_chunks": 0
+    }
+  },
+  "batch_b": {
+    "documents": 12,
+    "planted": {
+      "exact_duplicate_1": {"copy": "library-policy_copy.md", "of": "library-policy.md"},
+      "exact_duplicate_2": {"copy": "scholarship-policy_mirror.md", "of": "scholarship-policy.md"},
+      "near_duplicate": {"copy": "examination-conduct-guidelines_draft.md", "of": "examination-conduct-guidelines.md"},
+      "truncated": "transport-route-notice.md",
+      "corrupt": "examination-timetable-fall-2026.pdf",
+      "missing_metadata": "student-clubs-guide.md",
+      "newer_version": {"new": "faculty-entrepreneurship-policy-revision-2026.md", "supersedes": "faculty-entrepreneurship-and-technical-start-ups-policy.pdf"},
+      "injected_instruction": "it-acceptable-use-policy.md"
+    },
+    "expected": {
+      "accept": ["library-policy.md", "scholarship-policy.md", "accessibility-policy.md",
+                 "examination-conduct-guidelines.md", "it-acceptable-use-policy.md",
+                 "faculty-entrepreneurship-policy-revision-2026.md"],
+      "quarantine": {
+        "library-policy_copy.md": "uniqueness (exact duplicate)",
+        "scholarship-policy_mirror.md": "uniqueness (exact duplicate)",
+        "examination-conduct-guidelines_draft.md": "uniqueness (near-duplicate)",
+        "transport-route-notice.md": "completeness (text truncated)",
+        "examination-timetable-fall-2026.pdf": "quality (extraction failed) and completeness",
+        "student-clubs-guide.md": "completeness (missing title and version)"
+      },
+      "archived_superseded": ["faculty-entrepreneurship-and-technical-start-ups-policy.pdf"],
+      "injected_instruction": "passes verification (it is well-formed text); the API's context guardrail flags and drops it at query time and records the action in the trace"
+    }
+  }
+}

@@ -1,0 +1,125 @@
+﻿{
+  "trace_id": "9dda5d57a9ec4712a61469ac156c5b91",
+  "query": "What language is used for instruction at FAST, apart from language and Islamic Studies courses?",
+  "rewrite": "What language is used for instruction at FAST, apart from language and Islamic Studies courses?",
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "collection_version": "rahbar-day2-batch-b-v20261122-101850",
+  "retrieved": [
+    {
+      "chunk_id": "academic-rules-2027:00001",
+      "document": "academic-rules-2027.md",
+      "version": "2027",
+      "section": "1. Attendance",
+      "page": 1,
+      "score": 0.55730963,
+      "superseded": false,
+      "text": "1. Attendance\n1.1 A student must attend at least 80 percent of lectures to sit the final examination.\nDocumented medical absences may be considered by the department."
+    },
+    {
+      "chunk_id": "academic-rules-2027:00003",
+      "document": "academic-rules-2027.md",
+      "version": "2027",
+      "section": "3. Repeating a course",
+      "page": 1,
+      "score": 0.5349244,
+      "superseded": false,
+      "text": "3. Repeating a course\n3.1 A student may repeat any course to improve the cumulative grade point average.\nThe most recent attempt determines the recorded grade."
+    },
+    {
+      "chunk_id": "academic-rules-2027:00000",
+      "document": "academic-rules-2027.md",
+      "version": "2027",
+      "section": "Margalla Institute of Technology: Academic Rules (2027 edition)",
+      "page": 1,
+      "score": 0.52959406,
+      "superseded": false,
+      "text": "Margalla Institute of Technology: Academic Rules (2027 edition)\nThis edition replaces the 2026 edition for students beginning in Fall 2027."
+    },
+    {
+      "chunk_id": "academic-rules-2027:00002",
+      "document": "academic-rules-2027.md",
+      "version": "2027",
+      "section": "2. Academic warning",
+      "page": 1,
+      "score": 0.50946426,
+      "superseded": false,
+      "text": "2. Academic warning\n2.1 A student whose cumulative grade point average falls below 2.00 at the end of a regular semester is placed on academic warning."
+    },
+    {
+      "chunk_id": "handbook-exact-a:00000",
+      "document": "handbook-exact-a.md",
+      "version": "2026",
+      "section": "Student Handbook: Conduct",
+      "page": 1,
+      "score": 0.5060137,
+      "superseded": false,
+      "text": "Student Handbook: Conduct\nStudents must keep their university identification card visible while on campus.\nVisitors must register at the main gate and remain with their host.\nQuiet study areas are open from eight in the morning until ten in the evening on weekdays.\nStudents should report damaged equipment to the library desk so staff can arrange repairs."
+    },
+    {
+      "chunk_id": "scholarship-policy:00000",
+      "document": "scholarship-policy.md",
+      "version": "2026",
+      "section": "Need-based scholarship policy",
+      "page": 1,
+      "score": 0.49348080000000005,
+      "superseded": false,
+      "text": "Need-based scholarship policy\nApplicants submit the scholarship form with household income evidence and the latest transcript.\nThe review committee meets once each semester.\nAwards depend on available funds and are renewed only when the student maintains satisfactory academic progress."
+    },
+    {
+      "chunk_id": "accessibility-policy:00000",
+      "document": "accessibility-policy.md",
+      "version": "2026",
+      "section": "Accessibility accommodations",
+      "page": 1,
+      "score": 0.48506439999999995,
+      "superseded": false,
+      "text": "Accessibility accommodations\nStudents requesting academic accommodations should contact the student support office before the semester begins.\nDocumentation is reviewed confidentially.\nApproved plans are shared only with instructors who need to arrange the listed accommodations."
+    }
+  ],
+  "filters": {
+    "superseded_filter": true
+  },
+  "rerank_order": [
+    "academic-rules-2027:00001",
+    "academic-rules-2027:00003",
+    "academic-rules-2027:00000",
+    "academic-rules-2027:00002",
+    "handbook-exact-a:00000",
+    "scholarship-policy:00000",
+    "accessibility-policy:00000"
+  ],
+  "prompt": [],
+  "prompt_sha256": null,
+  "model_parameters": {
+    "provider": "hosted",
+    "model": "openai/gpt-oss-20b",
+    "temperature": 0.2,
+    "top_k": 7,
+    "max_tokens": 1024,
+    "reasoning_effort": "low"
+  },
+  "response": {
+    "answer": "The documents I have do not cover this question, so I can't answer it from them.",
+    "citations": [],
+    "answered_from_context": false,
+    "cached": false
+  },
+  "guardrail_actions": [
+    "relevance_floor_abstention"
+  ],
+  "outcome": "abstained",
+  "fallback_reason": null,
+  "abstain_reason": "relevance_floor",
+  "stage_ms": {
+    "embedding": 211.3,
+    "retrieval": 642.8,
+    "generation": 0.0,
+    "total": 965.5
+  },
+  "cache_status": "MISS",
+  "timestamp": "2026-11-22T10:22:34.535045+00:00",
+  "pod": "api-candidate-787bb66cc-xjdvz"
+}
+
+--- reconstructed prompt ---
+Prompt unavailable for cache hit or abstention before generation.

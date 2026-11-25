@@ -1,0 +1,42 @@
+$ kubectl -n rahbar get job indexer
+NAME      STATUS     COMPLETIONS   DURATION   AGE
+indexer   Complete   1/1           10m        11m
+
+$ kubectl -n rahbar logs job/indexer -c indexer
+{"ts": "2026-11-25T11:52:31Z", "logger": "rahbar.indexer", "msg": "indexer starting", "dummy": false, "embed_model": "BAAI/bge-small-en-v1.5", "collection": "rahbar", "chroma": "chroma:8000", "chunk_size": 480, "batch_dir": "/batch", "pod": "indexer-gt8vj"}
+{"ts": "2026-11-25T11:52:31Z", "logger": "rahbar.indexer", "msg": "batch input", "batch_dir": "/batch", "batch_name": "batch", "documents": 0}
+[0;93m2026-11-25 11:54:42.682453774 [W:onnxruntime:Default, telemetry_1ds.cc:600 operator()] Failed to persist telemetry device ID; using an in-memory identifier[m
+document                           quality  complete recency  unique   disposition
+undergraduate-academic-rules-aug-2 PASS     PASS     FAIL     PASS     archive-superseded
+    - recency: newer version 2026-06 detected (academic-rules-handbook-jun-2026.pdf); this version is archived as superseded
+academic-rules-handbook-jun-2026.p PASS     PASS     PASS     PASS     accept
+prospectus-2026-academic-rules-and PASS     PASS     PASS     PASS     accept
+student-handbook-jun-2026.pdf      PASS     PASS     PASS     PASS     accept
+annual-report-2019-20.pdf          PASS     PASS     FAIL     PASS     archive-superseded
+    - recency: newer version 2023-24 detected (annual-report-2023-24.pdf); this version is archived as superseded
+annual-report-2023-24.pdf          PASS     PASS     PASS     PASS     accept
+fee-structure-page.html            PASS     PASS     PASS     PASS     accept
+grading-page.html                  PASS     PASS     PASS     PASS     accept
+faculty-entrepreneurship-and-techn PASS     PASS     PASS     PASS     accept
+{"ts": "2026-11-25T11:55:38Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-handbook-jun-2026.pdf", "status": "current", "chunks": 201}
+{"ts": "2026-11-25T11:55:39Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "annual-report-2019-20.pdf", "status": "superseded", "chunks": 59}
+{"ts": "2026-11-25T11:55:40Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "annual-report-2023-24.pdf", "status": "current", "chunks": 192}
+{"ts": "2026-11-25T11:55:40Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "faculty-entrepreneurship-and-technical-start-ups-policy.pdf", "status": "current", "chunks": 18}
+{"ts": "2026-11-25T11:55:40Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "fee-structure-page.html", "status": "current", "chunks": 9}
+{"ts": "2026-11-25T11:55:40Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "grading-page.html", "status": "current", "chunks": 7}
+{"ts": "2026-11-25T11:55:41Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "prospectus-2026-academic-rules-and-regulations.pdf", "status": "current", "chunks": 21}
+{"ts": "2026-11-25T11:55:42Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "student-handbook-jun-2026.pdf", "status": "current", "chunks": 135}
+{"ts": "2026-11-25T11:55:42Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "undergraduate-academic-rules-aug-2023.pdf", "status": "superseded", "chunks": 122}
+{"ts": "2026-11-25T12:02:59Z", "logger": "rahbar.indexer", "msg": "lake", "action": "moved undergraduate-academic-rules-aug-2023.pdf into the lake"}
+{"ts": "2026-11-25T12:02:59Z", "logger": "rahbar.indexer", "msg": "lake", "action": "moved academic-rules-handbook-jun-2026.pdf into the lake"}
+{"ts": "2026-11-25T12:02:59Z", "logger": "rahbar.indexer", "msg": "lake", "action": "moved prospectus-2026-academic-rules-and-regulations.pdf into the lake"}
+{"ts": "2026-11-25T12:02:59Z", "logger": "rahbar.indexer", "msg": "lake", "action": "moved student-handbook-jun-2026.pdf into the lake"}
+{"ts": "2026-11-25T12:02:59Z", "logger": "rahbar.indexer", "msg": "lake", "action": "moved annual-report-2019-20.pdf into the lake"}
+{"ts": "2026-11-25T12:02:59Z", "logger": "rahbar.indexer", "msg": "lake", "action": "moved annual-report-2023-24.pdf into the lake"}
+{"ts": "2026-11-25T12:02:59Z", "logger": "rahbar.indexer", "msg": "lake", "action": "moved fee-structure-page.html into the lake"}
+{"ts": "2026-11-25T12:02:59Z", "logger": "rahbar.indexer", "msg": "lake", "action": "moved grading-page.html into the lake"}
+{"ts": "2026-11-25T12:02:59Z", "logger": "rahbar.indexer", "msg": "lake", "action": "moved faculty-entrepreneurship-and-technical-start-ups-policy.pdf into the lake"}
+{"ts": "2026-11-25T12:02:59Z", "logger": "rahbar.indexer", "msg": "lake", "action": "archived superseded undergraduate-academic-rules-aug-2023.pdf 2023-08 (newer: academic-rules-handbook-jun-2026.pdf 2026-06) [fast-undergraduate-academic-rules]"}
+{"ts": "2026-11-25T12:02:59Z", "logger": "rahbar.indexer", "msg": "lake", "action": "archived superseded annual-report-2019-20.pdf 2019-20 (newer: annual-report-2023-24.pdf 2023-24) [fast-annual-report]"}
+{"ts": "2026-11-25T12:02:59Z", "logger": "rahbar.indexer", "msg": "verification report written", "report": "/pipeline-data/eval/results/verification/20261125T115231Z-f308ca63.json", "documents_seen": 9, "unchanged": 0, "verified": 9, "passed": 7, "quarantined": 0, "archived_superseded_on_arrival": 2, "lake_current": 7, "lake_superseded": 2, "lake_deleted": 0, "embedded_chunks": 764, "reused_chunks": 0}
+{"ts": "2026-11-25T12:02:59Z", "logger": "rahbar.indexer", "msg": "indexer finished", "run_id": "20261125T115231Z-f308ca63", "verification_report": "/pipeline-data/eval/results/verification/20261125T115231Z-f308ca63.json", "collection": "rahbar-v20261125-120258", "summary": {"documents_seen": 9, "unchanged": 0, "verified": 9, "passed": 7, "quarantined": 0, "archived_superseded_on_arrival": 2, "lake_current": 7, "lake_superseded": 2, "lake_deleted": 0, "embedded_chunks": 764, "reused_chunks": 0}, "seconds": 627.9}

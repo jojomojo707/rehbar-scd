@@ -1,0 +1,14 @@
+# Small Assignment 03 data-lake volume for reports, quarantine, archive and traces.
+# Minikube uses its single-node RWO provisioner; Chroma remains on data-chroma-0.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pipeline-data
+  labels:
+    app.kubernetes.io/name: rahbar
+    app.kubernetes.io/part-of: rahbar
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 2Gi

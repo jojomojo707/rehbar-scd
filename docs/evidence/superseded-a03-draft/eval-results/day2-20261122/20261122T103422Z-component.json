@@ -1,0 +1,26 @@
+{
+  "input": "/pipeline-data/eval/results/20261122T103422Z-api.json",
+  "baseline": {
+    "n_answerable": 30,
+    "recall@3": 0.48333333333333334,
+    "recall@5": 0.5,
+    "mrr": 0.49444444444444446,
+    "ndcg@5": 0.48568805729851067
+  },
+  "controlled_noise": {
+    "condition": "prepend three synthetic irrelevant candidates to each ranking",
+    "metrics": {
+      "n_answerable": 30,
+      "recall@3": 0.0,
+      "recall@5": 0.4666666666666667,
+      "mrr": 0.12333333333333334,
+      "ndcg@5": 0.20333536967653323
+    },
+    "delta": {
+      "recall@3": -0.483333,
+      "recall@5": -0.033333,
+      "mrr": -0.371111,
+      "ndcg@5": -0.282353
+    }
+  }
+}

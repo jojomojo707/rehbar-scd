@@ -59,6 +59,8 @@ class Settings:
     llm_max_tokens: int = 1024
     llm_timeout_seconds: int = 20
     llm_reasoning_effort: str = "low"
+    trace_dir: str = ""
+    llm_seed: int | None = None   # LLM_SEED: fixed sampling seed for repeatable eval runs
     ollama_url: str = "http://host.minikube.internal:11434"
     hosted_base_url: str = ""        # e.g. an OpenAI-compatible endpoint
     llm_api_key: str = field(default="", repr=False)   # from the Secret; never log it
@@ -96,6 +98,8 @@ def get_settings() -> Settings:
         llm_max_tokens=_int("LLM_MAX_TOKENS", 1024),
         llm_timeout_seconds=_int("LLM_TIMEOUT_SECONDS", 20),
         llm_reasoning_effort=os.environ.get("LLM_REASONING_EFFORT", "low"),
+        trace_dir=os.environ.get("TRACE_DIR", ""),
+        llm_seed=int(os.environ["LLM_SEED"]) if os.environ.get("LLM_SEED") else None,
         ollama_url=os.environ.get("OLLAMA_URL", "http://host.minikube.internal:11434"),
         hosted_base_url=os.environ.get("HOSTED_BASE_URL", ""),
         llm_api_key=os.environ.get("LLM_API_KEY", ""),

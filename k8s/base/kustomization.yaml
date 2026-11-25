@@ -11,6 +11,10 @@ resources:
   - namespace.yaml
   - serviceaccounts.yaml
   - configmap.yaml
+  - release-gate-configmap.yaml
+  - candidate-configmap.yaml
+  - api-candidate.yaml
+  - eval-target-configmap.yaml
   - api.yaml
   - hpa.yaml
   - ui.yaml
@@ -18,6 +22,7 @@ resources:
   - chroma-statefulset.yaml
   - redis.yaml
   - corpus-pvc.yaml
+  - pipeline-data-pvc.yaml
   - indexer-job.yaml
   - reindex-cronjob.yaml
   - ingress.yaml

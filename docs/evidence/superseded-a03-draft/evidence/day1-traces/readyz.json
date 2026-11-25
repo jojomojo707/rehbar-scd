@@ -1,0 +1,12 @@
+﻿{
+    "status":  "ready",
+    "checks":  {
+                   "chroma":  "ok",
+                   "index_pointer":  "ok",
+                   "collection":  "ok",
+                   "embedding_pin":  "ok",
+                   "embedding_model":  "ok",
+                   "redis":  "ok"
+               },
+    "index":  "rahbar-v20261106-192510"
+}

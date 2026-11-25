@@ -28,6 +28,13 @@ LLM_TOKENS_PER_REQUEST = Histogram(
 CITATIONS_DROPPED = Counter("rahbar_citations_dropped_total", "Invalid citations removed")
 DEPENDENCY_ERRORS = Counter("rahbar_dependency_errors_total", "Dependency errors", ["dependency"])
 INFLIGHT = Gauge("rahbar_inflight_requests", "Requests currently being processed")
+TOP1_SIMILARITY = Histogram(
+    "rahbar_top1_similarity", "Similarity of the best retrieved passage per query",
+    buckets=(0.3, 0.4, 0.5, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0),
+)
+INJECTIONS_FLAGGED = Counter(
+    "rahbar_injections_flagged_total", "Prompt-injection attempts flagged", ["where"]
+)
 INDEX_INFO = Gauge("rahbar_index_info", "Serving index metadata", ["index_version", "embed_model"])
 
 # Keep all label series visible even before their first matching request.
@@ -37,6 +44,8 @@ for _reason in ("relevance_floor", "model"):
     ABSTENTIONS.labels(reason=_reason)
 for _reason in ("provider", "validation", "unknown"):
     FALLBACKS.labels(reason=_reason)
+for _where in ("query", "context"):
+    INJECTIONS_FLAGGED.labels(where=_where)
 for _direction in ("in", "out"):
     LLM_TOKENS.labels(direction=_direction)
     LLM_TOKENS_PER_REQUEST.labels(direction=_direction)

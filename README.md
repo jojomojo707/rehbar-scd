@@ -51,7 +51,7 @@ Design details: [ARCHITECTURE.md](ARCHITECTURE.md), which routes to every file i
 | Tool | Why |
 | --- | --- |
 | minikube (docker driver), 4 CPUs, and Docker with at least 7.5 GB of memory | The local cluster. `make cluster` starts it with 7168 MB and also enables Calico (NetworkPolicy), metrics-server (HPA, `kubectl top`) and ingress-nginx |
-| Docker 23+ with buildx | Builds the three images |
+| Docker 23+ with buildx | Builds the API, indexer, UI and evaluator images |
 | kubectl (with built-in kustomize) | `kubectl apply -k` |
 | Python 3.12 and GNU make (bash) | Tests, the eval and the helper targets |
 | A Groq API key | Generation. Free at console.groq.com. It goes only into the Kubernetes Secret |
@@ -170,6 +170,14 @@ The api keeps serving the old collection until the new one is complete, then swi
 and storage amplification (`kubectl logs job/indexer -n rahbar -c indexer`). Pipeline details:
 [docs/PIPELINE.md](docs/PIPELINE.md).
 
+The indexer records a SHA-256 digest and chunk count for each source document. On a repeated run,
+it reuses the prior vectors for unchanged documents, embeds changed or added documents only, and
+omits deleted documents from the new active collection. The prior complete collection remains
+available as the rollback target. To switch the active pointer to it, run
+`python -m pipeline.run --restore` in an indexer environment configured with the same Chroma
+settings. The command swaps the active and previous collection names; running it again switches
+back.
+
 ## API
 
 The Ingress forwards only `/api/*` to the api. The health and metrics endpoints are on the
@@ -200,6 +208,29 @@ drops more than 5 points below the baseline. Merging to `main` runs `cd.yml`: th
 the three images pushed to Docker Hub tagged with the commit SHA, then a deploy of exactly
 those images into a fresh kind cluster with a smoke test through the Ingress. `main` needs one
 approval and all ten checks.
+
+## Assignment 03: RAGOps (Parts A to F)
+
+Everything below runs on minikube; `k8s/README.md` has the fresh-cluster sequence and the role
+of every Kubernetes object. Results are committed under `eval/results/` and `traces/`, terminal
+evidence and screenshots under `docs/evidence/`, and the report under `docs/report/`.
+
+| Part | Exact command(s) | Output |
+| --- | --- | --- |
+| A1/A2 ingest + verify Batch A | `kubectl apply -k k8s/overlays/dev` then `kubectl -n rahbar logs job/indexer -c indexer` | pass/fail table per check; report in `/pipeline-data/eval/results/verification/<run>.json` |
+| A2 unchanged rerun | `kubectl -n rahbar delete job indexer && kubectl apply -k k8s/overlays/dev` | log shows `"embedded_chunks": 0`, collection kept |
+| A1/A2 Batch B (or any unseen batch) | `kubectl -n rahbar create configmap ingest-batch --from-file=eval/batches/batch-b` then rerun the indexer Job as above | planted problems quarantined, newer version archives the old one |
+| A2 orphans, restore | `python -m pipeline.counts --source <file>`; `python -m pipeline.run --restore-version <file>` (indexer image, see `k8s/README.md`) | chunk count per document id; restored version current again |
+| B suite | `kubectl apply -f k8s/eval-job.yaml` (or locally `python eval/run_suite.py --api <url> --trace-dir <traces>`) | `<stamp>-<label>/summary.md` with all three levels, two seeded runs and their difference |
+| C1 candidate | `kubectl apply -f k8s/candidate-ingest-job.yaml`, then the eval Job with `eval-target` pointing at `api-candidate` | comparison: `python eval/compare_runs.py --before <baseline>/suite.json --after <candidate>/suite.json --out <file>` |
+| C2 gate | runs inside the eval Job; alone: `kubectl apply -f k8s/gate-job.yaml` or `python eval/release_gate.py --candidate ... --baseline ... --thresholds k8s/base/release-gate-configmap.yaml` | `RELEASE GATE: PASS` / `REJECT` with reasons; exit 0 / 1 |
+| C3/F3 release, undo | `kubectl -n rahbar set env deployment/api CHROMA_COLLECTION=rahbar-candidate`; `kubectl -n rahbar rollout status deployment/api`; `kubectl -n rahbar rollout undo deployment/api` | new trace shows the collection and embedding version in use |
+| D trace tool | `python eval/trace.py trace <trace-id> --trace-dir traces/<run>` | exact context and rebuilt prompt (hash checked) |
+| D metrics | `python eval/trace.py summary --since <iso> --until <iso> --trace-dir traces/<run>`; `kubectl -n rahbar port-forward svc/api 8000:8000` + `curl localhost:8000/metrics` | top-1 distribution, abstention, cache hit rate, stage p95, injections flagged |
+| E coverage | `python eval/coverage.py --out eval/results/coverage-<name>.json` | coverage share vs 85 %, uncovered queries by topic; exit 1 below the threshold |
+| F resources | `kubectl -n rahbar get all,pvc,configmap,cronjob,job`; `kubectl -n rahbar top pods` | see `docs/evidence/` |
+
+Local checks without a cluster: `make test`, `make lint`, `python eval/validate_assignment_sets.py`.
 
 ## Further reading
 

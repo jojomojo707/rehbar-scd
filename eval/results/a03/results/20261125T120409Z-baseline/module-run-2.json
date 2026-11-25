@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-11-25T12:14:01.402811+00:00",
+  "seed": 20261125,
+  "model": {
+    "name": "BAAI/bge-small-en-v1.5",
+    "fastembed_version": "0.9.1",
+    "onnxruntime_version": "1.32.0",
+    "dimensions": 384,
+    "device": "CPUExecutionProvider",
+    "onnx_files": [
+      {
+        "file": "model_optimized.onnx",
+        "sha256": "51f1bd0addd6e859e42c2c8021a5e5461385bb676a649f4b269aa445449f2431"
+      }
+    ]
+  },
+  "hardware": {
+    "platform": "Linux-7.0.14-linuxkit-x86_64-with-glibc2.36",
+    "processor": "",
+    "logical_cpu_count": 12,
+    "python": "3.12.16",
+    "threads_per_session": 1
+  },
+  "semantic_similarity": {
+    "paraphrase_count": 15,
+    "paraphrase_mean_cosine": 0.85722372,
+    "unrelated_count": 15,
+    "unrelated_mean_cosine": 0.55526288,
+    "mean_gap_paraphrase_minus_unrelated": 0.30196084,
+    "paraphrase_pairs": [
+      {
+        "id": "P01",
+        "cosine": 0.7730872
+      },
+      {
+        "id": "P02",
+        "cosine": 0.92522474
+      },
+      {
+        "id": "P03",
+        "cosine": 0.89881825
+      },
+      {
+        "id": "P04",
+        "cosine": 0.89467793
+      },
+      {
+        "id": "P05",
+        "cosine": 0.83760104
+      },
+      {
+        "id": "P06",
+        "cosine": 0.74684101
+      },
+      {
+        "id": "P07",
+        "cosine": 0.89044132
+      },
+      {
+        "id": "P08",
+        "cosine": 0.82320026
+      },
+      {
+        "id": "P09",
+        "cosine": 0.84578927
+      },
+      {
+        "id": "P10",
+        "cosine": 0.87934744
+      },
+      {
+        "id": "P11",
+        "cosine": 0.83383913
+      },
+      {
+        "id": "P12",
+        "cosine": 0.88947307
+      },
+      {
+        "id": "P13",
+        "cosine": 0.83973079
+      },
+      {
+        "id": "P14",
+        "cosine": 0.96124733
+      },
+      {
+        "id": "P15",
+        "cosine": 0.81903699
+      }
+    ],
+    "unrelated_pairs": [
+      {
+        "id": "U01",
+        "cosine": 0.41365795
+      },
+      {
+        "id": "U02",
+        "cosine": 0.53642897
+      },
+      {
+        "id": "U03",
+        "cosine": 0.61250943
+      },
+      {
+        "id": "U04",
+        "cosine": 0.48696267
+      },
+      {
+        "id": "U05",
+        "cosine": 0.71953686
+      },
+      {
+        "id": "U06",
+        "cosine": 0.50818774
+      },
+      {
+        "id": "U07",
+        "cosine": 0.6193259
+      },
+      {
+        "id": "U08",
+        "cosine": 0.62364125
+      },
+      {
+        "id": "U09",
+        "cosine": 0.61697561
+      },
+      {
+        "id": "U10",
+        "cosine": 0.45765901
+      },
+      {
+        "id": "U11",
+        "cosine": 0.60333956
+      },
+      {
+        "id": "U12",
+        "cosine": 0.56487229
+      },
+      {
+        "id": "U13",
+        "cosine": 0.47977542
+      },
+      {
+        "id": "U14",
+        "cosine": 0.52445743
+      },
+      {
+        "id": "U15",
+        "cosine": 0.56161315
+      }
+    ]
+  },
+  "per_chunk_embedding_time": {
+    "measurement": "warm model; one passage per call; batch_size=1; initialization excluded",
+    "sample_count": 15,
+    "mean_seconds": 0.01237533,
+    "median_seconds": 0.01238525,
+    "p95_seconds": 0.01499611,
+    "samples_seconds": [
+      0.01015255,
+      0.01112149,
+      0.01330323,
+      0.01682299,
+      0.01070925,
+      0.01238549,
+      0.0124283,
+      0.01421316,
+      0.01235355,
+      0.01192963,
+      0.01035411,
+      0.01376651,
+      0.01238525,
+      0.01373315,
+      0.00997123
+    ]
+  },
+  "same_text_determinism": {
+    "repeats": 2,
+    "max_absolute_component_difference": 0.0,
+    "mean_absolute_component_difference": 0.0,
+    "cosine_similarity": 1.0
+  }
+}
