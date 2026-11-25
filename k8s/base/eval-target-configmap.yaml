@@ -1,5 +1,6 @@
 # Which API the Part B suite Job (k8s/eval-job.yaml) tests, and how its result is used:
 #   EVAL_LABEL=baseline   save the result as the gate baseline (/pipeline-data/eval/baseline)
+#   EVAL_RUNS             suite repetitions with the same seed (default 2)
 #   any other label       compare with the baseline through the release gate; exit 1 on REJECT
 apiVersion: v1
 kind: ConfigMap
@@ -11,3 +12,4 @@ metadata:
 data:
   EVAL_API_URL: "http://api-candidate:8000"
   EVAL_LABEL: "candidate"
+  EVAL_RUNS: "2"                 # repetitions (stochasticity); 1 saves hosted-LLM tokens
