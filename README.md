@@ -209,72 +209,28 @@ the three images pushed to Docker Hub tagged with the commit SHA, then a deploy 
 those images into a fresh kind cluster with a smoke test through the Ingress. `main` needs one
 approval and all ten checks.
 
-## Assignment 03: Day 2 gate and candidate release
+## Assignment 03: RAGOps (Parts A to F)
 
-Build and load the evaluation image along with the app images, then apply the manifests:
+Everything below runs on minikube; `k8s/README.md` has the fresh-cluster sequence and the role
+of every Kubernetes object. Results are committed under `eval/results/` and `traces/`, terminal
+evidence and screenshots under `docs/evidence/`, and the report under `docs/report/`.
 
-```bash
-make images
-kubectl apply -f k8s/base/namespace.yaml
-kubectl apply -k k8s/overlays/dev
-kubectl -n rahbar rollout status deployment/api-candidate --timeout=10m
-```
+| Part | Exact command(s) | Output |
+| --- | --- | --- |
+| A1/A2 ingest + verify Batch A | `kubectl apply -k k8s/overlays/dev` then `kubectl -n rahbar logs job/indexer -c indexer` | pass/fail table per check; report in `/pipeline-data/eval/results/verification/<run>.json` |
+| A2 unchanged rerun | `kubectl -n rahbar delete job indexer && kubectl apply -k k8s/overlays/dev` | log shows `"embedded_chunks": 0`, collection kept |
+| A1/A2 Batch B (or any unseen batch) | `kubectl -n rahbar create configmap ingest-batch --from-file=eval/batches/batch-b` then rerun the indexer Job as above | planted problems quarantined, newer version archives the old one |
+| A2 orphans, restore | `python -m pipeline.counts --source <file>`; `python -m pipeline.run --restore-version <file>` (indexer image, see `k8s/README.md`) | chunk count per document id; restored version current again |
+| B suite | `kubectl apply -f k8s/eval-job.yaml` (or locally `python eval/run_suite.py --api <url> --trace-dir <traces>`) | `<stamp>-<label>/summary.md` with all three levels, two seeded runs and their difference |
+| C1 candidate | `kubectl apply -f k8s/candidate-ingest-job.yaml`, then the eval Job with `eval-target` pointing at `api-candidate` | comparison: `python eval/compare_runs.py --before <baseline>/suite.json --after <candidate>/suite.json --out <file>` |
+| C2 gate | runs inside the eval Job; alone: `kubectl apply -f k8s/gate-job.yaml` or `python eval/release_gate.py --candidate ... --baseline ... --thresholds k8s/base/release-gate-configmap.yaml` | `RELEASE GATE: PASS` / `REJECT` with reasons; exit 0 / 1 |
+| C3/F3 release, undo | `kubectl -n rahbar set env deployment/api CHROMA_COLLECTION=rahbar-candidate`; `kubectl -n rahbar rollout status deployment/api`; `kubectl -n rahbar rollout undo deployment/api` | new trace shows the collection and embedding version in use |
+| D trace tool | `python eval/trace.py trace <trace-id> --trace-dir traces/<run>` | exact context and rebuilt prompt (hash checked) |
+| D metrics | `python eval/trace.py summary --since <iso> --until <iso> --trace-dir traces/<run>`; `kubectl -n rahbar port-forward svc/api 8000:8000` + `curl localhost:8000/metrics` | top-1 distribution, abstention, cache hit rate, stage p95, injections flagged |
+| E coverage | `python eval/coverage.py --out eval/results/coverage-<name>.json` | coverage share vs 85 %, uncovered queries by topic; exit 1 below the threshold |
+| F resources | `kubectl -n rahbar get all,pvc,configmap,cronjob,job`; `kubectl -n rahbar top pods` | see `docs/evidence/` |
 
-The full A–F walkthrough is:
-
-| Part | Command and evidence |
-| --- | --- |
-| A - verify and ingest | `kubectl -n rahbar create job --from=cronjob/batch-b-ingest batch-b-demo`; inspect its verification report under `/pipeline-data/eval/results/verification/` and the Job log. |
-| B - evaluate | `kubectl -n rahbar create job --from=cronjob/evaluation eval-demo`; results, component metrics and module metrics persist under `/pipeline-data/eval/results/`. |
-| C - release gate | `kubectl -n rahbar create job --from=cronjob/release-gate-check gate-demo`; see `PASS`/`REJECT` and each failed reason in its log. |
-| D - traces | `python eval/trace.py summary --trace-dir traces/day2-20261122`; reconstruct an individual request with `python eval/trace.py trace <trace-id> --trace-dir traces/day2-20261122`. |
-| E - coverage | `python eval/coverage.py --threshold 0.65 --out eval/results/coverage-after.json`; use `--threshold 0.99` to demonstrate a nonzero failure. |
-| F - cluster resources | `kubectl -n rahbar top pods`; `kubectl -n rahbar get services,pvc,cronjobs,jobs,configmaps`; see [Day 2 resource capture](docs/evidence/day2-resources-20261122.txt). |
-
-Before running the Batch B job, create its ConfigMap from the committed clean batch:
-
-```bash
-kubectl create configmap batch-b-clean --from-file=eval/batches/batch-b-clean -n rahbar \
-  --dry-run=client -o yaml | kubectl apply -f -
-```
-
-The candidate uses the same pinned model and active collection as baseline, changing only `TOP_K`
-from 5 to 7. It is reachable only from the evaluation Job. Start a timestamped run and inspect its
-metrics and release decision:
-
-```bash
-kubectl -n rahbar create job --from=cronjob/evaluation eval-candidate-$(date -u +%H%M%S)
-kubectl -n rahbar get jobs -w
-kubectl -n rahbar logs job/eval-candidate-<timestamp>
-kubectl -n rahbar exec deploy/api -- ls -l /pipeline-data/eval/results
-```
-
-The Job saves raw results to the `pipeline-data` PVC and exits 1 when the release gate rejects.
-Thresholds are mounted from `release-gate-thresholds`; changing them takes effect on the next
-gate-check Job without rebuilding an image. Restore the committed thresholds after a fail/pass
-demonstration.
-The gate checks recall@5 drop, manually reviewed faithfulness, p95 latency, and abstention against
-the frozen baseline. Run the local CLI with:
-
-```bash
-python eval/release_gate.py --candidate eval/results/20261121T191231Z/api-run-1.json \
-  --baseline eval/baseline.json --faithfulness eval/faithfulness_review_result.json \
-  --configmap k8s/base/release-gate-configmap.yaml
-```
-
-Promote only a gate-passing candidate, then verify and demonstrate undo:
-
-```bash
-kubectl -n rahbar set env deployment/api TOP_K=7
-kubectl -n rahbar rollout status deployment/api --timeout=10m
-kubectl -n rahbar rollout undo deployment/api
-kubectl -n rahbar rollout status deployment/api --timeout=10m
-```
-
-Save the post-rollback trace and verify the previous config, collection and embedding pin. The
-faithfulness labels currently need partner confirmation before their score is treated as final.
-Use the evaluation and coverage commands in [eval/README.md](eval/README.md) for Parts B and E;
-the full Part A–F run sequence is in [k8s/README.md](k8s/README.md).
+Local checks without a cluster: `make test`, `make lint`, `python eval/validate_assignment_sets.py`.
 
 ## Further reading
 
