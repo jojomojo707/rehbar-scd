@@ -298,11 +298,12 @@ figure img {{ width: 100%; max-height: 250mm; object-fit: contain; border: 1px s
 <p>API Deployment (3 replicas, HPA, RollingUpdate maxSurge 1 / maxUnavailable 0) and Service; Chroma StatefulSet with its PVC; PVC <code>pipeline-data</code> holds lake, quarantine, archive, results and traces (Chroma restart: rerun still 0 embedded). Ingestion = Job <code>indexer</code> + CronJob <code>reindex</code> (identical spec, checked in CI); the Part B suite = <code>kubectl apply -f k8s/eval-job.yaml</code> (exit 1 on REJECT); thresholds in a ConfigMap; candidate Deployment + Service + collection <code>rahbar-candidate</code>. Requests and limits come from <code>kubectl top</code> sampled every 10 s for 85 minutes:</p>
 {table(["Workload", "Measured peak CPU / memory", "Request (CPU / memory)", "Limit (CPU / memory)"], [
  ["api, api-candidate", "676m / 478 Mi", "250m / 480 Mi", "1 / 640 Mi"],
- ["indexer Job, CronJob, candidate-ingest", "2002m (pinned) / 2586 Mi", "2 / 2600 Mi", "2 / 3584 Mi"],
+ ["indexer Job, CronJob, candidate-ingest", "2002m (pinned) / 2586 Mi", "500m* / 2600 Mi", "2 / 3584 Mi"],
  ["chroma", "46m / 412 Mi", "100m / 416 Mi", "500m / 1 Gi"],
  ["eval Job", "50m / 410 Mi", "100m / 448 Mi", "1 / 768 Mi"],
  ["redis, ui", "11m / 38 Mi, 1m / 11 Mi", "50m / 64 Mi, 10m / 32 Mi", "200m / 256 Mi, 100m / 64 Mi"],
 ], "small")}
+<p class="small">* A 2-CPU request (the measured peak) left the indexer Pod Pending on the 4-vCPU kind node of our CI; the request stays 500m and the limit of 2 lets it use both cores when free.</p>
 
 <h2>4. Short answers</h2>
 <ol type="a">
