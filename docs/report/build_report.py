@@ -61,7 +61,7 @@ golden = [json.loads(line) for line in (ROOT / "eval" / "golden.jsonl").read_tex
 golden_before = [json.loads(line) for line in
                  (RES / "golden-before-e4.jsonl").read_text().splitlines() if line.strip()]
 reviewed = sum(g["origin"] == "synthetic" and (g.get("manual_review") or {}).get("status")
-               == "reviewed" and g["manual_review"].get("reviewer") for g in golden)
+               == "reviewed" and bool(g["manual_review"].get("reviewer")) for g in golden)
 reviewers = sorted({g["manual_review"]["reviewer"] for g in golden
                     if (g.get("manual_review") or {}).get("status") == "reviewed"})
 ai_checked = sum(g["origin"] == "synthetic" and (g.get("manual_review") or {}).get("status")
@@ -199,18 +199,24 @@ judged_faithful = sum(r["end_to_end"]["faithful"] for r in base["runs"])
 judge_line = (f"{n_agree}/{n_lab} = {n_agree / n_lab:.0%} agreement; humans judged "
               f"{n_human_faithful}/{n_lab} faithful" if n_lab else
               "<span class=todo>pending: fewer than 8 hand labels recorded (eval/label_answers.py)</span>")
-review_line = (f"{reviewed} synthetic questions hand-reviewed by {', '.join(reviewers)}"
+review_line = (f"{reviewed} of the {sum(g['origin'] == 'synthetic' for g in golden)} synthetic "
+               f"questions in the final {len(golden)}-question set hand-reviewed by "
+               f"{', '.join(reviewers)}"
                if reviewed else "<span class=todo>pending hand review (eval/review_synthetic.py)</span>")
-ai_fixed = [g["id"] for g in golden if g["origin"] == "synthetic"
-            and (g.get("manual_review") or {}).get("note", "").startswith("Fixed:")]
-if ai_checked or ai_flagged:
-    n_syn = sum(g["origin"] == "synthetic" for g in golden)
-    review_line += (f"; AI pre-check of all {n_syn} synthetic questions in the final "
-                    f"{len(golden)}-question set (Claude, not a hand review): {ai_checked} match "
-                    f"their source" + (f", {len(ai_fixed)} after a correction "
-                                       f"({', '.join(ai_fixed)})" if ai_fixed else "")
-                    + (f", {len(ai_flagged)} still flagged ({', '.join(ai_flagged)})"
-                       if ai_flagged else "")
+def ai_note(g: dict) -> str:
+    review = g.get("manual_review") or {}
+    if review.get("ai_precheck"):
+        return str(review["ai_precheck"])
+    return str(review.get("note", "")) if str(review.get("status", "")).startswith("ai-") else ""
+
+
+ai_prechecked = [g for g in golden if g["origin"] == "synthetic" and ai_note(g)]
+ai_fixed = [g["id"] for g in ai_prechecked if ai_note(g).startswith("Fixed:")]
+if ai_prechecked:
+    review_line += (f"; before that, Claude pre-checked {len(ai_prechecked)} synthetic questions "
+                    f"against the sources (not counted as hand review)"
+                    + (f" and {len(ai_fixed)} were corrected ({', '.join(ai_fixed)})"
+                       if ai_fixed else "")
                     + "; five gold pages were corrected after the runs (see the rescoring note)")
 if ai_labels:
     ai_agree = sum(1 for lb in ai_labels for r in load(base_dir / "e2e-run-1.json")["rows"]

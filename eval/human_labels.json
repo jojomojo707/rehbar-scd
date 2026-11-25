@@ -1,0 +1,74 @@
+{
+  "labels": [
+    {
+      "id": "O01",
+      "answer_sha": "4d23789e09952773",
+      "faithful": true,
+      "labeller": "Asad Ahmed",
+      "run": "20261125T120409Z-baseline"
+    },
+    {
+      "id": "O02",
+      "answer_sha": "f4d53764c7e4baa1",
+      "faithful": true,
+      "labeller": "Asad Ahmed",
+      "run": "20261125T120409Z-baseline"
+    },
+    {
+      "id": "O03",
+      "answer_sha": "1f0b7e04fb999803",
+      "faithful": true,
+      "labeller": "Asad Ahmed",
+      "run": "20261125T120409Z-baseline"
+    },
+    {
+      "id": "O04",
+      "answer_sha": "5abce110e59d2df8",
+      "faithful": true,
+      "labeller": "Asad Ahmed",
+      "run": "20261125T120409Z-baseline"
+    },
+    {
+      "id": "O05",
+      "answer_sha": "8f1233e8336cbc19",
+      "faithful": true,
+      "labeller": "Asad Ahmed",
+      "run": "20261125T120409Z-baseline"
+    },
+    {
+      "id": "O06",
+      "answer_sha": "5e86917065c3d0d5",
+      "faithful": true,
+      "labeller": "Asad Ahmed",
+      "run": "20261125T120409Z-baseline"
+    },
+    {
+      "id": "V01",
+      "answer_sha": "62ffdcd2abcb53fc",
+      "faithful": true,
+      "labeller": "Asad Ahmed",
+      "run": "20261125T120409Z-baseline"
+    },
+    {
+      "id": "V02",
+      "answer_sha": "f175656bb43c2bd7",
+      "faithful": true,
+      "labeller": "Asad Ahmed",
+      "run": "20261125T120409Z-baseline"
+    },
+    {
+      "id": "E01",
+      "answer_sha": "f0006ab59cb3880c",
+      "faithful": true,
+      "labeller": "Asad Ahmed",
+      "run": "20261125T120409Z-baseline"
+    },
+    {
+      "id": "E02",
+      "answer_sha": "cafa66020852e637",
+      "faithful": true,
+      "labeller": "Asad Ahmed",
+      "run": "20261125T120409Z-baseline"
+    }
+  ]
+}
