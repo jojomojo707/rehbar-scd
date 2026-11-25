@@ -104,10 +104,11 @@ spec:
               # corpus at CHUNK_SIZE 480 was OOM-killed (exit 137) at 2Gi on 5 Nov. Measured on 6 Nov
               # (docs/evidence/kubectl-top-indexer.txt): peak 2108Mi. Re-measured 25 Nov with the A03 lake
               # (docs/evidence/a03/F5-resource-peaks.md): peak 2586Mi, CPU pinned at 2 cores while embedding.
-              # Request = measured CPU and memory peak; memory limit 3584Mi = peak + 39%.
+              # Memory request = measured peak, limit 3584Mi = peak + 39%. CPU limit 2 = measured peak;
+              # CPU request stays 500m: a 2-CPU request left the Job Pending on the 4-vCPU CI kind node.
               resources:
                 requests:
-                  cpu: "2"
+                  cpu: 500m
                   memory: 2600Mi
                 limits:
                   cpu: "2"
