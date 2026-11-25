@@ -1,0 +1,109 @@
+{
+  "note": "AI second-opinion labels, NOT hand labels. The brief needs at least 8 answers labelled by a group member (eval/label_answers.py writes eval/human_labels.json).",
+  "labels": [
+    {
+      "id": "O01",
+      "answer_sha": "4d23789e09952773",
+      "faithful": true,
+      "labeller": "Claude Opus 5.5 (AI)",
+      "run": "20261125T120409Z-baseline",
+      "note": "Every claim checked against the retrieved passages; supported."
+    },
+    {
+      "id": "O02",
+      "answer_sha": "f4d53764c7e4baa1",
+      "faithful": true,
+      "labeller": "Claude Opus 5.5 (AI)",
+      "run": "20261125T120409Z-baseline",
+      "note": "Every claim checked against the retrieved passages; supported."
+    },
+    {
+      "id": "O03",
+      "answer_sha": "1f0b7e04fb999803",
+      "faithful": true,
+      "labeller": "Claude Opus 5.5 (AI)",
+      "run": "20261125T120409Z-baseline",
+      "note": "Every claim checked against the retrieved passages; supported."
+    },
+    {
+      "id": "O04",
+      "answer_sha": "5abce110e59d2df8",
+      "faithful": true,
+      "labeller": "Claude Opus 5.5 (AI)",
+      "run": "20261125T120409Z-baseline",
+      "note": "Every claim checked against the retrieved passages; supported."
+    },
+    {
+      "id": "O05",
+      "answer_sha": "8f1233e8336cbc19",
+      "faithful": true,
+      "labeller": "Claude Opus 5.5 (AI)",
+      "run": "20261125T120409Z-baseline",
+      "note": "Every claim checked against the retrieved passages; supported."
+    },
+    {
+      "id": "O06",
+      "answer_sha": "5e86917065c3d0d5",
+      "faithful": true,
+      "labeller": "Claude Opus 5.5 (AI)",
+      "run": "20261125T120409Z-baseline",
+      "note": "Every claim checked against the retrieved passages; supported."
+    },
+    {
+      "id": "V01",
+      "answer_sha": "62ffdcd2abcb53fc",
+      "faithful": true,
+      "labeller": "Claude Opus 5.5 (AI)",
+      "run": "20261125T120409Z-baseline",
+      "note": "Every claim checked against the retrieved passages; supported."
+    },
+    {
+      "id": "V02",
+      "answer_sha": "f175656bb43c2bd7",
+      "faithful": true,
+      "labeller": "Claude Opus 5.5 (AI)",
+      "run": "20261125T120409Z-baseline",
+      "note": "Every claim checked against the retrieved passages; supported."
+    },
+    {
+      "id": "E01",
+      "answer_sha": "f0006ab59cb3880c",
+      "faithful": true,
+      "labeller": "Claude Opus 5.5 (AI)",
+      "run": "20261125T120409Z-baseline",
+      "note": "Every claim checked against the retrieved passages; supported."
+    },
+    {
+      "id": "E02",
+      "answer_sha": "cafa66020852e637",
+      "faithful": true,
+      "labeller": "Claude Opus 5.5 (AI)",
+      "run": "20261125T120409Z-baseline",
+      "note": "Every claim checked against the retrieved passages; supported."
+    },
+    {
+      "id": "E03",
+      "answer_sha": "1bc1edff4a717950",
+      "faithful": true,
+      "labeller": "Claude Opus 5.5 (AI)",
+      "run": "20261125T120409Z-baseline",
+      "note": "Every claim checked against the retrieved passages; supported."
+    },
+    {
+      "id": "I02",
+      "answer_sha": "486c10b5a7eaaf66",
+      "faithful": true,
+      "labeller": "Claude Opus 5.5 (AI)",
+      "run": "20261125T120409Z-baseline",
+      "note": "Every claim checked against the retrieved passages; supported."
+    },
+    {
+      "id": "B01",
+      "answer_sha": "ef4470c5eae75890",
+      "faithful": true,
+      "labeller": "Claude Opus 5.5 (AI)",
+      "run": "20261125T120409Z-baseline",
+      "note": "Baseline ran before Batch B, so the answer comes from the student handbook table (Undergraduate: 04 items, 02 Weeks); every claim is in passage [1]."
+    }
+  ]
+}

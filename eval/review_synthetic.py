@@ -6,7 +6,8 @@
 For each synthetic question still pending, it shows the question, the expected answer and the
 gold location. Open the source (corpus/raw/<document> or eval/batches/batch-b/<document>) and
 check them, then type a to accept, f to flag a problem (you are asked for a note), s to skip,
-q to stop. Accepted questions get manual_review.status=reviewed and your name.
+q to stop. An AI pre-check note (status ai-checked / ai-flagged) is shown when there is one;
+it is a hint only and does not count as a hand review. Accepted questions get manual_review.status=reviewed and your name.
 """
 
 from __future__ import annotations
@@ -34,6 +35,8 @@ def main() -> int:
         for gold in row.get("gold") or []:
             print(f"gold location:   {gold['document']}  page {gold.get('page')}  "
                   f"section {gold.get('section')}")
+        if review.get("status", "").startswith("ai-"):
+            print(f"AI pre-check ({review['status']}): {review.get('note')}")
         choice = ""
         while choice not in {"a", "f", "s", "q"}:
             choice = input("[a]ccept / [f]lag / [s]kip / [q]uit: ").strip().lower()
@@ -42,7 +45,9 @@ def main() -> int:
         if choice == "a":
             row["manual_review"] = {"status": "reviewed", "reviewer": name,
                                     "note": input("note (optional): ").strip() or
-                                    "Question, answer and location checked against the source."}
+                                    "Question, answer and location checked against the source.",
+                                    "ai_precheck": review.get("note", "")
+                                    if review.get("status", "").startswith("ai-") else ""}
         elif choice == "f":
             row["manual_review"] = {"status": "flagged", "reviewer": name,
                                     "note": input("what is wrong: ").strip()}
