@@ -25,3 +25,9 @@ def test_delta_is_noisy_minus_clean():
     clean = {"recall@3": .8, "recall@5": .9, "mrr": .7, "ndcg@5": .75}
     noisy = {"recall@3": .6, "recall@5": .9, "mrr": .5, "ndcg@5": .6}
     assert delta(clean, noisy)["recall@3"] == -0.2
+
+
+def test_ndcg_never_exceeds_one_when_chunks_share_a_gold_page():
+    rows = [{"relevant": [{"source": "gold.pdf", "page": 4}],
+             "retrieved": [{"source": "gold.pdf", "page": 4}, {"source": "gold.pdf", "page": 4}]}]
+    assert score(rows)["ndcg@5"] == 1.0

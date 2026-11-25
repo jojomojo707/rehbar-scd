@@ -39,7 +39,15 @@ def score(rows: list[dict]) -> dict:
             return len({i for i, g in enumerate(gold)
                         if any(relevant(item, [g]) for item in ranked[:k])}) / len(gold)
 
-        hits = [relevant(item, gold) for item in ranked[:5]]
+        # A gold location counts once: further chunks from the same page are not new hits,
+        # otherwise DCG can exceed the ideal DCG (nDCG > 1).
+        hits, seen = [], set()
+        for item in ranked[:5]:
+            match = next((i for i, g in enumerate(gold)
+                          if i not in seen and relevant(item, [g])), None)
+            hits.append(match is not None)
+            if match is not None:
+                seen.add(match)
         recall3.append(found(3))
         recall5.append(found(5))
         rank = next((i + 1 for i, hit in enumerate(hits) if hit), None)
