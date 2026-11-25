@@ -1,0 +1,62 @@
+# Part C2 / F2: re-apply the release gate to the latest candidate suite result with the CURRENT
+# thresholds in ConfigMap release-gate-thresholds. Takes seconds, so it shows that editing the
+# ConfigMap changes the decision without rebuilding any image:
+#
+#   kubectl -n rahbar delete job gate --ignore-not-found && kubectl apply -f k8s/gate-job.yaml
+#   kubectl -n rahbar wait --for=condition=complete --timeout=2m job/gate; kubectl -n rahbar logs job/gate
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gate
+  namespace: rahbar
+  labels:
+    app.kubernetes.io/name: rahbar-evaluation
+    app.kubernetes.io/part-of: rahbar
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: rahbar-evaluation
+        app.kubernetes.io/part-of: rahbar
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: release-gate
+          image: rahbar-evaluator:dev
+          imagePullPolicy: IfNotPresent
+          command: ["python", "/app/eval/release_gate.py"]
+          args: ["--candidate", "/pipeline-data/eval/candidate/latest-suite.json",
+                 "--baseline", "/pipeline-data/eval/baseline/suite.json",
+                 "--thresholds", "/gate"]
+          resources:
+            requests: {cpu: 50m, memory: 64Mi}
+            limits: {cpu: 250m, memory: 256Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: pipeline-data
+              mountPath: /pipeline-data
+              readOnly: true
+            - name: gate
+              mountPath: /gate
+              readOnly: true
+      volumes:
+        - name: pipeline-data
+          persistentVolumeClaim:
+            claimName: pipeline-data
+        - name: gate
+          configMap:
+            name: release-gate-thresholds

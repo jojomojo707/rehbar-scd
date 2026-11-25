@@ -1,0 +1,105 @@
+# Part C1/F3: build the candidate's own collection (prefix rahbar-candidate, CHUNK_SIZE 384 from
+# ConfigMap rahbar-candidate-config) from the same verified data lake as the live index. It is
+# the indexer image and code, so the indexer stays the only Chroma writer. Run it when no other
+# ingestion Job is running (they share the lake manifest):
+#
+#   kubectl -n rahbar delete job candidate-ingest --ignore-not-found
+#   kubectl apply -f k8s/candidate-ingest-job.yaml
+#   kubectl -n rahbar wait --for=condition=complete --timeout=60m job/candidate-ingest
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: candidate-ingest
+  labels:
+    app.kubernetes.io/name: indexer
+    app.kubernetes.io/part-of: rahbar
+  namespace: rahbar
+spec:
+  backoffLimit: 2
+  activeDeadlineSeconds: 3600
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: indexer
+        app.kubernetes.io/part-of: rahbar
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: rahbar-indexer
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+      - name: prepare-pipeline-data
+        image: rahbar-indexer:dev
+        command:
+        - python
+        - -m
+        - pipeline.prepare_data
+        envFrom:
+        - configMapRef:
+            name: rahbar-config
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - name: pipeline-data
+          mountPath: /pipeline-data
+        imagePullPolicy: IfNotPresent
+      containers:
+      - name: indexer
+        image: rahbar-indexer:dev
+        args: []
+        envFrom:
+        - configMapRef:
+            name: rahbar-config
+        - configMapRef:
+            name: rahbar-candidate-config
+        resources:
+          requests:
+            cpu: 500m
+            memory: 2200Mi
+          limits:
+            cpu: '2'
+            memory: 3Gi
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - name: corpus
+          mountPath: /corpus
+          readOnly: true
+        - name: pipeline-data
+          mountPath: /pipeline-data
+        - name: tmp
+          mountPath: /tmp
+        imagePullPolicy: IfNotPresent
+      volumes:
+      - name: corpus
+        persistentVolumeClaim:
+          claimName: corpus
+      - name: pipeline-data
+        persistentVolumeClaim:
+          claimName: pipeline-data
+      - name: tmp
+        emptyDir:
+          sizeLimit: 1Gi

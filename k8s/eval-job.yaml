@@ -1,0 +1,120 @@
+# Part B suite as a Kubernetes Job (Assignment 03 F2):
+#
+#   kubectl -n rahbar delete job eval --ignore-not-found
+#   kubectl apply -f k8s/eval-job.yaml
+#   kubectl -n rahbar wait --for=condition=complete --timeout=60m job/eval   (or condition=failed)
+#   kubectl -n rahbar logs job/eval
+#
+# It runs eval/run_suite.py (module, component and end-to-end levels, twice, seeded) against the
+# API named in ConfigMap eval-target, writes the timestamped result folder to the pipeline-data
+# PVC (/pipeline-data/eval/results/) and, for any label other than `baseline`, applies the
+# release gate with the thresholds mounted from ConfigMap release-gate-thresholds. A REJECT
+# makes the container exit 1, so the Job ends Failed. Not listed in kustomization.yaml on
+# purpose: applying the base must not start an evaluation.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: eval
+  namespace: rahbar
+  labels:
+    app.kubernetes.io/name: rahbar-evaluation
+    app.kubernetes.io/part-of: rahbar
+spec:
+  backoffLimit: 0                 # a gate rejection is a result, not a crash: never retry it
+  activeDeadlineSeconds: 5400
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: rahbar-evaluation
+        app.kubernetes.io/part-of: rahbar
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: evaluation
+          image: rahbar-evaluator:dev
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -u
+              results=/pipeline-data/eval/results
+              baseline=/pipeline-data/eval/baseline/suite.json
+              mkdir -p "$results" /pipeline-data/eval/baseline
+              echo "Part B suite: target=${EVAL_API_URL} label=${EVAL_LABEL}"
+              if [ "${EVAL_LABEL}" = "baseline" ]; then
+                python /app/eval/run_suite.py --api "${EVAL_API_URL}" --label baseline \
+                  --trace-dir /pipeline-data/traces --out-dir "$results" --cache-dir /models
+                status=$?
+                latest=$(ls -td "$results"/*-baseline | head -1)
+                [ "$status" -eq 0 ] && cp "$latest/suite.json" "$baseline" \
+                  && echo "baseline saved: $baseline (from $latest)"
+                exit $status
+              fi
+              if [ ! -f "$baseline" ]; then
+                echo "no baseline yet: run this Job once with EVAL_LABEL=baseline"; exit 2
+              fi
+              python /app/eval/run_suite.py --api "${EVAL_API_URL}" --label "${EVAL_LABEL}" \
+                --trace-dir /pipeline-data/traces --out-dir "$results" --cache-dir /models \
+                --baseline "$baseline" --thresholds /gate
+              status=$?
+              latest=$(ls -td "$results"/*-"${EVAL_LABEL}" | head -1)
+              mkdir -p /pipeline-data/eval/candidate
+              cp "$latest/suite.json" /pipeline-data/eval/candidate/latest-suite.json
+              echo "result folder: $latest (exit $status: 0 = gate PASS, 1 = gate REJECT)"
+              exit $status
+          envFrom:
+            - configMapRef:
+                name: eval-target
+          env:
+            - name: LLM_API_KEY          # the faithfulness judge uses the hosted provider
+              valueFrom:
+                secretKeyRef:
+                  name: rahbar-secret
+                  key: LLM_API_KEY
+            - name: HOSTED_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: rahbar-config
+                  key: HOSTED_BASE_URL
+            - name: EMBED_CACHE_DIR
+              value: /models
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: pipeline-data
+              mountPath: /pipeline-data
+            - name: gate
+              mountPath: /gate
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: pipeline-data
+          persistentVolumeClaim:
+            claimName: pipeline-data
+        - name: gate
+          configMap:
+            name: release-gate-thresholds
+        - name: tmp
+          emptyDir:
+            sizeLimit: 256Mi
