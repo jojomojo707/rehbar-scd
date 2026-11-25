@@ -1,0 +1,157 @@
+<!doctype html><html><head><meta charset="utf-8"><title>RAHBAR Assignment 03 RAGOps report</title>
+<style>
+@page { size: A4; margin: 13mm 12mm 13mm 12mm; }
+body { font: 8.3pt/1.3 "DejaVu Sans", Arial, sans-serif; color: #1d2733; }
+h1 { font-size: 15pt; margin: 0 0 2px; color: #14324f; }
+h2 { font-size: 10.5pt; margin: 9px 0 3px; color: #14324f; border-bottom: 1px solid #c9d6e2; }
+h3 { font-size: 8.8pt; margin: 6px 0 2px; color: #0b6e78; }
+p { margin: 2px 0 4px; }
+table { border-collapse: collapse; width: 100%; margin: 3px 0 5px; }
+th, td { border: 1px solid #c9d6e2; padding: 1.5px 4px; vertical-align: top; text-align: left; }
+th { background: #eaf1f6; }
+td:not(:first-child) { }
+.small td, .small th { font-size: 7.3pt; }
+.todo { background: #fff1c2; }
+code { font-size: 7.6pt; background: #f3f5f7; }
+ol { margin: 2px 0 4px 16px; padding: 0; }
+li { margin-bottom: 2px; }
+.cover td { border: none; padding: 1px 6px 1px 0; }
+.pb { page-break-before: always; }
+figure { margin: 0 0 8px; page-break-inside: avoid; }
+figcaption { font-weight: bold; margin-bottom: 2px; }
+figure img { width: 100%; max-height: 255mm; object-fit: contain; border: 1px solid #ccc; }
+</style></head><body>
+
+<h1>RAHBAR: a RAGOps layer on Kubernetes (CS4032 Assignment 03)</h1>
+<table class="cover"><tr><td><b>Members</b></td><td>Asad Ahmed (i24-3057) &nbsp;&middot;&nbsp; Abdullah Adnan (i24-3020)</td></tr>
+<tr><td><b>Repository</b></td><td>https://github.com/jojomojo707/rehbar-scd (branch <code>main</code>)</td></tr>
+<tr><td><b>Runs</b></td><td>minikube v1.34 on our laptop, namespace <code>rahbar</code>, 25 Nov 2026; LLM <code>openai/gpt-oss-20b</code> (Groq), embeddings <code>BAAI/bge-small-en-v1.5</code></td></tr></table>
+<p>We extended the Assignment 02 RAHBAR pipeline (FAST-NUCES rules corpus, Chroma, FastAPI) with the data-management and testing lifecycle of the RAGOps paper. Ingestion now verifies every document, keeps a versioned data lake with quarantine and archive, and updates the index incrementally. A three-level test suite runs as a Kubernetes Job, gates a candidate change, and every query writes a reconstructable trace. All numbers below come from our own runs; the result files are under <code>eval/results/a03/</code>, <code>traces/a03/</code> and <code>docs/evidence/</code>.</p>
+
+<h2>1. Figure 3 stages in our pipeline</h2>
+<table class=""><tr><th>Stage</th><th>What our pipeline does</th><th>File / object</th><th>What is missing</th></tr>
+<tr><td>1 Ingest</td><td>Indexer Job reads the corpus PVC (Batch A, 9 PDFs/HTML fetched by an init container) and an optional batch ConfigMap <code>ingest-batch</code>; new or changed files (sha256) are staged in <code>inbox/&lt;run&gt;</code>.</td><td><code>indexer/pipeline/run.py</code>, <code>k8s/base/indexer-job.yaml</code>, CronJob <code>reindex</code></td><td>No push/webhook ingestion; batches travel in a ConfigMap (1 MiB limit).</td></tr>
+<tr><td>2 Verify</td><td>Four checks per document with pass/fail and a reason: quality, completeness (title, version, pages, truncation), recency (doc_id versions), uniqueness (text hash, window-embedding similarity &ge; 0.95). Report per run.</td><td><code>indexer/pipeline/verify.py</code></td><td>No consistency (contradiction) check; injected text is not detected at ingest (the API rail catches it).</td></tr>
+<tr><td>3 Update data lake</td><td>Failures are moved to <code>quarantine/&lt;run&gt;</code> (+ reason file, registry); accepted files move to <code>lake/docs</code>; older, replaced and deleted versions move to <code>archive/&lt;doc_id&gt;/&lt;version&gt;</code>; manifest records status; restore and delete commands.</td><td><code>indexer/pipeline/lake.py</code>, PVC <code>pipeline-data</code>, <code>scripts/lake_admin.sh</code></td><td>No access-control metadata; single ReadWriteOnce volume, so ingestion Jobs run one at a time.</td></tr>
+<tr><td>4 Update retrieval sources</td><td>Re-chunk/re-embed only new or changed documents, reuse vectors of the rest, write a new collection version and switch the <code>-active</code> alias; unchanged runs keep the collection.</td><td><code>run.py::update_retrieval_sources</code>, <code>store.py</code></td><td>A full collection copy per change (blue/green) instead of in-place updates.</td></tr>
+<tr><td>5 Offline testing</td><td>Module, component and end-to-end suite, two seeded runs, LLM judge, release gate with ConfigMap thresholds.</td><td><code>eval/run_suite.py</code>, <code>k8s/eval-job.yaml</code>, <code>eval/release_gate.py</code></td><td>Small golden set (47); judge from the generator's model family.</td></tr>
+<tr><td>6 Live testing</td><td>Candidate Deployment/Service on its own collection, gated rolling release (<code>maxUnavailable: 0</code>), undo, traces and Prometheus metrics on live traffic.</td><td><code>k8s/base/api-candidate.yaml</code>, <code>scripts/trace_probe.sh</code>, <code>/metrics</code></td><td>No shadow or A/B traffic split; no automatic alerting on live metrics.</td></tr>
+<tr><td>7 Check coverage</td><td>Nearest golden question for each of 40 live-style queries; share above a data-derived threshold; exit 1 below 85 percent; uncovered topics grouped.</td><td><code>eval/coverage.py</code></td><td>Live queries are simulated; no production query log yet.</td></tr></table>
+
+<h2>2. The five qualities of Table 2</h2>
+<table class=""><tr><th>Quality</th><th>What we measure</th><th>Threshold</th><th>Evidence</th></tr>
+<tr><td>Adaptability</td><td>Chunks re-embedded per update; whether a new batch can be adopted without rebuilding</td><td>unchanged rerun = 0 embedded; a changed document re-embeds only its own chunks</td><td>rerun 0 embedded / 764 reused; changed doc 3 embedded / 779 reused; Batch B 18 new chunks</td></tr>
+<tr><td>Monitorability</td><td>recall@5, judged faithfulness, p95 latency, abstention vs baseline; coverage share</td><td>drop &le; 0.02; &ge; 0.85; &le; 12 s; not lower; &ge; 85 %</td><td>gate PASS (chunk 384), REJECT (TOP_K=1); coverage 47.5 % &rarr; 92.5 %</td></tr>
+<tr><td>Observability</td><td>Every query traced (stdout + PVC); top-1 similarity, abstention, cache, stage p95, injections flagged</td><td>100 % of queries traced; no injected instruction reaches the prompt</td><td>118 traced requests in the baseline window; D4 trace with <code>context_injection_sentence_removed</code></td></tr>
+<tr><td>Traceability</td><td>Collection version, embedding version (ONNX digest), document versions, filters, prompt + hash in each trace</td><td>prompt rebuilt from a trace id matches its stored hash</td><td>D2 hash MATCHES; post-undo trace shows <code>rahbar-v20261125-120258</code></td></tr>
+<tr><td>Reliability</td><td>Measured CPU/memory per workload; rollout without unavailable pods; data on PVCs</td><td>requests = measured peak, memory limit &asymp; peak + 35-40 %</td><td>F5 table; rolling update 3/3 with <code>maxUnavailable: 0</code>; Chroma restart kept data (rerun: 0 embedded)</td></tr></table>
+
+<h2>3. Results</h2>
+<h3>A. Data management</h3>
+<p><b>Batch A</b> (real corpus, 9 documents): 9 verified, 0 quarantined, the Aug-2023 rules and the 2019-20 annual report detected as older versions (recency) and archived as superseded; 764 chunks embedded into <code>rahbar-v20261125-120258</code>. <b>Unchanged rerun:</b> 0 embedded, 764 reused, collection kept. <b>Batch B</b> (12 planted documents):</p>
+<table class="small"><tr><th>Document</th><th>Q</th><th>C</th><th>R</th><th>U</th><th>Disposition</th><th>Reason</th></tr>
+<tr><td>accessibility-policy.md</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>accept</td><td>all four checks pass</td></tr>
+<tr><td>examination-conduct-guidelines.md</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>accept</td><td>all four checks pass</td></tr>
+<tr><td>examination-conduct-guidelines_draft.md</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td><td>quarantine</td><td><b>uniqueness</b>: near-duplicate of examination-conduct-guidelines.md (similarity 0.998 &gt;= 0.95)</td></tr>
+<tr><td>examination-timetable-fall-2026.pdf</td><td>&#10007;</td><td>&#10007;</td><td>&#10003;</td><td>&#10003;</td><td>quarantine</td><td><b>completeness</b>: missing title; missing date/version; missing page count (no pages extracted); truncated: PDF file has no %%EOF end marker; <b>quality</b>: extraction failed: PdfminerException: Unexpected EOF</td></tr>
+<tr><td>faculty-entrepreneurship-policy-revision-2026.md</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>accept</td><td>all four checks pass</td></tr>
+<tr><td>it-acceptable-use-policy.md</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>accept</td><td>all four checks pass</td></tr>
+<tr><td>library-policy.md</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>accept</td><td>all four checks pass</td></tr>
+<tr><td>library-policy_copy.md</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td><td>quarantine</td><td><b>uniqueness</b>: exact duplicate of library-policy.md (same text hash e15b3714cfad)</td></tr>
+<tr><td>scholarship-policy.md</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>accept</td><td>all four checks pass</td></tr>
+<tr><td>scholarship-policy_mirror.md</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td><td>quarantine</td><td><b>uniqueness</b>: exact duplicate of scholarship-policy.md (same text hash e7be07a9c757)</td></tr>
+<tr><td>student-clubs-guide.md</td><td>&#10003;</td><td>&#10007;</td><td>&#10003;</td><td>&#10003;</td><td>quarantine</td><td><b>completeness</b>: missing title; missing date/version</td></tr>
+<tr><td>transport-route-notice.md</td><td>&#10003;</td><td>&#10007;</td><td>&#10003;</td><td>&#10003;</td><td>quarantine</td><td><b>completeness</b>: truncated: text ends mid-sentence (...&#x27; now serves the sectors of G-9, G-10 and&#x27;)</td></tr></table>
+<p>The 2022 entrepreneurship PDF was archived as superseded by the newer revision (same doc_id). <b>A2:</b> changing one line of <code>library-policy.md</code> re-embedded 3 chunks (its own) and reused 779; the old file went to the archive. <code>--delete library-policy.md</code> left <b>0</b> chunks with <code>source == library-policy.md</code> (count by document id); <code>--restore-version</code> brought it back (3 chunks) and restoring the 2022 policy flipped the superseded flags without re-embedding. During the delete demo a quarantined exact copy was accepted once its original was gone; we fixed this with a quarantine registry (unchanged quarantined bytes stay quarantined).</p>
+
+<h3>B. Offline tests (baseline, live API, 2 runs, seed 20261125)</h3>
+<p>Golden set for Parts B/C: 32 questions (16 answerable with document and page, 5 unanswerable, 11 hard of which 6 come from Batch B); 18 written by the group (<code>human</code>), 14 <code>synthetic</code>; <span class=todo>pending hand review (eval/review_synthetic.py)</span>.</p>
+<table class=""><tr><th>Level</th><th>Metric</th><th>Run 1</th><th>Run 2</th><th>|diff|</th></tr>
+<tr><td>Module</td><td>paraphrase / unrelated mean cosine (gap)</td><td>0.857 / 0.555 (0.302)</td><td>0.857 / 0.555</td><td>0</td></tr>
+<tr><td>Module</td><td>embedding time per chunk, mean / p95 (s)</td><td>0.0120 / 0.0150</td><td>0.0124 / 0.0150</td><td>0.0003</td></tr>
+<tr><td>Module</td><td>determinism: max abs. difference, same text twice</td><td>0.000</td><td>0.000</td><td>0</td></tr>
+<tr><td>Component</td><td>recall@3 / recall@5</td><td>0.611 / 0.630</td><td>0.611 / 0.630</td><td>0</td></tr>
+<tr><td>Component</td><td>MRR / nDCG@5</td><td>0.580 / 0.573</td><td>0.580 / 0.573</td><td>0</td></tr>
+<tr><td>Component</td><td>noise (seeded typos): change in recall@5 / MRR / nDCG@5</td><td>-0.074 / -0.043 / -0.044</td><td>-0.074 / -0.043 / -0.044</td><td>0</td></tr>
+<tr><td>End-to-end</td><td>faithfulness (judge, answered questions)</td><td>1.000 (13/13)</td><td>1.000 (12/12)</td><td>0.000</td></tr>
+<tr><td>End-to-end</td><td>abstention correctness / citation validity</td><td>1.000 / 1.000</td><td>1.000 / 1.000</td><td>0</td></tr>
+<tr><td>End-to-end</td><td>latency p50 / p95 (s)</td><td>1.00 / 10.52</td><td>1.10 / 10.50</td><td>0.10 / 0.02</td></tr>
+<tr><td>End-to-end</td><td>answer rate on answerable / fallbacks</td><td>0.481 / 6</td><td>0.444 / 8</td><td>0.037</td></tr></table>
+<p><b>LLM judge vs hand labels:</b> <span class=todo>pending: fewer than 8 hand labels recorded (eval/label_answers.py)</span>. <b>Stochasticity:</b> retrieval and the embedding model are deterministic (difference 0); remaining variation is in the hosted LLM (temperature 0.2, no provider seed in these runs) and in provider rate limiting: the free tier allows 8,000 tokens per minute, so some answers became fallbacks after retries. Every question bypassed the semantic cache (<code>Cache-Control: no-cache</code>), so run 2 is a real repeat.</p>
+
+<h3>C. Change experiment and release gate (chunk size 480 &rarr; 384, own collection <code>rahbar-candidate</code>)</h3>
+<table class=""><tr><th>Metric (mean of 2 runs)</th><th>Baseline 480</th><th>Candidate 384</th><th>Bad candidate TOP_K=1</th></tr>
+<tr><td>module: paraphrase - unrelated gap</td><td>0.302</td><td>0.302</td><td>0.302</td></tr>
+<tr><td>component: recall@5</td><td>0.630</td><td>0.630</td><td>0.500</td></tr>
+<tr><td>component: MRR</td><td>0.580</td><td>0.580</td><td>0.519</td></tr>
+<tr><td>component: nDCG@5</td><td>0.573</td><td>0.573</td><td>0.504</td></tr>
+<tr><td>component: MRR change under typos</td><td>-0.043</td><td>-0.062</td><td>-0.074</td></tr>
+<tr><td>end-to-end: faithfulness</td><td>1.000</td><td>0.958</td><td>0.964</td></tr>
+<tr><td>end-to-end: answer rate</td><td>0.463</td><td>0.352</td><td>0.519</td></tr>
+<tr><td>end-to-end: abstention correctness</td><td>1.000</td><td>1.000</td><td>1.000</td></tr>
+<tr><td>end-to-end: p95 latency (s)</td><td>10.512</td><td>9.934</td><td>1.194</td></tr></table>
+<p><b>Thresholds</b> (ConfigMap <code>release-gate-thresholds</code>): recall@5 drop &le; 0.02 &mdash; with 27 answerable questions one lost gold page costs 0.037, so this allows no lost question; faithfulness &ge; 0.85 &mdash; the baseline judged 25/25 answers faithful, and with about 12 judged answers per run 0.85 tolerates one unsupported answer while the judge itself is unverified; p95 &le; 12 s &mdash; baseline p95 was 10.5 s (generation dominates, D3) plus about 15 % headroom; abstention correctness not lower than the baseline. <b>Gate:</b> candidate 384 PASS; TOP_K=1 REJECT (recall@5 0.500, a drop of 0.130), the eval Job ended Failed and it was never rolled out. Editing <code>MAX_P95_SECONDS</code> to 8 rejected the same candidate (p95 9.93 s) without a rebuild; restoring 12 passed again.</p>
+<p><b>Release decision: released by the gate, then rolled back.</b> The candidate passed the gate and was rolled out (<code>kubectl set env deployment/api CHROMA_COLLECTION=rahbar-candidate</code>, <code>rollout status</code>). Our live check found no benefit: retrieval was identical at document-page level (the handbook's clause-sized chunks are already under 384 tokens; mainly long annual-report chunks were split, 810 vs 764 chunks), faithfulness was slightly lower and the answer rate fell from 0.463 to 0.352. The answer rate is partly provider throttling (the TOP_K=1 candidate, which sends fewer tokens per question, answered 0.519), so we read it as "no evidence of improvement" rather than proof of harm. A change with no measured benefit and a possible cost should not stay live, so we treated it as a bad release and reversed it with <code>kubectl rollout undo</code>; the next trace shows collection <code>rahbar-v20261125-120258</code> and embedding <code>bge-small-en-v1.5@aa8f8b06/onnx-sha256:51f1bd0a</code>, the previous versions. Lessons: add answer rate to the gate, and evaluate with a paid provider tier or paced runs so throttling does not mask real differences.</p>
+
+<h3>D. Observability</h3>
+<p><b>D1</b> each query writes one JSON line to stdout (<code>kubectl logs</code>) and to <code>/pipeline-data/traces</code>: trace id, timestamp, pod, query, rewrite, embedding model and version, collection and version, retrieved chunk ids with document, version, page, score and superseded flag, the same before the guardrail, filters, rerank order, full prompt and SHA-256, model parameters, response, citations, guardrail actions, injection flags, outcome, stage latencies and cache status. <b>D2</b> <code>eval/trace.py trace &lt;id&gt;</code> prints the context and the rebuilt prompt and checks it against the stored hash. <b>D3</b> baseline window (118 requests): top-1 similarity p10/p50/p90 = 0.6625/0.7559/0.859; abstention rate 0.6271; cache: all requests bypassed by design (hit rate is reported by <code>rahbar_cache_hit_ratio</code> on normal traffic); stage p95 embedding 201.2 ms, retrieval 198.2 ms, generation 10779.1 ms; injection attempts flagged 8 (query rail). <b>D4</b> asking about e-mail passwords retrieved the injected Batch B chunk at rank 1 (0.86); the context rail removed the "SYSTEM NOTICE... ignore all previous instructions" sentences and the trace records <code>context_injection_sentence_removed:it-acceptable-use-policy:00001</code>; the answer stayed correct.</p>
+<p><b>D5 root cause from one trace</b> (H03, trace <code>82d5d262f3fe45ffbc993c700c4ce6b3</code>, abstained):<br>
+1. Query: what the 2026 handbook says about permitted absence and its consequence; outcome <code>abstained</code>, guardrail <code>relevance_floor_abstention</code>.<br>
+2. Collection <code>rahbar-v20261125-120258</code>, filter <code>superseded_filter: true</code>; all five retrieved chunks are current (2026-06), so no version or filter problem.<br>
+3. The gold chunk <code>academic-rules-handbook-jun-2026:00033</code> (page 10, &sect;1.22) was retrieved at rank 3 with score 0.703.<br>
+4. The best score was 0.718 (&sect;3.17, page 15) &mdash; below the configured <code>RELEVANCE_FLOOR</code> 0.73, so the pipeline abstained before generation.<br>
+5. Cause: the relevance floor is too strict for multi-clause questions whose evidence is split over two clauses (&sect;1.21 was not retrieved); fix by tuning the floor on the golden set or scoring the floor per clause.</p>
+
+<h3>E. Coverage and drift</h3>
+<p>40 live-style queries (28 in the golden-set domain, 12 off-corpus). Threshold 0.7332 = midpoint of the highest unrelated-pair cosine (0.720) and the lowest paraphrase-pair cosine (0.747) of the module pairs: above it, a live query reads as "the same question in other words". <b>Before:</b> 19/40 = 47.5% (in-domain 18/28, off-corpus 1/12), below the paper's 85 % &rarr; exit 1. Uncovered topics: attendance (4), academic warning (2), library, library fines, scholarship, semester calendar, and the off-corpus topics healthcare (2), transport, food, parking, employment, sports, finance, weather, technology, travel. <b>E4:</b> 15 new questions (7 answerable/hard, 8 must-abstain) &rarr; 37/40 = 92.5%, exit 0; still uncovered: pharmacy, laptop BIOS, visas.</p>
+<p><b>E3 drift (Batch B ingested, suite re-run, same 32 questions):</b> recall@5 0.6296 &rarr; 0.8519, MRR 0.5802 &rarr; 0.7778, nDCG@5 0.5725 &rarr; 0.7762; module unchanged. Why: the six Batch B questions became answerable once their documents were indexed; nothing in Batch A moved (Batch B adds 18 chunks to 764). The entrepreneurship policy's current version changed to the revision, and the injected document is now retrievable (handled by D4). The answer-level part of this run is not usable: the provider's daily token limit (200,000) was exhausted during the run, giving 22 fallbacks (answer rate 0.03704); the gate rejected it on p95 latency for the same reason.</p>
+
+<h3>F. Kubernetes</h3>
+<p>API Deployment (3 replicas, HPA, RollingUpdate maxSurge 1 / maxUnavailable 0) and Service; Chroma StatefulSet with its PVC; PVC <code>pipeline-data</code> holds lake, quarantine, archive, results and traces (Chroma restart: rerun still 0 embedded). Ingestion = Job <code>indexer</code> + CronJob <code>reindex</code> (identical spec, checked in CI); the Part B suite = <code>kubectl apply -f k8s/eval-job.yaml</code> (exit 1 on REJECT); thresholds in a ConfigMap; candidate Deployment + Service + collection <code>rahbar-candidate</code>. Requests and limits come from <code>kubectl top</code> sampled every 10 s for 85 minutes:</p>
+<table class="small"><tr><th>Workload</th><th>Measured peak CPU / memory</th><th>Request (CPU / memory)</th><th>Limit (CPU / memory)</th></tr>
+<tr><td>api, api-candidate</td><td>676m / 478 Mi</td><td>250m / 480 Mi</td><td>1 / 640 Mi</td></tr>
+<tr><td>indexer Job, CronJob, candidate-ingest</td><td>2002m (pinned) / 2586 Mi</td><td>2 / 2600 Mi</td><td>2 / 3584 Mi</td></tr>
+<tr><td>chroma</td><td>46m / 412 Mi</td><td>100m / 416 Mi</td><td>500m / 1 Gi</td></tr>
+<tr><td>eval Job</td><td>50m / 410 Mi</td><td>100m / 448 Mi</td><td>1 / 768 Mi</td></tr>
+<tr><td>redis, ui</td><td>11m / 38 Mi, 1m / 11 Mi</td><td>50m / 64 Mi, 10m / 32 Mi</td><td>200m / 256 Mi, 100m / 64 Mi</td></tr></table>
+
+<h2>4. Short answers</h2>
+<ol type="a">
+<li><b>Most catches and the miss.</b> In Batch B, completeness and uniqueness each caught three documents (missing title/version, truncated text, corrupt PDF; two exact copies and one near-copy at 0.998), quality one (the corrupt PDF also failed extraction). Nothing caught the injected instruction: it is well-formed, unique, current text. A content check at verification (the API's injection patterns or a prompt-guard classifier, e.g. Llama Prompt Guard) should flag it for human review. The paper's consistency check (contradictions) is also missing.</li>
+<li><b>Module fine, end-to-end not.</b> In C1 the embedding module and retrieval component were identical for baseline and candidate (gap 0.302, recall@5 0.630), yet the candidate's answer rate fell from 0.463 to 0.352 and faithfulness from 1.000 to 0.958. The baseline shows it too: a 0.302 module gap, but H03 abstained although its gold chunk was retrieved (D5).</li>
+<li><b>Archive or delete.</b> We archive: superseded, replaced and deleted versions move to <code>archive/&lt;doc_id&gt;/&lt;version&gt;</code> and stay in the manifest; superseded versions stay indexed with <code>superseded=true</code> and are filtered out of normal retrieval. Deleting would break rollback (no <code>--restore-version</code>), version questions such as V01 on the Aug-2023 rules, and audit of old answers whose traces cite the old document version.</li>
+<li><b>Least trusted metric.</b> Faithfulness: the judge (<code>gpt-oss-120b</code>) is from the generator's model family, the denominator is small (about 12 answered questions per run) and rate-limit fallbacks change which questions get answered. p95 latency is the second: it includes provider retries under the 8,000 tokens-per-minute limit.</li>
+<li><b>Hardest idea and our changes.</b> Testing against evolving data with a stable baseline: Batch B questions are unanswerable until Batch B is ingested, so we keep them in the set and compare runs on shared question ids. We changed: a recency failure archives the older version instead of quarantining it (the paper archives and replaces); superseded versions stay indexed behind a metadata filter; the coverage threshold is derived from module pairs; live testing is a gated candidate Deployment plus rolling release instead of shadow or A/B traffic.</li>
+<li><b>Kubernetes responsibilities.</b> Single writer: only the indexer image contains write code, it runs only as Job <code>indexer</code>/CronJob <code>reindex</code> (concurrencyPolicy Forbid) under service account <code>rahbar-indexer</code>; the API only reads. Ingest + verify + lake + retrieval sources: that Job and PVC <code>pipeline-data</code>. Offline testing and gate: Job <code>eval</code> + ConfigMaps <code>release-gate-thresholds</code> and <code>eval-target</code>. Live testing and release: Deployment <code>api-candidate</code> + Service + NetworkPolicy (only evaluation pods reach it), Deployment <code>api</code> RollingUpdate and <code>rollout undo</code>. Reliability: requests/limits, HPA, StatefulSet + PVC for Chroma. Secret <code>rahbar-secret</code> holds the LLM key.</li>
+</ol>
+
+<h2>5. Contributions and AI use</h2>
+<table class=""><tr><th>Member</th><th>Work</th></tr>
+<tr><td>Asad Ahmed (i24-3057), platform</td><td>Audit of the first draft against the brief; data lake, verification rework, quarantine registry, incremental update, restore/delete; context injection rail, trace fields, retrieval-only endpoint; three-level suite, LLM judge, gate, coverage; Kubernetes Jobs, candidate collection, rollout and undo; all cluster runs, measurements, screenshots and this report.</td></tr>
+<tr><td>Abdullah Adnan (i24-3020), RAG and evaluation</td><td>First Assignment 03 implementation (verification checks, quarantine, incremental accounting, golden set and module benchmark, release gate, evaluation and rollout manifests), which the rework built on; the 40 live-style coverage queries and the first planted batch.{human_work}</td></tr></table>
+<p><b>AI statement.</b> Claude Code (Claude Opus 5.5) helped Asad audit the first draft, write and test the code, run the cluster workflow and draft this report; OpenAI Codex helped Abdullah with the first draft. Every number comes from our own runs; hand reviews and hand labels were done by us, and we reviewed all code and text before submission.</p>
+
+<div class="pb"></div>
+<h2>Appendix: screenshots (our minikube cluster, 25 November 2026)</h2>
+<figure><figcaption>A1 - Batch B verification report: pass/fail per check with reasons (ingestion Job log)</figcaption><img src="../evidence/screenshots/A1-batch-b-verification-report.png"></figure>
+<figure><figcaption>A2 - second ingestion on the unchanged corpus: 0 chunks embedded, collection kept</figcaption><img src="../evidence/screenshots/A2-unchanged-rerun-zero-embedded.png"></figure>
+<figure><figcaption>A2 - a changed document re-embeds only its own 3 chunks; old version archived</figcaption><img src="../evidence/screenshots/A2-changed-document-own-chunks-only.png"></figure>
+<figure><figcaption>A2 - deleting a document: count by document id = 0 chunks (no orphans)</figcaption><img src="../evidence/screenshots/A2-delete-no-orphans.png"></figure>
+<figure><figcaption>A2 - restoring the archived document: 3 chunks back</figcaption><img src="../evidence/screenshots/A2-restore-deleted-document.png"></figure>
+<figure><figcaption>A2 - rollback: the archived 2022 policy restored as current</figcaption><img src="../evidence/screenshots/A2-rollback-superseded-version.png"></figure>
+<figure><figcaption>B/C2 - evaluation summary with all three levels; gate REJECT for the TOP_K=1 candidate (Job Failed)</figcaption><img src="../evidence/screenshots/C2-gate-fails-bad-candidate.png"></figure>
+<figure><figcaption>C2 - gate PASS for the chunk-384 candidate (committed thresholds)</figcaption><img src="../evidence/screenshots/C2-gate-passes-candidate-chunk384.png"></figure>
+<figure><figcaption>F2 - ConfigMap threshold edit (p95 12 to 8 s): same candidate REJECTED, no rebuild</figcaption><img src="../evidence/screenshots/F2-configmap-edit-gate-rejects.png"></figure>
+<figure><figcaption>F2 - threshold restored: PASS again</figcaption><img src="../evidence/screenshots/F2-configmap-restored-gate-passes.png"></figure>
+<figure><figcaption>D1 - one full trace record (JSON line as stored)</figcaption><img src="../evidence/screenshots/D1-full-trace-record.png"></figure>
+<figure><figcaption>D2 - trace tool: context and rebuilt prompt for a trace id, hash checked</figcaption><img src="../evidence/screenshots/D2-trace-tool-rebuilds-prompt.png"></figure>
+<figure><figcaption>D3 - trace metrics over a time window</figcaption><img src="../evidence/screenshots/D3-trace-metrics-window.png"></figure>
+<figure><figcaption>D4 - Batch B injected document: context rail action written to the trace</figcaption><img src="../evidence/screenshots/D4-injection-guardrail-in-trace.png"></figure>
+<figure><figcaption>E2 - coverage before: 47.5 percent, exit 1</figcaption><img src="../evidence/screenshots/E2-coverage-before.png"></figure>
+<figure><figcaption>E4 - coverage after adding 15 questions: 92.5 percent, exit 0</figcaption><img src="../evidence/screenshots/E4-coverage-after.png"></figure>
+<figure><figcaption>E4 - coverage script exits non-zero below its threshold</figcaption><img src="../evidence/screenshots/E4-coverage-gate-fails-below-threshold.png"></figure>
+<figure><figcaption>F1 - kubectl get all,pvc,configmap,cronjob,job</figcaption><img src="../evidence/screenshots/F1-get-all-pvc-configmap-cronjob-job.png"></figure>
+<figure><figcaption>F3 - release of the gated candidate: rolling update (maxUnavailable 0), rollout status, trace on rahbar-candidate</figcaption><img src="../evidence/screenshots/F3-release-candidate-rollout-status.png"></figure>
+<figure><figcaption>F3 - rollout undo: new trace shows the previous collection and embedding version</figcaption><img src="../evidence/screenshots/F3-rollout-undo-trace-previous-collection.png"></figure>
+<figure><figcaption>F4 - metrics endpoint through kubectl port-forward</figcaption><img src="../evidence/screenshots/F4-metrics-port-forward.png"></figure>
+</body></html>
