@@ -74,6 +74,22 @@ def _retrieval_query(
     return make_retrieval_query(question, settings.top_k, collection, embedder, versions)
 
 
+def retrieve_only(question: str, retriever: Retriever,
+                  settings: Settings) -> tuple[list[RetrievedRef], str | None]:
+    """The retrieval half of the query pipeline (same query rewrite, filters, hybrid search
+    and context guardrail as answer_with_cache_status), with no cache and no LLM call."""
+    status, metadata = _index_context(retriever)
+    query = _retrieval_query(question, retriever, settings, status, metadata)
+    if isinstance(query, RetrievalQuery):
+        passages = retriever.retrieve(query)
+    else:
+        passages = retriever.retrieve(query, k=settings.top_k)
+    passages, _flags = screen_passages(passages)
+    refs = [RetrievedRef(chunk_id=p.chunk_id, source=p.source, section=p.section, page=p.page,
+                         score=p.score) for p in passages]
+    return refs, str(getattr(status, "active", None) or "") or None
+
+
 def _check_relevance_floor(passages: list[Passage], floor: float) -> bool:
     """Abstain when retrieval found no passage at or above the configured score floor."""
     return not passages or max(passage.score for passage in passages) < floor
