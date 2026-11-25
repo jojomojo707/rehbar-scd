@@ -107,6 +107,7 @@ def test_fake_vectors_are_deterministic_unit_vectors() -> None:
 
 def test_discover_reads_fixture_front_matter() -> None:
     fixtures = Path(__file__).resolve().parents[2] / "eval" / "fixtures"
-    found = {p.name: (version, old) for p, version, old in discover(str(fixtures))}
-    assert found["academic-rules-2023.md"] == ("2023", True)
-    assert found["academic-rules-2026.md"] == ("2026", False)
+    found = {doc.source: doc for doc in discover(str(fixtures))}
+    assert found["academic-rules-2023.md"].doc_version == "2023"
+    assert found["academic-rules-2023.md"].doc_id == found["academic-rules-2026.md"].doc_id
+    assert found["academic-rules-2026.md"].title.startswith("Margalla Institute")

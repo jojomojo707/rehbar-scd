@@ -1,20 +1,23 @@
 # Assignment 03 ingestion batches
 
-`batch-a/` is the baseline built from three existing Assignment 02 retrieval fixtures.
-`batch-b/` starts with those same documents and adds ten compact Markdown sources for controlled
-verification and lifecycle exercises. The expected outcomes for every Batch B source are recorded
-in `expected-dispositions.json`.
+**Batch A** is the real FAST-NUCES corpus listed in `corpus/sources.yaml` (9 documents). The
+ingestion Job reads it from the `corpus` PVC.
 
-Planted cases: an exact duplicate pair, a close fee-schedule near-duplicate, a short/truncated
-notice, a document without version metadata, a new 2027 academic-rules version that supersedes
-2026, and an untrusted instruction in document content. The injected sentence is expected to pass
-document ingestion quality checks; it must remain quoted/untrusted and be tested against the
-answer-time prompt guardrail. The duplicate, near-duplicate, truncated, and incomplete-metadata
-documents are expected to be quarantined.
+**Batch B** (`batch-b/`) adds 12 documents with planted problems. It is ingested on top of
+Batch A through the same Job (`BATCH_DIR`). The documents are short synthetic notices labelled
+as test documents; none is an official FAST-NUCES policy.
 
-`batch-b-clean/` is the accepted subset used for the incremental lifecycle run after rejected
-documents are quarantined. It updates the academic-rules supersession flags, adds the 2027 edition
-and clean policy documents, and omits `fees-2026.md` to exercise deletion accounting.
+| File | Planted case | Expected disposition |
+| --- | --- | --- |
+| `library-policy.md`, `scholarship-policy.md`, `accessibility-policy.md`, `examination-conduct-guidelines.md` | clean new topics | accepted into the lake and indexed |
+| `library-policy_copy.md` | exact duplicate 1 | quarantined (uniqueness) |
+| `scholarship-policy_mirror.md` | exact duplicate 2 | quarantined (uniqueness) |
+| `examination-conduct-guidelines_draft.md` | near-duplicate (two small edits) | quarantined (uniqueness, cosine >= 0.95) |
+| `transport-route-notice.md` | truncated text (stops mid-sentence) | quarantined (completeness) |
+| `examination-timetable-fall-2026.pdf` | corrupt PDF (cut at 55% of its bytes, no `%%EOF`) | quarantined (quality and completeness) |
+| `student-clubs-guide.md` | missing title and version | quarantined (completeness) |
+| `faculty-entrepreneurship-policy-revision-2026.md` | newer version of the 2022 corpus policy (same `doc_id`) | accepted; the 2022 PDF is archived as superseded |
+| `it-acceptable-use-policy.md` | injected instruction in the text | accepted; flagged and dropped by the API context guardrail at query time |
 
-These small text fixtures are deliberately safe to commit and quick to run. They supplement the
-real fetched corpus; they do not replace it or claim to reproduce the source PDFs' OCR behavior.
+`expected-dispositions.json` is the machine-readable version that `indexer/tests/test_batches.py`
+checks.
