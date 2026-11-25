@@ -1,0 +1,37 @@
+{"ts": "2026-11-25T12:57:18Z", "logger": "rahbar.indexer", "msg": "indexer starting", "dummy": false, "embed_model": "BAAI/bge-small-en-v1.5", "collection": "rahbar", "chroma": "chroma:8000", "chunk_size": 480, "batch_dir": "/batch", "pod": "indexer-phc8h"}
+{"ts": "2026-11-25T12:57:18Z", "logger": "rahbar.indexer", "msg": "batch input", "batch_dir": "/batch", "batch_name": "batch", "documents": 12}
+[0;93m2026-11-25 12:57:18.835343762 [W:onnxruntime:Default, telemetry_1ds.cc:600 operator()] Failed to persist telemetry device ID; using an in-memory identifier[m
+document                           quality  complete recency  unique   disposition
+examination-conduct-guidelines_dra PASS     PASS     PASS     FAIL     quarantine
+    - uniqueness: near-duplicate of examination-conduct-guidelines.md (similarity 0.998 >= 0.95)
+examination-timetable-fall-2026.pd FAIL     FAIL     PASS     PASS     quarantine
+    - quality: extraction failed: PdfminerException: Unexpected EOF
+    - completeness: missing title; missing date/version; missing page count (no pages extracted); truncated: PDF file has no %%EOF end marker
+library-policy.md                  PASS     PASS     PASS     PASS     accept
+library-policy_copy.md             PASS     PASS     PASS     FAIL     quarantine
+    - uniqueness: near-duplicate of library-policy.md (similarity 1.000 >= 0.95)
+scholarship-policy_mirror.md       PASS     PASS     PASS     FAIL     quarantine
+    - uniqueness: exact duplicate of scholarship-policy.md (same text hash e7be07a9c757)
+student-clubs-guide.md             PASS     FAIL     PASS     PASS     quarantine
+    - completeness: missing title; missing date/version
+transport-route-notice.md          PASS     FAIL     PASS     PASS     quarantine
+    - completeness: truncated: text ends mid-sentence (...' now serves the sectors of G-9, G-10 and')
+{"ts": "2026-11-25T12:57:24Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-handbook-jun-2026.pdf", "status": "current", "chunks": 201}
+{"ts": "2026-11-25T12:57:24Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "accessibility-policy.md", "status": "current", "chunks": 3}
+{"ts": "2026-11-25T12:57:24Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "annual-report-2019-20.pdf", "status": "superseded", "chunks": 59}
+{"ts": "2026-11-25T12:57:24Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "annual-report-2023-24.pdf", "status": "current", "chunks": 192}
+{"ts": "2026-11-25T12:57:24Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "examination-conduct-guidelines.md", "status": "current", "chunks": 3}
+{"ts": "2026-11-25T12:57:24Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "faculty-entrepreneurship-and-technical-start-ups-policy.pdf", "status": "superseded", "chunks": 18}
+{"ts": "2026-11-25T12:57:24Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "faculty-entrepreneurship-policy-revision-2026.md", "status": "current", "chunks": 3}
+{"ts": "2026-11-25T12:57:24Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "fee-structure-page.html", "status": "current", "chunks": 9}
+{"ts": "2026-11-25T12:57:24Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "grading-page.html", "status": "current", "chunks": 7}
+{"ts": "2026-11-25T12:57:24Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "it-acceptable-use-policy.md", "status": "current", "chunks": 3}
+{"ts": "2026-11-25T12:57:24Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "library-policy.md", "status": "current", "chunks": 3}
+{"ts": "2026-11-25T12:57:24Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "prospectus-2026-academic-rules-and-regulations.pdf", "status": "current", "chunks": 21}
+{"ts": "2026-11-25T12:57:24Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "scholarship-policy.md", "status": "current", "chunks": 3}
+{"ts": "2026-11-25T12:57:24Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "student-handbook-jun-2026.pdf", "status": "current", "chunks": 135}
+{"ts": "2026-11-25T12:57:24Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "undergraduate-academic-rules-aug-2023.pdf", "status": "superseded", "chunks": 122}
+{"ts": "2026-11-25T12:57:26Z", "logger": "rahbar.indexer", "msg": "lake", "action": "archived replaced library-policy.md 2026-11"}
+{"ts": "2026-11-25T12:57:26Z", "logger": "rahbar.indexer", "msg": "lake", "action": "moved library-policy.md into the lake"}
+{"ts": "2026-11-25T12:57:26Z", "logger": "rahbar.indexer", "msg": "verification report written", "report": "/pipeline-data/eval/results/verification/20261125T125718Z-aec140cf.json", "documents_seen": 21, "unchanged": 14, "verified": 7, "passed": 1, "quarantined": 6, "archived_superseded_on_arrival": 0, "lake_current": 12, "lake_superseded": 3, "lake_deleted": 0, "embedded_chunks": 3, "reused_chunks": 779}
+{"ts": "2026-11-25T12:57:26Z", "logger": "rahbar.indexer", "msg": "indexer finished", "run_id": "20261125T125718Z-aec140cf", "verification_report": "/pipeline-data/eval/results/verification/20261125T125718Z-aec140cf.json", "collection": "rahbar-v20261125-125724", "summary": {"documents_seen": 21, "unchanged": 14, "verified": 7, "passed": 1, "quarantined": 6, "archived_superseded_on_arrival": 0, "lake_current": 12, "lake_superseded": 3, "lake_deleted": 0, "embedded_chunks": 3, "reused_chunks": 779}, "seconds": 8.2}

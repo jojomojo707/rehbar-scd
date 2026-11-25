@@ -1,0 +1,369 @@
+{
+  "chunking": {
+    "overlap": 64,
+    "size": 480,
+    "strategy": "structure"
+  },
+  "collection": "rahbar-v20261125-120258",
+  "collection_prefix": "rahbar",
+  "created_at": "2026-11-25T12:02:59.614507+00:00",
+  "documents": [
+    {
+      "change": "new",
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version 2023-08 and 26 page(s) present; text complete"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "usable text (33641 characters, 81% alphanumeric)"
+        },
+        "recency": {
+          "passed": false,
+          "reason": "newer version 2026-06 detected (academic-rules-handbook-jun-2026.pdf); this version is archived as superseded"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near duplicate"
+        }
+      },
+      "disposition": "archive-superseded",
+      "doc_id": "fast-undergraduate-academic-rules",
+      "doc_version": "2023-08",
+      "lake_status": "superseded",
+      "moved_to": "/pipeline-data/archive/fast-undergraduate-academic-rules/2023-08/undergraduate-academic-rules-aug-2023.pdf",
+      "origin": "corpus",
+      "passed": false,
+      "sha256": "cddfe1f5e9770132e27d686abd1c2e6742ef4732f0c2f431ed514bc1691d2004",
+      "source": "undergraduate-academic-rules-aug-2023.pdf",
+      "title": "Undergraduate Academic Rules (Aug 2023)"
+    },
+    {
+      "change": "new",
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version 2026-06 and 58 page(s) present; text complete"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "usable text (65387 characters, 80% alphanumeric)"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of fast-undergraduate-academic-rules; supersedes undergraduate-academic-rules-aug-2023.pdf 2023-08"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near duplicate"
+        }
+      },
+      "disposition": "accept",
+      "doc_id": "fast-undergraduate-academic-rules",
+      "doc_version": "2026-06",
+      "lake_status": "current",
+      "moved_to": "/pipeline-data/lake/docs/academic-rules-handbook-jun-2026.pdf",
+      "origin": "corpus",
+      "passed": true,
+      "sha256": "4cfee3e191b84aeb9168f17656c7642212ff52b90f2780d028b33c154aa74b62",
+      "source": "academic-rules-handbook-jun-2026.pdf",
+      "title": "Academic Rules Handbook (Jun 2026)"
+    },
+    {
+      "change": "new",
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version 2026 and 5 page(s) present; text complete"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "usable text (21018 characters, 80% alphanumeric)"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of prospectus-academic-rules-and-regulations"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near duplicate; closest other document undergraduate-academic-rules-aug-2023.pdf at 0.798"
+        }
+      },
+      "disposition": "accept",
+      "doc_id": "prospectus-academic-rules-and-regulations",
+      "doc_version": "2026",
+      "lake_status": "current",
+      "moved_to": "/pipeline-data/lake/docs/prospectus-2026-academic-rules-and-regulations.pdf",
+      "origin": "corpus",
+      "passed": true,
+      "sha256": "a7e7f6896a59eb9413c9e8826e6c4c018ebe52045d10cebfcba92ded10a3174a",
+      "source": "prospectus-2026-academic-rules-and-regulations.pdf",
+      "title": "Prospectus 2026 - Academic Rules and Regulations"
+    },
+    {
+      "change": "new",
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version 2026-06 and 64 page(s) present; text complete"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "usable text (75945 characters, 79% alphanumeric)"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of student-handbook-jun"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near duplicate; closest other document academic-rules-handbook-jun-2026.pdf at 0.805"
+        }
+      },
+      "disposition": "accept",
+      "doc_id": "student-handbook-jun",
+      "doc_version": "2026-06",
+      "lake_status": "current",
+      "moved_to": "/pipeline-data/lake/docs/student-handbook-jun-2026.pdf",
+      "origin": "corpus",
+      "passed": true,
+      "sha256": "717eb4b8d37e50185ffe952735c08ef19edd16074d547f10ebd22cf23da67c4d",
+      "source": "student-handbook-jun-2026.pdf",
+      "title": "Student Handbook (Jun 2026)"
+    },
+    {
+      "change": "new",
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version 2019-20 and 33 page(s) present; text complete"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "usable text (49585 characters, 78% alphanumeric)"
+        },
+        "recency": {
+          "passed": false,
+          "reason": "newer version 2023-24 detected (annual-report-2023-24.pdf); this version is archived as superseded"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near duplicate; closest other document student-handbook-jun-2026.pdf at 0.695"
+        }
+      },
+      "disposition": "archive-superseded",
+      "doc_id": "fast-annual-report",
+      "doc_version": "2019-20",
+      "lake_status": "superseded",
+      "moved_to": "/pipeline-data/archive/fast-annual-report/2019-20/annual-report-2019-20.pdf",
+      "origin": "corpus",
+      "passed": false,
+      "sha256": "4d1961e340b13273bb039805ab5fd5e2c7bd0144a5bd5870f2ce4da13becd650",
+      "source": "annual-report-2019-20.pdf",
+      "title": "Annual Report 2019-20"
+    },
+    {
+      "change": "new",
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version 2023-24 and 85 page(s) present; text complete"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "usable text (204828 characters, 78% alphanumeric)"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of fast-annual-report; supersedes annual-report-2019-20.pdf 2019-20"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near duplicate; closest other document student-handbook-jun-2026.pdf at 0.688"
+        }
+      },
+      "disposition": "accept",
+      "doc_id": "fast-annual-report",
+      "doc_version": "2023-24",
+      "lake_status": "current",
+      "moved_to": "/pipeline-data/lake/docs/annual-report-2023-24.pdf",
+      "origin": "corpus",
+      "passed": true,
+      "sha256": "3c9d89e84af24df4b939f10e32c620a3877b276acea1db52f1aae4098e5c057a",
+      "source": "annual-report-2023-24.pdf",
+      "title": "Annual Report 2023-24"
+    },
+    {
+      "change": "new",
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version 2026-27 and 1 page(s) present; text complete"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "usable text (5436 characters, 77% alphanumeric)"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of fee-structure-page"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near duplicate; closest other document prospectus-2026-academic-rules-and-regulations.pdf at 0.654"
+        }
+      },
+      "disposition": "accept",
+      "doc_id": "fee-structure-page",
+      "doc_version": "2026-27",
+      "lake_status": "current",
+      "moved_to": "/pipeline-data/lake/docs/fee-structure-page.html",
+      "origin": "corpus",
+      "passed": true,
+      "sha256": "ec8872ae77cac7e96e20e6979933f36b00aaeb0ab3f668a2116e521c655e7b90",
+      "source": "fee-structure-page.html",
+      "title": "Fee Structure page"
+    },
+    {
+      "change": "new",
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version 2026 and 1 page(s) present; text complete"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "usable text (4935 characters, 73% alphanumeric)"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of grading-page"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near duplicate; closest other document prospectus-2026-academic-rules-and-regulations.pdf at 0.782"
+        }
+      },
+      "disposition": "accept",
+      "doc_id": "grading-page",
+      "doc_version": "2026",
+      "lake_status": "current",
+      "moved_to": "/pipeline-data/lake/docs/grading-page.html",
+      "origin": "corpus",
+      "passed": true,
+      "sha256": "66a995b4d8474e914d37bfa14755a5361f47327d5a7314f9b7ec15d9b6176e6e",
+      "source": "grading-page.html",
+      "title": "Grading page"
+    },
+    {
+      "change": "new",
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version 2022-05 and 8 page(s) present; text complete"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "usable text (11738 characters, 81% alphanumeric)"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of faculty-entrepreneurship-and-technical-start-ups-policy"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near duplicate; closest other document academic-rules-handbook-jun-2026.pdf at 0.662"
+        }
+      },
+      "disposition": "accept",
+      "doc_id": "faculty-entrepreneurship-and-technical-start-ups-policy",
+      "doc_version": "2022-05",
+      "lake_status": "current",
+      "moved_to": "/pipeline-data/lake/docs/faculty-entrepreneurship-and-technical-start-ups-policy.pdf",
+      "origin": "corpus",
+      "passed": true,
+      "sha256": "c2d5c7648d1593daf34d5c0596ede476e8984b0551830cc1690017e6e22f1359",
+      "source": "faculty-entrepreneurship-and-technical-start-ups-policy.pdf",
+      "title": "Faculty Entrepreneurship and Technical Start-ups Policy"
+    }
+  ],
+  "embed_model": "BAAI/bge-small-en-v1.5",
+  "incremental": {
+    "added": [
+      "academic-rules-handbook-jun-2026.pdf",
+      "annual-report-2019-20.pdf",
+      "annual-report-2023-24.pdf",
+      "faculty-entrepreneurship-and-technical-start-ups-policy.pdf",
+      "fee-structure-page.html",
+      "grading-page.html",
+      "prospectus-2026-academic-rules-and-regulations.pdf",
+      "student-handbook-jun-2026.pdf",
+      "undergraduate-academic-rules-aug-2023.pdf"
+    ],
+    "changed": [],
+    "deleted": [],
+    "document_chunk_counts_after": {
+      "academic-rules-handbook-jun-2026.pdf": 201,
+      "annual-report-2019-20.pdf": 59,
+      "annual-report-2023-24.pdf": 192,
+      "faculty-entrepreneurship-and-technical-start-ups-policy.pdf": 18,
+      "fee-structure-page.html": 9,
+      "grading-page.html": 7,
+      "prospectus-2026-academic-rules-and-regulations.pdf": 21,
+      "student-handbook-jun-2026.pdf": 135,
+      "undergraduate-academic-rules-aug-2023.pdf": 122
+    },
+    "document_chunk_counts_before": {},
+    "embedded_chunks": 764,
+    "embedded_documents": [
+      "academic-rules-handbook-jun-2026.pdf",
+      "annual-report-2019-20.pdf",
+      "annual-report-2023-24.pdf",
+      "faculty-entrepreneurship-and-technical-start-ups-policy.pdf",
+      "fee-structure-page.html",
+      "grading-page.html",
+      "prospectus-2026-academic-rules-and-regulations.pdf",
+      "student-handbook-jun-2026.pdf",
+      "undergraduate-academic-rules-aug-2023.pdf"
+    ],
+    "model_or_chunk_config_changed": false,
+    "published": true,
+    "reused_chunks": 0,
+    "reused_documents": [],
+    "superseded_flag_changes": [],
+    "unchanged": []
+  },
+  "inputs": {
+    "batch_dir": "/batch",
+    "corpus_dir": "/corpus"
+  },
+  "lake_actions": [
+    "moved undergraduate-academic-rules-aug-2023.pdf into the lake",
+    "moved academic-rules-handbook-jun-2026.pdf into the lake",
+    "moved prospectus-2026-academic-rules-and-regulations.pdf into the lake",
+    "moved student-handbook-jun-2026.pdf into the lake",
+    "moved annual-report-2019-20.pdf into the lake",
+    "moved annual-report-2023-24.pdf into the lake",
+    "moved fee-structure-page.html into the lake",
+    "moved grading-page.html into the lake",
+    "moved faculty-entrepreneurship-and-technical-start-ups-policy.pdf into the lake",
+    "archived superseded undergraduate-academic-rules-aug-2023.pdf 2023-08 (newer: academic-rules-handbook-jun-2026.pdf 2026-06) [fast-undergraduate-academic-rules]",
+    "archived superseded annual-report-2019-20.pdf 2019-20 (newer: annual-report-2023-24.pdf 2023-24) [fast-annual-report]"
+  ],
+  "run_id": "20261125T115231Z-f308ca63",
+  "summary": {
+    "archived_superseded_on_arrival": 2,
+    "documents_seen": 9,
+    "embedded_chunks": 764,
+    "lake_current": 7,
+    "lake_deleted": 0,
+    "lake_superseded": 2,
+    "passed": 7,
+    "quarantined": 0,
+    "reused_chunks": 0,
+    "unchanged": 0,
+    "verified": 9
+  },
+  "unchanged_documents": []
+}

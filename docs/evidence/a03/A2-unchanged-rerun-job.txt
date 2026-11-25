@@ -1,0 +1,17 @@
+$ kubectl -n rahbar logs job/indexer -c indexer
+{"ts": "2026-11-25T12:03:35Z", "logger": "rahbar.indexer", "msg": "indexer starting", "dummy": false, "embed_model": "BAAI/bge-small-en-v1.5", "collection": "rahbar", "chroma": "chroma:8000", "chunk_size": 480, "batch_dir": "/batch", "pod": "indexer-fmfw5"}
+{"ts": "2026-11-25T12:03:35Z", "logger": "rahbar.indexer", "msg": "batch input", "batch_dir": "/batch", "batch_name": "batch", "documents": 0}
+{"ts": "2026-11-25T12:03:35Z", "logger": "rahbar.indexer", "msg": "no new or changed documents to verify"}
+[0;93m2026-11-25 12:03:36.465801122 [W:onnxruntime:Default, telemetry_1ds.cc:600 operator()] Failed to persist telemetry device ID; using an in-memory identifier[m
+{"ts": "2026-11-25T12:03:36Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-handbook-jun-2026.pdf", "status": "current", "chunks": 201}
+{"ts": "2026-11-25T12:03:36Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "annual-report-2019-20.pdf", "status": "superseded", "chunks": 59}
+{"ts": "2026-11-25T12:03:36Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "annual-report-2023-24.pdf", "status": "current", "chunks": 192}
+{"ts": "2026-11-25T12:03:36Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "faculty-entrepreneurship-and-technical-start-ups-policy.pdf", "status": "current", "chunks": 18}
+{"ts": "2026-11-25T12:03:36Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "fee-structure-page.html", "status": "current", "chunks": 9}
+{"ts": "2026-11-25T12:03:36Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "grading-page.html", "status": "current", "chunks": 7}
+{"ts": "2026-11-25T12:03:36Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "prospectus-2026-academic-rules-and-regulations.pdf", "status": "current", "chunks": 21}
+{"ts": "2026-11-25T12:03:36Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "student-handbook-jun-2026.pdf", "status": "current", "chunks": 135}
+{"ts": "2026-11-25T12:03:36Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "undergraduate-academic-rules-aug-2023.pdf", "status": "superseded", "chunks": 122}
+{"ts": "2026-11-25T12:03:36Z", "logger": "rahbar.indexer", "msg": "index unchanged: every document reused, active collection kept", "collection": "rahbar-v20261125-120258", "embedded_chunks": 0, "reused_chunks": 764}
+{"ts": "2026-11-25T12:03:36Z", "logger": "rahbar.indexer", "msg": "verification report written", "report": "/pipeline-data/eval/results/verification/20261125T120335Z-04b85ee2.json", "documents_seen": 9, "unchanged": 9, "verified": 0, "passed": 0, "quarantined": 0, "archived_superseded_on_arrival": 0, "lake_current": 7, "lake_superseded": 2, "lake_deleted": 0, "embedded_chunks": 0, "reused_chunks": 764}
+{"ts": "2026-11-25T12:03:36Z", "logger": "rahbar.indexer", "msg": "indexer finished", "run_id": "20261125T120335Z-04b85ee2", "verification_report": "/pipeline-data/eval/results/verification/20261125T120335Z-04b85ee2.json", "collection": "rahbar-v20261125-120258", "summary": {"documents_seen": 9, "unchanged": 9, "verified": 0, "passed": 0, "quarantined": 0, "archived_superseded_on_arrival": 0, "lake_current": 7, "lake_superseded": 2, "lake_deleted": 0, "embedded_chunks": 0, "reused_chunks": 764}, "seconds": 1.4}
