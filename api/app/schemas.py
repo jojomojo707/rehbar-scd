@@ -67,6 +67,15 @@ class RetrievedRef(BaseModel):
     score: float
 
 
+class RetrieveResponse(BaseModel):
+    """POST /api/retrieve: the ranked passages the answer path would use, without generation.
+    Used by the component-level (retrieval) tests; see docs/adr/0006."""
+
+    request_id: str
+    collection_version: str | None = None
+    retrieved: list[RetrievedRef]
+
+
 class AskResponse(BaseModel):
     request_id: str
     answer: str

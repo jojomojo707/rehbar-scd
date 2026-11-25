@@ -81,17 +81,24 @@ spec:
           envFrom:
             - configMapRef:
                 name: rahbar-config
+          # Part A batch input: `kubectl create configmap ingest-batch --from-file=<dir>` puts new
+          # documents here; without that ConfigMap the directory is empty and only the corpus runs.
+          env:
+            - name: BATCH_DIR
+              value: /batch
           # OCR at 300 dpi and embedding batches are the memory peak of the system. The real
           # corpus at CHUNK_SIZE 480 was OOM-killed (exit 137) at 2Gi on 5 Nov. Measured on 6 Nov
-          # (docs/evidence/kubectl-top-indexer.txt): peak 2108Mi, CPU pinned at the 2-CPU limit for
-          # the 18-minute embedding phase. Request 2200Mi = peak; limit 3Gi = peak + 46%.
+          # (docs/evidence/kubectl-top-indexer.txt): peak 2108Mi. Re-measured 25 Nov with the A03 lake
+          # (docs/evidence/a03/F5-resource-peaks.md): peak 2586Mi, CPU pinned at 2 cores while embedding.
+          # Memory request = measured peak, limit 3584Mi = peak + 39%. CPU limit 2 = measured peak;
+          # CPU request stays 500m: a 2-CPU request left the Job Pending on the 4-vCPU CI kind node.
           resources:
             requests:
               cpu: 500m
-              memory: 2200Mi
+              memory: 2600Mi
             limits:
               cpu: "2"
-              memory: 3Gi
+              memory: 3584Mi
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -104,6 +111,9 @@ spec:
               readOnly: true   # only fetch-corpus writes the corpus
             - name: pipeline-data
               mountPath: /pipeline-data
+            - name: batch
+              mountPath: /batch
+              readOnly: true
             - name: tmp
               mountPath: /tmp
       volumes:
@@ -113,6 +123,10 @@ spec:
         - name: pipeline-data
           persistentVolumeClaim:
             claimName: pipeline-data
+        - name: batch
+          configMap:
+            name: ingest-batch
+            optional: true
         - name: tmp
           emptyDir:
             sizeLimit: 1Gi

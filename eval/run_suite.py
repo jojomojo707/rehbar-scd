@@ -10,7 +10,9 @@ For each of --runs repetitions (default 2, same --seed):
   end-to-end  answers: faithfulness (LLM judge over the traced context), abstention
               correctness, citation validity, latency p50/p95; judge agreement with hand labels
 
-Every question is sent with Cache-Control: no-cache, so a repeat is a real repeat. Results go to
+The noise test ranks the typo queries through POST /api/retrieve, which runs the same retrieval
+path with no LLM call (component level in isolation). Every question is sent with
+Cache-Control: no-cache, so a repeat is a real repeat. Results go to
 <out-dir>/<UTC stamp>-<label>/: suite.json, summary.md, one JSON per run and level, and
 to-label.json (answers for hand labelling). With --baseline and --thresholds the release gate
 (release_gate.py) runs at the end and the exit code is 1 when it rejects the candidate.
@@ -21,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import os
 import json
 import random
 import statistics
@@ -79,6 +82,24 @@ def run_questions(client: httpx.Client, api: str, questions: list[dict], pause: 
         print(f"  {q['id']:<5} {seconds:6.2f}s  {'ABSTAIN' if not rows[-1]['answered_from_context'] else 'answer '}  {asked[:64]}", flush=True)
         if pause:
             time.sleep(pause)
+    return rows
+
+
+def retrieve_questions(client: httpx.Client, api: str, questions: list[dict],
+                       rewrite) -> list[dict]:  # type: ignore[no-untyped-def]
+    """Component level only: rank passages through POST /api/retrieve (no LLM call)."""
+    rows = []
+    for q in questions:
+        asked = rewrite(q["question"])
+        response = client.post(f"{api.rstrip('/')}/api/retrieve", json={"question": asked})
+        response.raise_for_status()
+        rows.append({"id": q["id"], "question": q["question"], "asked": asked,
+                     "relevant": q["relevant"],
+                     "retrieved": [{"source": r.get("source"), "section": r.get("section"),
+                                    "page": r.get("page"), "score": r.get("score"),
+                                    "chunk_id": r.get("chunk_id")}
+                                   for r in response.json().get("retrieved") or []]})
+        print(f"  {q['id']:<5} retrieve  {asked[:70]}", flush=True)
     return rows
 
 
@@ -236,9 +257,11 @@ def main() -> int:
     parser.add_argument("--trace-dir", type=Path, default=None,
                         help="the API's trace JSONL directory (judge context)")
     parser.add_argument("--human-labels", type=Path, default=HERE / "human_labels.json")
-    parser.add_argument("--runs", type=int, default=2)
+    parser.add_argument("--runs", type=int, default=int(os.environ.get("EVAL_RUNS", "2")))
     parser.add_argument("--seed", type=int, default=20261125)
-    parser.add_argument("--pause", type=float, default=0.5)
+    parser.add_argument("--pause", type=float, default=float(os.environ.get("EVAL_PAUSE", "0.5")),
+                        help="seconds between questions (EVAL_PAUSE); ~20 keeps a free-tier "
+                             "hosted LLM under its tokens-per-minute limit")
     parser.add_argument("--no-judge", action="store_true")
     parser.add_argument("--cache-dir", type=Path, default=Path("/models"))
     parser.add_argument("--model", default="BAAI/bge-small-en-v1.5")
@@ -264,8 +287,8 @@ def main() -> int:
                 print(f"== run {run}: component noise test (typos, seed {args.seed})")
                 rng = random.Random(args.seed)
                 answerable = [q for q in questions if not q["must_abstain"]]
-                noisy = run_questions(client, args.api, answerable, args.pause,
-                                      rewrite=lambda text: typo_query(text, rng))
+                noisy = retrieve_questions(client, args.api, answerable,
+                                           rewrite=lambda text: typo_query(text, rng))
                 faith = faithfulness(rows, args.trace_dir, not args.no_judge, human)
                 traces = load_traces(args.trace_dir)
                 first = traces.get(rows[0]["request_id"] or "", {})

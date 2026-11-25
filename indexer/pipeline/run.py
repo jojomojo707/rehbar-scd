@@ -124,11 +124,13 @@ def ingest_and_verify(
     from .extract import extract
     from .verify import Candidate, KnownDocument, verify_documents
 
-    unchanged, incoming = [], []
+    unchanged, incoming, held = [], [], []
     for doc in sources:
         digest = sha256_file(doc.path)
         entry = lake.entries.get(doc.source)
-        if entry is not None and entry.sha256 == digest:
+        if lake.quarantined.get(doc.source, {}).get("sha256") == digest:
+            held.append(doc.source)          # same bytes that failed before: still quarantined
+        elif entry is not None and entry.sha256 == digest:
             # unchanged; a deleted document stays deleted until its file changes or an
             # operator restores it with --restore-version
             unchanged.append(doc.source)
@@ -175,7 +177,8 @@ def ingest_and_verify(
         }
         if disposition == "quarantine":
             failed = {n: c.reason for n, c in result.checks.items() if not c.passed}
-            record["moved_to"] = str(lake.quarantine(staged[doc.source], run_id, failed))
+            record["moved_to"] = str(lake.quarantine(staged[doc.source], run_id, failed,
+                                                     digest))
         else:
             entry = LakeEntry(doc.source, doc.doc_id, doc.doc_version, doc.title, digest,
                               result.text_sha256, doc.origin, "current", "",
@@ -198,7 +201,7 @@ def ingest_and_verify(
     except OSError:
         pass
     return {"records": records, "unchanged": unchanged, "lake_actions": actions,
-            "extracted": extracted}
+            "extracted": extracted, "still_quarantined": held}
 
 
 def _chunks_from_snapshot(rows: list[dict[str, Any]], entry: LakeEntry) -> list[Chunk]:
@@ -297,13 +300,13 @@ def update_retrieval_sources(
 
 def _print_report_table(records: list[dict[str, Any]]) -> None:
     """A human-readable pass/fail table in the Job log (one line per document)."""
-    print(f"{'document':34} {'quality':8} {'complete':8} {'recency':8} {'unique':8} disposition",
+    print(f"{'document':48} {'quality':8} {'complete':8} {'recency':8} {'unique':8} disposition",
           flush=True)
     for record in records:
         checks = record["checks"]
         marks = ["PASS" if checks[name]["passed"] else "FAIL"
                  for name in ("quality", "completeness", "recency", "uniqueness")]
-        print(f"{record['source'][:34]:34} {marks[0]:8} {marks[1]:8} {marks[2]:8} "
+        print(f"{record['source'][:48]:48} {marks[0]:8} {marks[1]:8} {marks[2]:8} "
               f"{marks[3]:8} {record['disposition']}", flush=True)
         for name, check in checks.items():
             if not check["passed"]:
@@ -323,11 +326,11 @@ def run_pipeline(settings: IndexerSettings, *, batch_dir: str | None = None,
             raise SystemExit(f"no documents found in {settings.corpus_dir}")
         corpus_sources = {doc.source for doc in corpus}
         sources.update({doc.source: doc for doc in corpus})
-    if batch_dir:
+    if batch_dir and Path(batch_dir).is_dir():
+        # The Job mounts the optional ConfigMap `ingest-batch` here; empty means no batch.
         name = batch_name or Path(batch_dir).name
         batch = discover(batch_dir, name)
-        if not batch:
-            raise SystemExit(f"no documents found in batch {batch_dir}")
+        log("batch input", batch_dir=batch_dir, batch_name=name, documents=len(batch))
         sources.update({doc.source: doc for doc in batch})
     if not sources and not lake.entries:
         raise SystemExit("no corpus, batch or data-lake documents to index")
@@ -340,6 +343,7 @@ def run_pipeline(settings: IndexerSettings, *, batch_dir: str | None = None,
     counts = {
         "documents_seen": len(sources),
         "unchanged": len(ingest["unchanged"]),
+        "still_quarantined": len(ingest["still_quarantined"]),
         "verified": len(records),
         "passed": sum(r["passed"] for r in records),
         "quarantined": sum(r["disposition"] == "quarantine" for r in records),
@@ -363,6 +367,7 @@ def run_pipeline(settings: IndexerSettings, *, batch_dir: str | None = None,
         "summary": counts,
         "documents": records,
         "unchanged_documents": ingest["unchanged"],
+        "still_quarantined_documents": ingest["still_quarantined"],
         "lake_actions": [*(pre_actions or []), *ingest["lake_actions"]],
         "incremental": incremental,
     }

@@ -106,3 +106,12 @@ def test_hosted_provider_sends_the_configured_seed() -> None:
     HostedProvider(settings, client=httpx.Client(transport=httpx.MockTransport(handler))
                    ).complete([{"role": "user", "content": "hi"}], Answer.model_json_schema(), 0)
     assert seen["seed"] == 7
+
+
+def test_retrieve_only_ranks_without_calling_the_llm() -> None:
+    from app.services.answer import retrieve_only
+
+    refs, version = retrieve_only("What is the minimum attendance?", InjectedRetriever(),
+                                  Settings(relevance_floor=0.5))
+    assert version == "rahbar-v1"
+    assert [r.chunk_id for r in refs] == ["rules:00001"]
