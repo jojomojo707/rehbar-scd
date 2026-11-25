@@ -259,7 +259,9 @@ def main() -> int:
     parser.add_argument("--human-labels", type=Path, default=HERE / "human_labels.json")
     parser.add_argument("--runs", type=int, default=int(os.environ.get("EVAL_RUNS", "2")))
     parser.add_argument("--seed", type=int, default=20261125)
-    parser.add_argument("--pause", type=float, default=0.5)
+    parser.add_argument("--pause", type=float, default=float(os.environ.get("EVAL_PAUSE", "0.5")),
+                        help="seconds between questions (EVAL_PAUSE); ~20 keeps a free-tier "
+                             "hosted LLM under its tokens-per-minute limit")
     parser.add_argument("--no-judge", action="store_true")
     parser.add_argument("--cache-dir", type=Path, default=Path("/models"))
     parser.add_argument("--model", default="BAAI/bge-small-en-v1.5")

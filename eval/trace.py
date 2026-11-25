@@ -47,9 +47,21 @@ def _time(value: str) -> datetime:
     return datetime.fromisoformat(value.replace("Z", "+00:00"))
 
 
-def show(row: dict) -> None:
-    print(json.dumps({k: v for k, v in row.items() if k not in ("prompt",)}, indent=2,
-                     ensure_ascii=False))
+BRIEF_KEYS = ("trace_id", "timestamp", "pod", "query", "rewrite", "collection",
+              "collection_version", "embedding_model", "embedding_version", "filters",
+              "rerank_order", "model_parameters", "guardrail_actions", "injection_flags",
+              "outcome", "cache_status", "stage_ms", "prompt_sha256")
+
+
+def show(row: dict, brief: bool = False) -> None:
+    if brief:
+        for key in BRIEF_KEYS:
+            print(f"{key:20} {json.dumps(row.get(key), ensure_ascii=False)}")
+        print(f"{'answer':20} {row.get('response', {}).get('answer')}")
+        print(f"{'citations':20} {json.dumps(row.get('citations'))}")
+    else:
+        print(json.dumps({k: v for k, v in row.items() if k not in ("prompt",)}, indent=2,
+                         ensure_ascii=False))
     print("\n=== context: the passages the model saw, in rank order ===")
     for rank, passage in enumerate(row.get("retrieved") or [], 1):
         print(f"[{rank}] {passage.get('chunk_id')}  {passage.get('document')} v"
@@ -113,6 +125,8 @@ def main() -> int:
     one = sub.add_parser("trace", help="print the context and prompt behind one answer")
     one.add_argument("trace_id")
     one.add_argument("--trace-dir", type=Path, default=Path("traces"))
+    one.add_argument("--brief", action="store_true",
+                     help="key fields instead of the full record (passage texts are in the prompt)")
     many = sub.add_parser("summary", help="metrics over a time window")
     many.add_argument("--since", default="1970-01-01T00:00:00+00:00")
     many.add_argument("--until")
@@ -123,7 +137,7 @@ def main() -> int:
         row = next((item for item in rows if item.get("trace_id") == args.trace_id), None)
         if row is None:
             parser.error(f"trace id {args.trace_id!r} was not found in {args.trace_dir}")
-        show(row)
+        show(row, args.brief)
         return 0
     print(json.dumps(summary(rows, args.since, args.until), indent=2))
     return 0
