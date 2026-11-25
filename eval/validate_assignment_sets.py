@@ -55,12 +55,14 @@ def validate_golden() -> int:
     reviewed_synthetic = sum(
         row.get("origin") == "synthetic"
         and row.get("manual_review", {}).get("status") in {"reviewed", "verified"}
+        and row.get("manual_review", {}).get("reviewer", "").strip()
+        and "agent" not in row.get("manual_review", {}).get("reviewer", "").casefold()
         for row in rows
     )
     if carried < 8:
         raise ValueError(f"only {carried} cases carried forward from team golden set; need at least 8")
     if reviewed_synthetic < 8:
-        raise ValueError(f"only {reviewed_synthetic} synthetic cases manually reviewed; need at least 8")
+        raise ValueError(f"only {reviewed_synthetic} synthetic cases reviewed by a named team member; need at least 8 (set manual_review.status to reviewed and manual_review.reviewer to your name after checking each one)")
     print(f"golden: {len(rows)} cases ({counts}); {carried} carried team cases; "
           f"{reviewed_synthetic} synthetic cases manually checked")
     return len(rows)
