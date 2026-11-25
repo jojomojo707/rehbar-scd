@@ -26,6 +26,7 @@ from .cache import (
     is_cacheable,
 )
 from .fallback import relevance_abstention, safe_fallback
+from .guardrails import screen_passages
 from .prompt import PROMPT_VERSION, build_prompt
 from .query_intent import (
     QueryIntent,
@@ -223,6 +224,7 @@ def answer_with_cache_status(
     history: list[HistoryTurn] | None = None,
     cache: SemanticCache | None = None,
     turns: TurnLog | None = None,
+    bypass_cache: bool = False,
 ) -> AskResult:
     request_started = time.perf_counter()
     cache = cache or NullSemanticCache()
@@ -235,7 +237,7 @@ def answer_with_cache_status(
     # 2. Intent. A follow-up refers back to the history (D4, ADR 0005). Only follow-ups use it.
     status, metadata = _index_context(retriever)
     follow_up = is_follow_up(question, history)
-    skip_cache = follow_up                      # never look up or store a follow-up (3.3)
+    skip_cache = follow_up or bypass_cache      # never look up or store a follow-up (3.3)
     used_history = history if follow_up else []
     retrieval_text = follow_up_retrieval_text(question, history) if follow_up else question
     intent = _query_intent(retrieval_text, metadata)
@@ -271,7 +273,7 @@ def answer_with_cache_status(
         }
 
         # 2 (after 3). Cache lookup, unless this is a follow-up or there is no index version.
-        cache_status = "SKIP"
+        cache_status = "BYPASS" if bypass_cache else "SKIP"
         if not skip_cache and index_version and vector:
             hit = cache.lookup(namespace, vector)
             if hit is not None:
@@ -317,6 +319,13 @@ def answer_with_cache_status(
             passages = retriever.retrieve(query, k=settings.top_k)
         retrieval_seconds = time.perf_counter() - retrieval_started
         metrics.RETRIEVAL.observe(retrieval_seconds)
+        if passages:
+            metrics.TOP1_SIMILARITY.observe(max(p.score for p in passages))
+        retrieved_passages = passages
+        # Retrieval rail: strip injected instructions from untrusted passages before the prompt.
+        passages, injection_flags = screen_passages(passages)
+        if injection_flags:
+            metrics.INJECTIONS_FLAGGED.labels(where="context").inc(len(injection_flags))
 
         # Relevance floor, then 5. augment, 6. generate, 7. validate with retry and fallback.
         should_abstain = _check_relevance_floor(passages, settings.relevance_floor)
@@ -436,6 +445,10 @@ def answer_with_cache_status(
         guardrails = []
         if retrieval_value != retrieval_text:
             guardrails.append("instruction_override_removed_from_retrieval_query")
+            metrics.INJECTIONS_FLAGGED.labels(where="query").inc()
+        for flag in injection_flags:
+            guardrails.append(("context_injection_passage_dropped:" if flag.dropped_passage
+                               else "context_injection_sentence_removed:") + flag.chunk_id)
         if should_abstain:
             guardrails.append("relevance_floor_abstention")
         if report.dropped:
@@ -443,7 +456,8 @@ def answer_with_cache_status(
         write_trace(settings.trace_dir, make_trace(
             trace_id=request_id, question=question, retrieval_query=retrieval_value,
             passages=passages, response=response, settings=settings, index_version=index_version,
-            cache_status=cache_status,
+            cache_status=cache_status, retrieved_passages=retrieved_passages,
+            injection_flags=[vars(flag) for flag in injection_flags],
             stage_ms={"embedding": embed_ms, "retrieval": round(retrieval_seconds * 1000, 1),
                       "generation": generation_ms,
                       "total": round((time.perf_counter() - request_started) * 1000, 1)},
