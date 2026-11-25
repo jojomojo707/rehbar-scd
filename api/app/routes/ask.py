@@ -16,8 +16,10 @@ def ask(body: AskRequest, request: Request, response: Response) -> AskResponse:
     result = answer_with_cache_status(
         body.question, state.retriever, state.provider, state.settings, body.history,
         getattr(state, "cache", None), getattr(state, "turns", None),
+        bypass_cache="no-cache" in request.headers.get("cache-control", "").lower(),
     )
     # HIT: served from the semantic cache; MISS: looked up, not found; SKIP: follow-up (or no
-    # index), so the cache was not consulted. The UI shows this as a chip.
+    # index), so the cache was not consulted; BYPASS: the client sent
+    # Cache-Control: no-cache (evaluation runs), so the cache was neither read nor written. The UI shows this as a chip.
     response.headers["X-Cache"] = result.cache_status
     return result.response
