@@ -32,18 +32,18 @@
       },
       "component": {
         "n_answerable": 27,
-        "recall@3": 0.611111,
-        "recall@5": 0.62963,
-        "mrr": 0.580247,
-        "ndcg@5": 0.5725,
-        "noise_recall@3": 0.537037,
-        "noise_recall@5": 0.555556,
-        "noise_mrr": 0.537037,
-        "noise_ndcg@5": 0.528957,
+        "recall@3": 0.666667,
+        "recall@5": 0.685185,
+        "mrr": 0.623457,
+        "ndcg@5": 0.628714,
+        "noise_recall@3": 0.592593,
+        "noise_recall@5": 0.611111,
+        "noise_mrr": 0.567901,
+        "noise_ndcg@5": 0.5725,
         "noise_delta_recall@3": -0.074074,
         "noise_delta_recall@5": -0.074074,
-        "noise_delta_mrr": -0.04321,
-        "noise_delta_ndcg@5": -0.043543
+        "noise_delta_mrr": -0.055556,
+        "noise_delta_ndcg@5": -0.056214
       },
       "end_to_end": {
         "questions": 32,
@@ -75,18 +75,18 @@
       },
       "component": {
         "n_answerable": 27,
-        "recall@3": 0.611111,
-        "recall@5": 0.62963,
-        "mrr": 0.580247,
-        "ndcg@5": 0.5725,
-        "noise_recall@3": 0.537037,
-        "noise_recall@5": 0.555556,
-        "noise_mrr": 0.537037,
-        "noise_ndcg@5": 0.528957,
+        "recall@3": 0.666667,
+        "recall@5": 0.685185,
+        "mrr": 0.623457,
+        "ndcg@5": 0.628714,
+        "noise_recall@3": 0.592593,
+        "noise_recall@5": 0.611111,
+        "noise_mrr": 0.567901,
+        "noise_ndcg@5": 0.5725,
         "noise_delta_recall@3": -0.074074,
         "noise_delta_recall@5": -0.074074,
-        "noise_delta_mrr": -0.04321,
-        "noise_delta_ndcg@5": -0.043543
+        "noise_delta_mrr": -0.055556,
+        "noise_delta_ndcg@5": -0.056214
       },
       "end_to_end": {
         "questions": 32,
@@ -119,18 +119,18 @@
     },
     "component": {
       "n_answerable": 27.0,
-      "recall@3": 0.611111,
-      "recall@5": 0.62963,
-      "mrr": 0.580247,
-      "ndcg@5": 0.5725,
-      "noise_recall@3": 0.537037,
-      "noise_recall@5": 0.555556,
-      "noise_mrr": 0.537037,
-      "noise_ndcg@5": 0.528957,
+      "recall@3": 0.666667,
+      "recall@5": 0.685185,
+      "mrr": 0.623457,
+      "ndcg@5": 0.628714,
+      "noise_recall@3": 0.592593,
+      "noise_recall@5": 0.611111,
+      "noise_mrr": 0.567901,
+      "noise_ndcg@5": 0.5725,
       "noise_delta_recall@3": -0.074074,
       "noise_delta_recall@5": -0.074074,
-      "noise_delta_mrr": -0.04321,
-      "noise_delta_ndcg@5": -0.043543
+      "noise_delta_mrr": -0.055556,
+      "noise_delta_ndcg@5": -0.056214
     },
     "end_to_end": {
       "questions": 32.0,
@@ -186,5 +186,5 @@
     "end_to_end.faithfulness": 0.0,
     "end_to_end.human_labelled": 0
   },
-  "rescored_component": "nDCG@5 dedup fix, 25 Nov 2026 (eval/rescore_component.py)"
+  "rescored_component": "nDCG@5 dedup fix and gold pages re-read from the corrected golden set, 25 Nov 2026 (eval/rescore_component.py --golden)"
 }

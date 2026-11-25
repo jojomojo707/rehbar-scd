@@ -40,7 +40,7 @@ API `http://api-candidate:8000` | collection `rahbar-candidate-v20261125-122317`
 
 **Release gate: REJECT**
 
-- recall@5 0.500 dropped 0.130 below the baseline 0.630 (allowed drop 0.020)
+- recall@5 0.500 dropped 0.185 below the baseline 0.685 (allowed drop 0.020)
 
 Noise test = the same golden questions with seeded typos (`noise_*` = noisy value, `noise_delta_*` = noisy minus clean).
 Faithfulness = share of answered questions the judge found fully supported by the context recorded in their trace.

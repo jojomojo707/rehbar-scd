@@ -16,13 +16,29 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 
-def restrict(before_path: Path, before: dict, after_path: Path, after: dict) -> tuple[dict, dict]:
-    """Recompute means over the questions both runs share (golden sets can differ, e.g. E3)."""
+def restrict(before_path: Path, before: dict, after_path: Path, after: dict,
+             golden: Path | None = None) -> tuple[dict, dict]:
+    """Recompute means over the questions both runs share (golden sets can differ, e.g. E3).
+
+    With golden, each row's gold locations are re-read from that file first, so both runs are
+    scored against the same (corrected) gold pages.
+    """
     from eval.component_eval import score
     from eval.run_suite import end_to_end
 
+    gold = None
+    if golden is not None:
+        from eval.run_eval import load_golden
+        gold = {q["id"]: q["relevant"] for q in load_golden(golden)}
+
     def runs(path: Path) -> list[list[dict]]:
-        return [json.loads(f.read_text())["rows"] for f in sorted(path.parent.glob("e2e-run-*.json"))]
+        out = []
+        for f in sorted(path.parent.glob("e2e-run-*.json")):
+            rows = json.loads(f.read_text())["rows"]
+            if gold is not None:
+                rows = [{**r, "relevant": gold[r["id"]]} if r["id"] in gold else r for r in rows]
+            out.append(rows)
+        return out
 
     b_runs, a_runs = runs(before_path), runs(after_path)
     common = {r["id"] for r in b_runs[0]} & {r["id"] for r in a_runs[0]}
@@ -63,11 +79,14 @@ def main() -> int:
     parser.add_argument("--common-ids", action="store_true",
                         help="recompute component and end-to-end metrics from the per-question "
                              "rows, using only question ids present in both runs")
+    parser.add_argument("--golden", type=Path, default=None,
+                        help="with --common-ids: re-read gold locations from this golden file")
     args = parser.parse_args()
     before = json.loads(args.before.read_text())
     after = json.loads(args.after.read_text())
     if args.common_ids:
-        before, after = restrict(args.before, before, args.after, after)
+        before, after = restrict(args.before, before, args.after, after,
+                                 args.golden)
     lines = [f"# {args.before_name} vs {args.after_name}", ""]
     for name, suite in ((args.before_name, before), (args.after_name, after)):
         serving = suite.get("serving", {})
