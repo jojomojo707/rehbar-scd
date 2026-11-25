@@ -64,6 +64,12 @@ reviewed = sum(g["origin"] == "synthetic" and (g.get("manual_review") or {}).get
                == "reviewed" and g["manual_review"].get("reviewer") for g in golden)
 reviewers = sorted({g["manual_review"]["reviewer"] for g in golden
                     if (g.get("manual_review") or {}).get("status") == "reviewed"})
+ai_checked = sum(g["origin"] == "synthetic" and (g.get("manual_review") or {}).get("status")
+                 == "ai-checked" for g in golden)
+ai_flagged = [g["id"] for g in golden if g["origin"] == "synthetic"
+              and (g.get("manual_review") or {}).get("status") == "ai-flagged"]
+ai_labels_path = ROOT / "eval" / "ai_labels.json"
+ai_labels = load(ai_labels_path)["labels"] if ai_labels_path.exists() else []
 labels_path = ROOT / "eval" / "human_labels.json"
 labels = load(labels_path)["labels"] if labels_path.exists() else []
 verif = {Path(p).stem: load(Path(p)) for p in sorted(glob.glob(str(RUNS / "verification" / "*.json")))}
@@ -195,6 +201,15 @@ judge_line = (f"{n_agree}/{n_lab} = {n_agree / n_lab:.0%} agreement; humans judg
               "<span class=todo>pending: fewer than 8 hand labels recorded (eval/label_answers.py)</span>")
 review_line = (f"{reviewed} synthetic questions hand-reviewed by {', '.join(reviewers)}"
                if reviewed else "<span class=todo>pending hand review (eval/review_synthetic.py)</span>")
+if ai_checked or ai_flagged:
+    review_line += (f"; AI pre-check (Claude, not a hand review): {ai_checked} matched the "
+                    f"source, {len(ai_flagged)} flagged ({', '.join(ai_flagged)})")
+if ai_labels:
+    ai_agree = sum(1 for lb in ai_labels for r in load(base_dir / "e2e-run-1.json")["rows"]
+                   if r["id"] == lb["id"]
+                   and (r.get("faithfulness") or {}).get("faithful") == lb["faithful"])
+    judge_line += (f"; AI second opinion (Claude, not a hand label) agrees with the judge on "
+                   f"{ai_agree}/{len(ai_labels)}")
 e3_answer = e3_row("answer_rate_answerable")
 e3_fb = e3_row("provider_or_validation_fallbacks")
 
