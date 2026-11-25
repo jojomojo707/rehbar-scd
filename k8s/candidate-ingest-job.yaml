@@ -73,11 +73,11 @@ spec:
             name: rahbar-candidate-config
         resources:
           requests:
-            cpu: 500m
-            memory: 2200Mi
+            cpu: "2"
+            memory: 2600Mi
           limits:
-            cpu: '2'
-            memory: 3Gi
+            cpu: "2"
+            memory: 3584Mi
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true

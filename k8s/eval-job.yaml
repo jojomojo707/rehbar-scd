@@ -89,12 +89,12 @@ spec:
             - name: EMBED_CACHE_DIR
               value: /models
           resources:
-            requests:
-              cpu: 250m
-              memory: 512Mi
+            requests:          # measured peak 410Mi, 50m (docs/evidence/a03/F5-resource-peaks.md)
+              cpu: 100m
+              memory: 448Mi
             limits:
               cpu: "1"
-              memory: 1Gi
+              memory: 768Mi
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

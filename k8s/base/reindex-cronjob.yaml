@@ -102,15 +102,16 @@ spec:
                   value: /batch
               # OCR at 300 dpi and embedding batches are the memory peak of the system. The real
               # corpus at CHUNK_SIZE 480 was OOM-killed (exit 137) at 2Gi on 5 Nov. Measured on 6 Nov
-              # (docs/evidence/kubectl-top-indexer.txt): peak 2108Mi, CPU pinned at the 2-CPU limit for
-              # the 18-minute embedding phase. Request 2200Mi = peak; limit 3Gi = peak + 46%.
+              # (docs/evidence/kubectl-top-indexer.txt): peak 2108Mi. Re-measured 25 Nov with the A03 lake
+              # (docs/evidence/a03/F5-resource-peaks.md): peak 2586Mi, CPU pinned at 2 cores while embedding.
+              # Request = measured CPU and memory peak; memory limit 3584Mi = peak + 39%.
               resources:
                 requests:
-                  cpu: 500m
-                  memory: 2200Mi
+                  cpu: "2"
+                  memory: 2600Mi
                 limits:
                   cpu: "2"
-                  memory: 3Gi
+                  memory: 3584Mi
               securityContext:
                 allowPrivilegeEscalation: false
                 readOnlyRootFilesystem: true
