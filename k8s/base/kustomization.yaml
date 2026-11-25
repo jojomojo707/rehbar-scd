@@ -14,9 +14,7 @@ resources:
   - release-gate-configmap.yaml
   - candidate-configmap.yaml
   - api-candidate.yaml
-  - evaluation-cronjob.yaml
-  - release-gate-check-cronjob.yaml
-  - batch-b-ingest-cronjob.yaml
+  - eval-target-configmap.yaml
   - api.yaml
   - hpa.yaml
   - ui.yaml

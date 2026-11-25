@@ -323,11 +323,11 @@ def run_pipeline(settings: IndexerSettings, *, batch_dir: str | None = None,
             raise SystemExit(f"no documents found in {settings.corpus_dir}")
         corpus_sources = {doc.source for doc in corpus}
         sources.update({doc.source: doc for doc in corpus})
-    if batch_dir:
+    if batch_dir and Path(batch_dir).is_dir():
+        # The Job mounts the optional ConfigMap `ingest-batch` here; empty means no batch.
         name = batch_name or Path(batch_dir).name
         batch = discover(batch_dir, name)
-        if not batch:
-            raise SystemExit(f"no documents found in batch {batch_dir}")
+        log("batch input", batch_dir=batch_dir, batch_name=name, documents=len(batch))
         sources.update({doc.source: doc for doc in batch})
     if not sources and not lake.entries:
         raise SystemExit("no corpus, batch or data-lake documents to index")

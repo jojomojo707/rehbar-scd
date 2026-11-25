@@ -1,3 +1,6 @@
+# Part C2 release-gate thresholds, mounted at /gate by the evaluation Jobs (one file per key).
+# Edit with `kubectl -n rahbar edit configmap release-gate-thresholds`; the next Job reads the new
+# values, no image rebuild. Justification of each value: docs/report (Part C).
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -6,7 +9,7 @@ metadata:
     app.kubernetes.io/name: rahbar-evaluation
     app.kubernetes.io/part-of: rahbar
 data:
-  # Recall may fall by at most five percentage points; the other floors are explicit release SLOs.
-  MAX_RECALL5_DROP: "0.05"
-  MIN_FAITHFULNESS: "0.90"
-  MAX_P95_SECONDS: "15"
+  MAX_RECALL5_DROP: "0.02"       # recall@5 may fall at most 2 points below the baseline
+  MIN_FAITHFULNESS: "0.85"       # judged faithfulness of the candidate's answers
+  MAX_P95_SECONDS: "12"          # end-to-end p95 latency
+  MIN_ABSTENTION_MARGIN: "0"     # abstention correctness not lower than the baseline

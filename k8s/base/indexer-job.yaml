@@ -81,6 +81,11 @@ spec:
           envFrom:
             - configMapRef:
                 name: rahbar-config
+          # Part A batch input: `kubectl create configmap ingest-batch --from-file=<dir>` puts new
+          # documents here; without that ConfigMap the directory is empty and only the corpus runs.
+          env:
+            - name: BATCH_DIR
+              value: /batch
           # OCR at 300 dpi and embedding batches are the memory peak of the system. The real
           # corpus at CHUNK_SIZE 480 was OOM-killed (exit 137) at 2Gi on 5 Nov. Measured on 6 Nov
           # (docs/evidence/kubectl-top-indexer.txt): peak 2108Mi, CPU pinned at the 2-CPU limit for
@@ -104,6 +109,9 @@ spec:
               readOnly: true   # only fetch-corpus writes the corpus
             - name: pipeline-data
               mountPath: /pipeline-data
+            - name: batch
+              mountPath: /batch
+              readOnly: true
             - name: tmp
               mountPath: /tmp
       volumes:
@@ -113,6 +121,10 @@ spec:
         - name: pipeline-data
           persistentVolumeClaim:
             claimName: pipeline-data
+        - name: batch
+          configMap:
+            name: ingest-batch
+            optional: true
         - name: tmp
           emptyDir:
             sizeLimit: 1Gi

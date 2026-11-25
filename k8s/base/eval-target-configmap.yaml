@@ -1,0 +1,13 @@
+# Which API the Part B suite Job (k8s/eval-job.yaml) tests, and how its result is used:
+#   EVAL_LABEL=baseline   save the result as the gate baseline (/pipeline-data/eval/baseline)
+#   any other label       compare with the baseline through the release gate; exit 1 on REJECT
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: eval-target
+  labels:
+    app.kubernetes.io/name: rahbar-evaluation
+    app.kubernetes.io/part-of: rahbar
+data:
+  EVAL_API_URL: "http://api-candidate:8000"
+  EVAL_LABEL: "candidate"
