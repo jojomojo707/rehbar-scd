@@ -71,6 +71,12 @@ class DataLake:
         self.quarantine_root = self.root / "quarantine"
         self.inbox_root = self.root / "inbox"
         self.entries: dict[str, LakeEntry] = {}
+        # Quarantined sources by file name: the digest that failed, the run and the reasons.
+        # An unchanged quarantined file is not re-verified (or accepted) on later runs.
+        self.registry_path = self.root / "lake" / "quarantine-registry.json"
+        self.quarantined: dict[str, dict[str, object]] = (
+            json.loads(self.registry_path.read_text(encoding="utf-8"))
+            if self.registry_path.exists() else {})
         if self.manifest_path.exists():
             raw = json.loads(self.manifest_path.read_text(encoding="utf-8"))
             self.entries = {key: LakeEntry(**value) for key, value in raw.items()}
@@ -92,8 +98,11 @@ class DataLake:
         shutil.copy2(source_path, target)
         return target
 
-    def quarantine(self, staged: Path, run_id: str, reasons: dict[str, str]) -> Path:
+    def quarantine(self, staged: Path, run_id: str, reasons: dict[str, str],
+                   digest: str = "") -> Path:
         target = self.quarantine_root / run_id / staged.name
+        self.quarantined[staged.name] = {"sha256": digest, "run_id": run_id,
+                                         "failed_checks": reasons, "path": str(target)}
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.move(str(staged), target)
         (target.parent / f"{staged.name}.reason.json").write_text(
@@ -125,6 +134,7 @@ class DataLake:
             actions.append(f"archived replaced {old.source} {old.doc_version}")
             entry.history = [*old.history, {"version": old.doc_version, "sha256": old.sha256,
                                             "archived_to": replaced.path, "at": now()}]
+        self.quarantined.pop(entry.source, None)
         target = self.docs / entry.source
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.move(str(staged), target)
@@ -196,6 +206,8 @@ class DataLake:
         tmp = self.manifest_path.with_suffix(".tmp")
         tmp.write_text(json.dumps(payload, indent=1) + "\n", encoding="utf-8")
         tmp.replace(self.manifest_path)
+        self.registry_path.write_text(json.dumps(self.quarantined, indent=1, sort_keys=True)
+                                      + "\n", encoding="utf-8")
 
 
 def _safe(text: str) -> str:

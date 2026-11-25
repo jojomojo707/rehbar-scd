@@ -152,3 +152,14 @@ def test_superseded_version_restore_flips_metadata_without_re_embedding(env):
     assert result["summary"]["embedded_chunks"] == 0
     assert sorted(result["incremental"]["superseded_flag_changes"]) == [
         "academic-rules-2023.md", "academic-rules-2026.md"]
+
+
+def test_unchanged_quarantined_file_stays_quarantined(env):
+    settings, _corpus, client = env
+    run.run_pipeline(settings, batch_dir=str(BATCH_B))
+    lake = DataLake(settings.pipeline_data_dir)
+    lake.delete("library-policy.md", "deleted by operator")   # the copy is no longer a dupe
+    lake.save()
+    again = report(run.run_pipeline(settings, batch_dir=str(BATCH_B)))
+    assert again["summary"]["still_quarantined"] == 6 and again["summary"]["verified"] == 0
+    assert "library-policy_copy.md" not in chunks_by_source(client)
