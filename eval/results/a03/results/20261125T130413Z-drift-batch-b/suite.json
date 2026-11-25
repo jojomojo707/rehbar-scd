@@ -32,18 +32,18 @@
       },
       "component": {
         "n_answerable": 34,
-        "recall@3": 0.779412,
-        "recall@5": 0.823529,
-        "mrr": 0.706863,
-        "ndcg@5": 0.719861,
-        "noise_recall@3": 0.691176,
-        "noise_recall@5": 0.764706,
-        "noise_mrr": 0.670098,
-        "noise_ndcg@5": 0.683244,
-        "noise_delta_recall@3": -0.088236,
+        "recall@3": 0.823529,
+        "recall@5": 0.867647,
+        "mrr": 0.741176,
+        "ndcg@5": 0.764502,
+        "noise_recall@3": 0.735294,
+        "noise_recall@5": 0.808824,
+        "noise_mrr": 0.694608,
+        "noise_ndcg@5": 0.717822,
+        "noise_delta_recall@3": -0.088235,
         "noise_delta_recall@5": -0.058823,
-        "noise_delta_mrr": -0.036765,
-        "noise_delta_ndcg@5": -0.036617
+        "noise_delta_mrr": -0.046568,
+        "noise_delta_ndcg@5": -0.04668
       },
       "end_to_end": {
         "questions": 47,
@@ -76,18 +76,18 @@
     },
     "component": {
       "n_answerable": 34.0,
-      "recall@3": 0.779412,
-      "recall@5": 0.823529,
-      "mrr": 0.706863,
-      "ndcg@5": 0.719861,
-      "noise_recall@3": 0.691176,
-      "noise_recall@5": 0.764706,
-      "noise_mrr": 0.670098,
-      "noise_ndcg@5": 0.683244,
-      "noise_delta_recall@3": -0.088236,
+      "recall@3": 0.823529,
+      "recall@5": 0.867647,
+      "mrr": 0.741176,
+      "ndcg@5": 0.764502,
+      "noise_recall@3": 0.735294,
+      "noise_recall@5": 0.808824,
+      "noise_mrr": 0.694608,
+      "noise_ndcg@5": 0.717822,
+      "noise_delta_recall@3": -0.088235,
       "noise_delta_recall@5": -0.058823,
-      "noise_delta_mrr": -0.036765,
-      "noise_delta_ndcg@5": -0.036617
+      "noise_delta_mrr": -0.046568,
+      "noise_delta_ndcg@5": -0.04668
     },
     "end_to_end": {
       "questions": 47.0,
@@ -122,5 +122,5 @@
     },
     "decision": "REJECT"
   },
-  "rescored_component": "nDCG@5 dedup fix, 25 Nov 2026 (eval/rescore_component.py)"
+  "rescored_component": "nDCG@5 dedup fix and gold pages re-read from the corrected golden set, 25 Nov 2026 (eval/rescore_component.py --golden)"
 }

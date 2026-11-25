@@ -32,18 +32,18 @@
       },
       "component": {
         "n_answerable": 27,
-        "recall@3": 0.611111,
-        "recall@5": 0.62963,
-        "mrr": 0.580247,
-        "ndcg@5": 0.5725,
-        "noise_recall@3": 0.537037,
-        "noise_recall@5": 0.555556,
-        "noise_mrr": 0.518519,
-        "noise_ndcg@5": 0.515288,
-        "noise_delta_recall@3": -0.074074,
+        "recall@3": 0.666667,
+        "recall@5": 0.685185,
+        "mrr": 0.623457,
+        "ndcg@5": 0.628714,
+        "noise_recall@3": 0.555556,
+        "noise_recall@5": 0.611111,
+        "noise_mrr": 0.546296,
+        "noise_ndcg@5": 0.556263,
+        "noise_delta_recall@3": -0.111111,
         "noise_delta_recall@5": -0.074074,
-        "noise_delta_mrr": -0.061728,
-        "noise_delta_ndcg@5": -0.057212
+        "noise_delta_mrr": -0.077161,
+        "noise_delta_ndcg@5": -0.072451
       },
       "end_to_end": {
         "questions": 32,
@@ -75,18 +75,18 @@
       },
       "component": {
         "n_answerable": 27,
-        "recall@3": 0.611111,
-        "recall@5": 0.62963,
-        "mrr": 0.580247,
-        "ndcg@5": 0.5725,
-        "noise_recall@3": 0.537037,
-        "noise_recall@5": 0.555556,
-        "noise_mrr": 0.518519,
-        "noise_ndcg@5": 0.515288,
-        "noise_delta_recall@3": -0.074074,
+        "recall@3": 0.666667,
+        "recall@5": 0.685185,
+        "mrr": 0.623457,
+        "ndcg@5": 0.628714,
+        "noise_recall@3": 0.555556,
+        "noise_recall@5": 0.611111,
+        "noise_mrr": 0.546296,
+        "noise_ndcg@5": 0.556263,
+        "noise_delta_recall@3": -0.111111,
         "noise_delta_recall@5": -0.074074,
-        "noise_delta_mrr": -0.061728,
-        "noise_delta_ndcg@5": -0.057212
+        "noise_delta_mrr": -0.077161,
+        "noise_delta_ndcg@5": -0.072451
       },
       "end_to_end": {
         "questions": 32,
@@ -119,18 +119,18 @@
     },
     "component": {
       "n_answerable": 27.0,
-      "recall@3": 0.611111,
-      "recall@5": 0.62963,
-      "mrr": 0.580247,
-      "ndcg@5": 0.5725,
-      "noise_recall@3": 0.537037,
-      "noise_recall@5": 0.555556,
-      "noise_mrr": 0.518519,
-      "noise_ndcg@5": 0.515288,
-      "noise_delta_recall@3": -0.074074,
+      "recall@3": 0.666667,
+      "recall@5": 0.685185,
+      "mrr": 0.623457,
+      "ndcg@5": 0.628714,
+      "noise_recall@3": 0.555556,
+      "noise_recall@5": 0.611111,
+      "noise_mrr": 0.546296,
+      "noise_ndcg@5": 0.556263,
+      "noise_delta_recall@3": -0.111111,
       "noise_delta_recall@5": -0.074074,
-      "noise_delta_mrr": -0.061728,
-      "noise_delta_ndcg@5": -0.057212
+      "noise_delta_mrr": -0.077161,
+      "noise_delta_ndcg@5": -0.072451
     },
     "end_to_end": {
       "questions": 32.0,
@@ -195,7 +195,9 @@
       "MAX_P95_SECONDS": 12.0,
       "MIN_ABSTENTION_MARGIN": 0.0
     },
-    "decision": "PASS"
+    "decision": "PASS",
+    "failures_at_run_time": [],
+    "rescored_note": "failures recomputed after the gold-page correction; decision unchanged"
   },
-  "rescored_component": "nDCG@5 dedup fix, 25 Nov 2026 (eval/rescore_component.py)"
+  "rescored_component": "nDCG@5 dedup fix and gold pages re-read from the corrected golden set, 25 Nov 2026 (eval/rescore_component.py --golden)"
 }

@@ -12,10 +12,10 @@
 | module | embed_seconds_per_chunk_p95 | 0.01498 | 0.01588 | +0.000904 |
 | module | determinism_max_abs_diff | 0 | 0 | +0 |
 | component | n_answerable | 27 | 27 | +0 |
-| component | recall@3 | 0.6111 | 0.8333 | +0.2222 |
-| component | recall@5 | 0.6296 | 0.8519 | +0.2222 |
-| component | mrr | 0.5802 | 0.7778 | +0.1975 |
-| component | ndcg@5 | 0.7262 | 1.009 | +0.2833 |
+| component | recall@3 | 0.6667 | 0.8889 | +0.2222 |
+| component | recall@5 | 0.6852 | 0.9074 | +0.2222 |
+| component | mrr | 0.6235 | 0.821 | +0.1975 |
+| component | ndcg@5 | 0.6287 | 0.8324 | +0.2037 |
 | end_to_end | questions | 32 | 32 | +0 |
 | end_to_end | abstention_correctness | 1 | 1 | +0 |
 | end_to_end | answer_rate_answerable | 0.463 | 0.03704 | -0.4259 |
