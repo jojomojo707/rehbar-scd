@@ -69,6 +69,8 @@ class HostedProvider:
             "reasoning_effort": self.settings.llm_reasoning_effort,
             "response_format": response_format,
         }
+        if self.settings.llm_seed is not None:
+            payload["seed"] = self.settings.llm_seed
         try:
             response = self._client.post(
                 f"{base_url}/chat/completions",
