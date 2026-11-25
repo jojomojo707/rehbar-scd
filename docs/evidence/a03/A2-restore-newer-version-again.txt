@@ -1,0 +1,23 @@
+job.batch/lake-admin created
+NAME         STATUS     COMPLETIONS   DURATION   AGE
+lake-admin   Complete   1/1           8s         8s
+  lake: restored faculty-entrepreneurship-policy-revision-2026.md 2026-11; archived superseded faculty-entrepreneurship-and-technical-start-ups-policy.pdf 2022-05 (newer: faculty-entrepreneurship-policy-revision-2026.md 2026-11) [faculty-entrepreneurship-and-technical-start-ups-policy]; faculty-entrepreneurship-policy-revision-2026.md 2026-11 is current again
+  run: {'unchanged': 16, 'verified': 0, 'lake_current': 12, 'lake_superseded': 3, 'lake_deleted': 1, 'embedded_chunks': 0, 'reused_chunks': 782}
+  new collection: rahbar-v20261125-130024
+collection rahbar-v20261125-130024: 782 chunks, 15 documents
+document id                                          version    superseded chunks
+academic-rules-handbook-jun-2026.pdf                 2026-06    False      201
+accessibility-policy.md                              2026-11    False      3
+annual-report-2019-20.pdf                            2019-20    True       59
+annual-report-2023-24.pdf                            2023-24    False      192
+examination-conduct-guidelines.md                    2026-11    False      3
+faculty-entrepreneurship-and-technical-start-ups-policy.pdf 2022-05    True       18
+faculty-entrepreneurship-policy-revision-2026.md     2026-11    False      3
+fee-structure-page.html                              2026-27    False      9
+grading-page.html                                    2026       False      7
+it-acceptable-use-policy.md                          2026-11    False      3
+library-policy.md                                    2026-11    False      3
+prospectus-2026-academic-rules-and-regulations.pdf   2026       False      21
+scholarship-policy.md                                2026-11    False      3
+student-handbook-jun-2026.pdf                        2026-06    False      135
+undergraduate-academic-rules-aug-2023.pdf            2023-08    True       122

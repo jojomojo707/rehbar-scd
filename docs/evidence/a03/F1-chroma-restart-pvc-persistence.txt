@@ -1,0 +1,25 @@
+$ kubectl -n rahbar get pods chroma-0; kubectl -n rahbar logs job/indexer -c indexer
+NAME       READY   STATUS    RESTARTS   AGE
+chroma-0   1/1     Running   0          44s
+{"ts": "2026-11-25T15:07:16Z", "logger": "rahbar.indexer", "msg": "indexer starting", "dummy": false, "embed_model": "BAAI/bge-small-en-v1.5", "collection": "rahbar", "chroma": "chroma:8000", "chunk_size": 480, "batch_dir": "/batch", "pod": "indexer-8qcm2"}
+{"ts": "2026-11-25T15:07:16Z", "logger": "rahbar.indexer", "msg": "batch input", "batch_dir": "/batch", "batch_name": "batch", "documents": 12}
+{"ts": "2026-11-25T15:07:16Z", "logger": "rahbar.indexer", "msg": "no new or changed documents to verify"}
+[0;93m2026-11-25 15:07:17.761596988 [W:onnxruntime:Default, telemetry_1ds.cc:600 operator()] Failed to persist telemetry device ID; using an in-memory identifier[m
+{"ts": "2026-11-25T15:07:17Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-handbook-jun-2026.pdf", "status": "current", "chunks": 201}
+{"ts": "2026-11-25T15:07:17Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "accessibility-policy.md", "status": "current", "chunks": 3}
+{"ts": "2026-11-25T15:07:17Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "annual-report-2019-20.pdf", "status": "superseded", "chunks": 59}
+{"ts": "2026-11-25T15:07:17Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "annual-report-2023-24.pdf", "status": "current", "chunks": 192}
+{"ts": "2026-11-25T15:07:17Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "examination-conduct-guidelines.md", "status": "current", "chunks": 3}
+{"ts": "2026-11-25T15:07:17Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "faculty-entrepreneurship-and-technical-start-ups-policy.pdf", "status": "superseded", "chunks": 18}
+{"ts": "2026-11-25T15:07:17Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "faculty-entrepreneurship-policy-revision-2026.md", "status": "current", "chunks": 3}
+{"ts": "2026-11-25T15:07:17Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "fee-structure-page.html", "status": "current", "chunks": 9}
+{"ts": "2026-11-25T15:07:17Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "grading-page.html", "status": "current", "chunks": 7}
+{"ts": "2026-11-25T15:07:17Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "it-acceptable-use-policy.md", "status": "current", "chunks": 3}
+{"ts": "2026-11-25T15:07:17Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "library-policy.md", "status": "current", "chunks": 3}
+{"ts": "2026-11-25T15:07:17Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "prospectus-2026-academic-rules-and-regulations.pdf", "status": "current", "chunks": 21}
+{"ts": "2026-11-25T15:07:17Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "scholarship-policy.md", "status": "current", "chunks": 3}
+{"ts": "2026-11-25T15:07:17Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "student-handbook-jun-2026.pdf", "status": "current", "chunks": 135}
+{"ts": "2026-11-25T15:07:17Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "undergraduate-academic-rules-aug-2023.pdf", "status": "superseded", "chunks": 122}
+{"ts": "2026-11-25T15:07:17Z", "logger": "rahbar.indexer", "msg": "index unchanged: every document reused, active collection kept", "collection": "rahbar-v20261125-130024", "embedded_chunks": 0, "reused_chunks": 782}
+{"ts": "2026-11-25T15:07:17Z", "logger": "rahbar.indexer", "msg": "verification report written", "report": "/pipeline-data/eval/results/verification/20261125T150716Z-8cd7fc3c.json", "documents_seen": 21, "unchanged": 16, "still_quarantined": 5, "verified": 0, "passed": 0, "quarantined": 0, "archived_superseded_on_arrival": 0, "lake_current": 12, "lake_superseded": 3, "lake_deleted": 1, "embedded_chunks": 0, "reused_chunks": 782}
+{"ts": "2026-11-25T15:07:17Z", "logger": "rahbar.indexer", "msg": "indexer finished", "run_id": "20261125T150716Z-8cd7fc3c", "verification_report": "/pipeline-data/eval/results/verification/20261125T150716Z-8cd7fc3c.json", "collection": "rahbar-v20261125-130024", "summary": {"documents_seen": 21, "unchanged": 16, "still_quarantined": 5, "verified": 0, "passed": 0, "quarantined": 0, "archived_superseded_on_arrival": 0, "lake_current": 12, "lake_superseded": 3, "lake_deleted": 1, "embedded_chunks": 0, "reused_chunks": 782}, "seconds": 1.8}

@@ -1,0 +1,41 @@
+{"ts": "2026-11-25T13:00:00Z", "logger": "rahbar.indexer", "msg": "indexer starting", "dummy": false, "embed_model": "BAAI/bge-small-en-v1.5", "collection": "rahbar", "chroma": "chroma:8000", "chunk_size": 480, "batch_dir": "/batch", "pod": "lake-admin-xtk7l"}
+{"ts": "2026-11-25T13:00:00Z", "logger": "rahbar.indexer", "msg": "batch input", "batch_dir": "/batch", "batch_name": "batch", "documents": 12}
+{"ts": "2026-11-25T13:00:00Z", "logger": "rahbar.indexer", "msg": "no new or changed documents to verify"}
+[0;93m2026-11-25 13:00:01.460576662 [W:onnxruntime:Default, telemetry_1ds.cc:600 operator()] Failed to persist telemetry device ID; using an in-memory identifier[m
+{"ts": "2026-11-25T13:00:01Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-handbook-jun-2026.pdf", "status": "current", "chunks": 201}
+{"ts": "2026-11-25T13:00:01Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "accessibility-policy.md", "status": "current", "chunks": 3}
+{"ts": "2026-11-25T13:00:01Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "annual-report-2019-20.pdf", "status": "superseded", "chunks": 59}
+{"ts": "2026-11-25T13:00:01Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "annual-report-2023-24.pdf", "status": "current", "chunks": 192}
+{"ts": "2026-11-25T13:00:01Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "examination-conduct-guidelines.md", "status": "current", "chunks": 3}
+{"ts": "2026-11-25T13:00:01Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "faculty-entrepreneurship-and-technical-start-ups-policy.pdf", "status": "superseded", "chunks": 18}
+{"ts": "2026-11-25T13:00:01Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "faculty-entrepreneurship-policy-revision-2026.md", "status": "current", "chunks": 3}
+{"ts": "2026-11-25T13:00:01Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "fee-structure-page.html", "status": "current", "chunks": 9}
+{"ts": "2026-11-25T13:00:01Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "grading-page.html", "status": "current", "chunks": 7}
+{"ts": "2026-11-25T13:00:01Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "it-acceptable-use-policy.md", "status": "current", "chunks": 3}
+{"ts": "2026-11-25T13:00:01Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "library-policy.md", "status": "current", "chunks": 3}
+{"ts": "2026-11-25T13:00:01Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "prospectus-2026-academic-rules-and-regulations.pdf", "status": "current", "chunks": 21}
+{"ts": "2026-11-25T13:00:01Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "scholarship-policy.md", "status": "current", "chunks": 3}
+{"ts": "2026-11-25T13:00:01Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "student-handbook-jun-2026.pdf", "status": "current", "chunks": 135}
+{"ts": "2026-11-25T13:00:01Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "undergraduate-academic-rules-aug-2023.pdf", "status": "superseded", "chunks": 122}
+{"ts": "2026-11-25T13:00:05Z", "logger": "rahbar.indexer", "msg": "lake", "action": "restored library-policy.md 2026-11; library-policy.md 2026-11 is current again"}
+{"ts": "2026-11-25T13:00:05Z", "logger": "rahbar.indexer", "msg": "verification report written", "report": "/pipeline-data/eval/results/verification/20261125T130000Z-ba1a2f04.json", "documents_seen": 21, "unchanged": 16, "still_quarantined": 5, "verified": 0, "passed": 0, "quarantined": 0, "archived_superseded_on_arrival": 0, "lake_current": 12, "lake_superseded": 3, "lake_deleted": 1, "embedded_chunks": 3, "reused_chunks": 779}
+{"ts": "2026-11-25T13:00:05Z", "logger": "rahbar.indexer", "msg": "indexer finished", "run_id": "20261125T130000Z-ba1a2f04", "verification_report": "/pipeline-data/eval/results/verification/20261125T130000Z-ba1a2f04.json", "collection": "rahbar-v20261125-130002", "summary": {"documents_seen": 21, "unchanged": 16, "still_quarantined": 5, "verified": 0, "passed": 0, "quarantined": 0, "archived_superseded_on_arrival": 0, "lake_current": 12, "lake_superseded": 3, "lake_deleted": 1, "embedded_chunks": 3, "reused_chunks": 779}, "seconds": 5.1}
+collection rahbar-v20261125-130002: 782 chunks, 15 documents
+document id                                          version    superseded chunks
+academic-rules-handbook-jun-2026.pdf                 2026-06    False      201
+accessibility-policy.md                              2026-11    False      3
+annual-report-2019-20.pdf                            2019-20    True       59
+annual-report-2023-24.pdf                            2023-24    False      192
+examination-conduct-guidelines.md                    2026-11    False      3
+faculty-entrepreneurship-and-technical-start-ups-policy.pdf 2022-05    True       18
+faculty-entrepreneurship-policy-revision-2026.md     2026-11    False      3
+fee-structure-page.html                              2026-27    False      9
+grading-page.html                                    2026       False      7
+it-acceptable-use-policy.md                          2026-11    False      3
+library-policy.md                                    2026-11    False      3
+prospectus-2026-academic-rules-and-regulations.pdf   2026       False      21
+scholarship-policy.md                                2026-11    False      3
+student-handbook-jun-2026.pdf                        2026-06    False      135
+undergraduate-academic-rules-aug-2023.pdf            2023-08    True       122
+where source == 'library-policy.md': 3 chunks
+{"collection": "rahbar-v20261125-130002", "documents": {"academic-rules-handbook-jun-2026.pdf": {"chunks": 201, "doc_version": "2026-06", "superseded": false}, "accessibility-policy.md": {"chunks": 3, "doc_version": "2026-11", "superseded": false}, "annual-report-2019-20.pdf": {"chunks": 59, "doc_version": "2019-20", "superseded": true}, "annual-report-2023-24.pdf": {"chunks": 192, "doc_version": "2023-24", "superseded": false}, "examination-conduct-guidelines.md": {"chunks": 3, "doc_version": "2026-11", "superseded": false}, "faculty-entrepreneurship-and-technical-start-ups-policy.pdf": {"chunks": 18, "doc_version": "2022-05", "superseded": true}, "faculty-entrepreneurship-policy-revision-2026.md": {"chunks": 3, "doc_version": "2026-11", "superseded": false}, "fee-structure-page.html": {"chunks": 9, "doc_version": "2026-27", "superseded": false}, "grading-page.html": {"chunks": 7, "doc_version": "2026", "superseded": false}, "it-acceptable-use-policy.md": {"chunks": 3, "doc_version": "2026-11", "superseded": false}, "library-policy.md": {"chunks": 3, "doc_version": "2026-11", "superseded": false}, "prospectus-2026-academic-rules-and-regulations.pdf": {"chunks": 21, "doc_version": "2026", "superseded": false}, "scholarship-policy.md": {"chunks": 3, "doc_version": "2026-11", "superseded": false}, "student-handbook-jun-2026.pdf": {"chunks": 135, "doc_version": "2026-06", "superseded": false}, "undergraduate-academic-rules-aug-2023.pdf": {"chunks": 122, "doc_version": "2023-08", "superseded": true}}}

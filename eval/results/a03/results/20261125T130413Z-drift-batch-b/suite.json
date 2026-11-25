@@ -1,0 +1,126 @@
+{
+  "stamp": "20261125T130413Z",
+  "label": "drift-batch-b",
+  "api": "http://api:8000",
+  "seed": 20261125,
+  "golden": "/app/eval/golden.jsonl",
+  "questions": 47,
+  "serving": {
+    "collection": "rahbar",
+    "collection_version": "rahbar-v20261125-130024",
+    "embedding_model": "BAAI/bge-small-en-v1.5",
+    "embedding_version": "BAAI/bge-small-en-v1.5@aa8f8b060edb/onnx-sha256:51f1bd0addd6e859",
+    "model_parameters": {
+      "provider": "hosted",
+      "model": "openai/gpt-oss-20b",
+      "temperature": 0.2,
+      "top_k": 5,
+      "max_tokens": 1024,
+      "reasoning_effort": "low",
+      "seed": null
+    }
+  },
+  "runs": [
+    {
+      "module": {
+        "paraphrase_mean_cosine": 0.85722372,
+        "unrelated_mean_cosine": 0.55526288,
+        "gap": 0.30196084,
+        "embed_seconds_per_chunk_mean": 0.01305883,
+        "embed_seconds_per_chunk_p95": 0.01588035,
+        "determinism_max_abs_diff": 0.0
+      },
+      "component": {
+        "n_answerable": 34,
+        "recall@3": 0.779412,
+        "recall@5": 0.823529,
+        "mrr": 0.706863,
+        "ndcg@5": 0.719861,
+        "noise_recall@3": 0.691176,
+        "noise_recall@5": 0.764706,
+        "noise_mrr": 0.670098,
+        "noise_ndcg@5": 0.683244,
+        "noise_delta_recall@3": -0.088236,
+        "noise_delta_recall@5": -0.058823,
+        "noise_delta_mrr": -0.036765,
+        "noise_delta_ndcg@5": -0.036617
+      },
+      "end_to_end": {
+        "questions": 47,
+        "abstention_correctness": 1.0,
+        "answer_rate_answerable": 0.029412,
+        "citation_validity": 1.0,
+        "e2e_recall@5": 0.838235,
+        "fallbacks": 29,
+        "cache_hits": 0,
+        "latency_p50_seconds": 10.553,
+        "latency_p95_seconds": 14.834,
+        "answered": 1,
+        "judged": 1,
+        "faithful": 1,
+        "faithfulness": 1.0,
+        "judge_model": "openai/gpt-oss-120b",
+        "human_labelled": 0,
+        "judge_human_agreement": null
+      }
+    }
+  ],
+  "mean": {
+    "module": {
+      "paraphrase_mean_cosine": 0.857224,
+      "unrelated_mean_cosine": 0.555263,
+      "gap": 0.301961,
+      "embed_seconds_per_chunk_mean": 0.013059,
+      "embed_seconds_per_chunk_p95": 0.01588,
+      "determinism_max_abs_diff": 0.0
+    },
+    "component": {
+      "n_answerable": 34.0,
+      "recall@3": 0.779412,
+      "recall@5": 0.823529,
+      "mrr": 0.706863,
+      "ndcg@5": 0.719861,
+      "noise_recall@3": 0.691176,
+      "noise_recall@5": 0.764706,
+      "noise_mrr": 0.670098,
+      "noise_ndcg@5": 0.683244,
+      "noise_delta_recall@3": -0.088236,
+      "noise_delta_recall@5": -0.058823,
+      "noise_delta_mrr": -0.036765,
+      "noise_delta_ndcg@5": -0.036617
+    },
+    "end_to_end": {
+      "questions": 47.0,
+      "abstention_correctness": 1.0,
+      "answer_rate_answerable": 0.029412,
+      "citation_validity": 1.0,
+      "e2e_recall@5": 0.838235,
+      "fallbacks": 29.0,
+      "cache_hits": 0.0,
+      "latency_p50_seconds": 10.553,
+      "latency_p95_seconds": 14.834,
+      "answered": 1.0,
+      "judged": 1.0,
+      "faithful": 1.0,
+      "faithfulness": 1.0,
+      "judge_model": "openai/gpt-oss-120b",
+      "human_labelled": 0.0,
+      "judge_human_agreement": null
+    }
+  },
+  "difference_run1_run2": {},
+  "gate": {
+    "baseline": "/pipeline-data/eval/baseline/suite.json",
+    "failures": [
+      "p95 latency 14.83s exceeds the maximum 12.00s"
+    ],
+    "thresholds": {
+      "MAX_RECALL5_DROP": 0.02,
+      "MIN_FAITHFULNESS": 0.85,
+      "MAX_P95_SECONDS": 12.0,
+      "MIN_ABSTENTION_MARGIN": 0.0
+    },
+    "decision": "REJECT"
+  },
+  "rescored_component": "nDCG@5 dedup fix, 25 Nov 2026 (eval/rescore_component.py)"
+}

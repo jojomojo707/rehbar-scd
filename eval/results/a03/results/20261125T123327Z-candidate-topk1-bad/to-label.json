@@ -1,0 +1,226 @@
+[
+  {
+    "id": "O01",
+    "answer_sha": "4d23789e09952773",
+    "question": "What language is used for instruction at FAST, apart from language and Islamic Studies courses?",
+    "answer": "English [academic-rules-handbook-jun-2026.pdf / 1.1 The medium of instruction and examinations for all courses is]",
+    "context": [
+      {
+        "document": "academic-rules-handbook-jun-2026.pdf",
+        "section": "1.1 The medium of instruction and examinations for all courses is",
+        "page": 7,
+        "text": "1.1 The medium of instruction and examinations for all courses is\nEnglish (except language courses, other than English, and Islamic Studies).\nAcademic Year"
+      }
+    ],
+    "faithful": null,
+    "labeller": ""
+  },
+  {
+    "id": "O02",
+    "answer_sha": "cc07193543830a66",
+    "question": "How many teaching weeks are in a regular semester, excluding makeup and final examination weeks?",
+    "answer": "16 [academic-rules-handbook-jun-2026.pdf / 1.6 A regular semester is spread over 16 weeks of teaching, one]",
+    "context": [
+      {
+        "document": "academic-rules-handbook-jun-2026.pdf",
+        "section": "1.6 A regular semester is spread over 16 weeks of teaching, one",
+        "page": 7,
+        "text": "1.6 A regular semester is spread over 16 weeks of teaching, one\nmakeup week and 2 weeks of final examinations.\nCredit Hour"
+      }
+    ],
+    "faithful": null,
+    "labeller": ""
+  },
+  {
+    "id": "O03",
+    "answer_sha": "d9ac7581bbe20ca8",
+    "question": "What does one credit hour of theory represent each week?",
+    "answer": "One credit hour of theory represents teaching a theory course for one classroom\u2011teaching hour each week throughout the semester [academic-rules-handbook-jun-2026.pdf / 1.7 1-credit hour implies teaching a theory course for one].",
+    "context": [
+      {
+        "document": "academic-rules-handbook-jun-2026.pdf",
+        "section": "1.7 1-credit hour implies teaching a theory course for one",
+        "page": 7,
+        "text": "1.7 1-credit hour implies teaching a theory course for one\nclassroom-teaching hour each week throughout the semester."
+      }
+    ],
+    "faithful": null,
+    "labeller": ""
+  },
+  {
+    "id": "O04",
+    "answer_sha": "8873f63e20335656",
+    "question": "How many courses is the normal undergraduate course load?",
+    "answer": "The normal undergraduate course load is 5 courses [academic-rules-handbook-jun-2026.pdf / 4.3 The normal course load is 5 courses. A final year student may].",
+    "context": [
+      {
+        "document": "academic-rules-handbook-jun-2026.pdf",
+        "section": "4.3 The normal course load is 5 courses. A final year student may",
+        "page": 19,
+        "text": "4.3 The normal course load is 5 courses. A final year student may\nregister in one additional course (inclusive of Final Year Project-FYP).\nRegistration of Students under Academic Warning"
+      }
+    ],
+    "faithful": null,
+    "labeller": ""
+  },
+  {
+    "id": "O05",
+    "answer_sha": "f1fc13639b83a319",
+    "question": "What happens when a student fails to meet course attendance requirements?",
+    "answer": "When a student fails to meet attendance requirements in a course, the student becomes ineligible to appear in the final examination of that course and will be assigned an F/A grade [academic-rules-handbook-jun-2026.pdf / 1.22 Failure to meet attendance requirements in a course will].",
+    "context": [
+      {
+        "document": "academic-rules-handbook-jun-2026.pdf",
+        "section": "1.22 Failure to meet attendance requirements in a course will",
+        "page": 10,
+        "text": "1.22 Failure to meet attendance requirements in a course will\nrender the student ineligible to appear in the final examination of the concerned course.\nConsequently, the student will be assigned F/A grade in the course.\nBachelor\u2019s Degree Requirements"
+      }
+    ],
+    "faithful": null,
+    "labeller": ""
+  },
+  {
+    "id": "O06",
+    "answer_sha": "8cf91d9689f98544",
+    "question": "What is the minimum CGPA required for an undergraduate degree?",
+    "answer": "The minimum cumulative grade point average (CGPA) required for an undergraduate degree is 2.00 [academic-rules-handbook-jun-2026.pdf / 1.25 Minimum Cumulative Grade Point Average (CGPA) of 2.00 is].",
+    "context": [
+      {
+        "document": "academic-rules-handbook-jun-2026.pdf",
+        "section": "1.25 Minimum Cumulative Grade Point Average (CGPA) of 2.00 is",
+        "page": 10,
+        "text": "1.25 Minimum Cumulative Grade Point Average (CGPA) of 2.00 is\nrequired for graduation.\n| 4 | Undergraduate Academic Rules and Regulations 2026 |\n| --- | --- |"
+      }
+    ],
+    "faithful": null,
+    "labeller": ""
+  },
+  {
+    "id": "O08",
+    "answer_sha": "13ff40797cbae90d",
+    "question": "Who must approve withdrawal from a course?",
+    "answer": "The HoD must approve a withdrawal from a course [academic-rules-handbook-jun-2026.pdf / 4.23 Application for withdrawal from a course must be].",
+    "context": [
+      {
+        "document": "academic-rules-handbook-jun-2026.pdf",
+        "section": "4.23 Application for withdrawal from a course must be",
+        "page": 22,
+        "text": "4.23 Application for withdrawal from a course must be\ncountersigned by the parent or the guardian of the student.\nRequest for withdrawal must be approved by the HoD."
+      }
+    ],
+    "faithful": null,
+    "labeller": ""
+  },
+  {
+    "id": "V01",
+    "answer_sha": "4920070dae710f2b",
+    "question": "Under clause 1.17 of the August 2023 rules, how is the normal semester course load determined?",
+    "answer": "The normal semester course load is determined as per the university study plan [undergraduate-academic-rules-aug-2023.pdf / 1.17 Normal semester course load for undergraduate students, who are].",
+    "context": [
+      {
+        "document": "undergraduate-academic-rules-aug-2023.pdf",
+        "section": "1.17 Normal semester course load for undergraduate students, who are",
+        "page": 7,
+        "text": "1.17 Normal semester course load for undergraduate students, who are\nnot on academic warning/probation, is as per the university study plan."
+      }
+    ],
+    "faithful": null,
+    "labeller": ""
+  },
+  {
+    "id": "V02",
+    "answer_sha": "1b48277ce5f4a47a",
+    "question": "What is the normal undergraduate course load under section 4.3 of the June 2026 rules?",
+    "answer": "The normal undergraduate course load is five courses [academic-rules-handbook-jun-2026.pdf / 4.3 The normal course load is 5 courses. A final year student may].",
+    "context": [
+      {
+        "document": "academic-rules-handbook-jun-2026.pdf",
+        "section": "4.3 The normal course load is 5 courses. A final year student may",
+        "page": 19,
+        "text": "4.3 The normal course load is 5 courses. A final year student may\nregister in one additional course (inclusive of Final Year Project-FYP).\nRegistration of Students under Academic Warning"
+      }
+    ],
+    "faithful": null,
+    "labeller": ""
+  },
+  {
+    "id": "E01",
+    "answer_sha": "15bde0f51c3e7cc5",
+    "question": "Which grade point is assigned to A-minus?",
+    "answer": "The grade point assigned to A\u2011minus is 3.67 [academic-rules-handbook-jun-2026.pdf / 2.3 The points for each letter grade are given as follows:].",
+    "context": [
+      {
+        "document": "academic-rules-handbook-jun-2026.pdf",
+        "section": "2.3 The points for each letter grade are given as follows:",
+        "page": 12,
+        "text": "2.3 The points for each letter grade are given as follows:\n| Grade | Points | Grade | Points |\n| --- | --- | --- | --- |\n| A+ | 4.00 | C+ | 2.33 |\n| A | 4.00 | C | 2.00 |\n| A- | 3.67 | C- | 1.67 |\n| B+ | 3.33 | D+ | 1.33 |\n| B | 3.00 | D | 1.00 |\n| B- | 2.67 | F | 0.00 |\nGPA Calculation"
+      }
+    ],
+    "faithful": null,
+    "labeller": ""
+  },
+  {
+    "id": "E02",
+    "answer_sha": "cafa66020852e637",
+    "question": "What exact section number defines the minimum undergraduate CGPA for graduation?",
+    "answer": "The minimum undergraduate CGPA for graduation is defined in section 1.25 [academic-rules-handbook-jun-2026.pdf / 1.25 Minimum Cumulative Grade Point Average (CGPA) of 2.00 is].",
+    "context": [
+      {
+        "document": "academic-rules-handbook-jun-2026.pdf",
+        "section": "1.25 Minimum Cumulative Grade Point Average (CGPA) of 2.00 is",
+        "page": 10,
+        "text": "1.25 Minimum Cumulative Grade Point Average (CGPA) of 2.00 is\nrequired for graduation.\n| 4 | Undergraduate Academic Rules and Regulations 2026 |\n| --- | --- |"
+      }
+    ],
+    "faithful": null,
+    "labeller": ""
+  },
+  {
+    "id": "E03",
+    "answer_sha": "eb48ebc726d6afe4",
+    "question": "What minimum number of students must register for a summer course to be offered?",
+    "answer": "TEN (10) students [academic-rules-handbook-jun-2026.pdf / 6.11 A minimum of TEN (10) students should register in a summer]",
+    "context": [
+      {
+        "document": "academic-rules-handbook-jun-2026.pdf",
+        "section": "6.11 A minimum of TEN (10) students should register in a summer",
+        "page": 29,
+        "text": "6.11 A minimum of TEN (10) students should register in a summer\ncourse.\nOtherwise, the course shall be dropped."
+      }
+    ],
+    "faithful": null,
+    "labeller": ""
+  },
+  {
+    "id": "H04",
+    "answer_sha": "7ba4bbc4e44f46d2",
+    "question": "Distinguish the individual student's summer course limit from the minimum enrollment needed for a summer course to be offered.",
+    "answer": "The evidence states that a summer course must have a minimum of TEN (10) students registered; it does not specify any limit on how many summer courses an individual student may enroll in [academic-rules-handbook-jun-2026.pdf / 6.11 A minimum of TEN (10) students should register in a summer].",
+    "context": [
+      {
+        "document": "academic-rules-handbook-jun-2026.pdf",
+        "section": "6.11 A minimum of TEN (10) students should register in a summer",
+        "page": 29,
+        "text": "6.11 A minimum of TEN (10) students should register in a summer\ncourse.\nOtherwise, the course shall be dropped."
+      }
+    ],
+    "faithful": null,
+    "labeller": ""
+  },
+  {
+    "id": "B01",
+    "answer_sha": "a3e2e07831f93c82",
+    "question": "How many books can an undergraduate borrow at once from the library, and for how long?",
+    "answer": "An undergraduate can borrow up to 4 books at once, and each book can be borrowed for a maximum of 2 weeks [student-handbook-jun-2026.pdf / 16. Renewal of borrowed books cannot be claimed as a right.].",
+    "context": [
+      {
+        "document": "student-handbook-jun-2026.pdf",
+        "section": "16. Renewal of borrowed books cannot be claimed as a right.",
+        "page": 32,
+        "text": "16. Renewal of borrowed books cannot be claimed as a right.\nPriority would be given to those in the waiting list, if any.\nThe library has a right to recall the material on a when and where required basis.\n| 24 | Student Handbook 2026 | |\nLibrary material is issued for the following duration:\n| Patron Group | Loan Limit | Max Renew | Loan Period | Fine Rate | Fine Ceiling |\n| --- | --- | --- | --- | --- | --- |\n| PhD | 07 | 02 | 01 Month (s) | PKR 10/item/day | PKR 5,000 |\n| Graduate | 05 | 02 | 01 Month (s) | PKR 10/item/day | PKR 5,000 |\n| Undergradu ate | 04 | 02 | 02 Weeks | PKR 10/item/day | PKR 5,000 |"
+      }
+    ],
+    "faithful": null,
+    "labeller": ""
+  }
+]
