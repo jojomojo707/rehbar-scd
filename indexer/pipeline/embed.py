@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
+from functools import lru_cache
+from typing import Any
 
 from .config import IndexerSettings
 
@@ -12,6 +14,14 @@ EMBED_BATCH_SIZE = 32
 def _batches(values: list[str], size: int) -> Iterator[list[str]]:
     for start in range(0, len(values), size):
         yield values[start:start + size]
+
+
+@lru_cache(maxsize=2)
+def _model(name: str, cache_dir: str) -> Any:
+    """Load the pinned model once per process (verification and chunking both embed)."""
+    from fastembed import TextEmbedding
+
+    return TextEmbedding(model_name=name, cache_dir=cache_dir)
 
 
 def embed(texts: list[str], settings: IndexerSettings) -> list[list[float]]:
@@ -27,9 +37,7 @@ def embed(texts: list[str], settings: IndexerSettings) -> list[list[float]]:
 
         return [fake_vector(text, DUMMY_DIM) for text in texts]
 
-    from fastembed import TextEmbedding
-
-    model = TextEmbedding(model_name=settings.embed_model, cache_dir=settings.embed_cache_dir)
+    model = _model(settings.embed_model, settings.embed_cache_dir)
     vectors: list[list[float]] = []
     for batch in _batches(texts, EMBED_BATCH_SIZE):
         vectors.extend(vector.astype(float).tolist() for vector in model.embed(batch, batch_size=EMBED_BATCH_SIZE))

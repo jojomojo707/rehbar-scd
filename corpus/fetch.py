@@ -98,6 +98,11 @@ def load_sources() -> list[dict]:
     return docs
 
 
+def _identity(doc: dict) -> dict:
+    """Title and document id (shared by every version of one document) for verification."""
+    return {"title": doc["name"], **({"doc_id": doc["doc_id"]} if doc.get("doc_id") else {})}
+
+
 def fetch(force: bool, out: Path | None = None, strict: bool = False,
           transport: httpx.BaseTransport | None = None) -> int:
     """Download what is missing into `out` (default corpus/raw). `transport` lets tests
@@ -118,7 +123,8 @@ def fetch(force: bool, out: Path | None = None, strict: bool = False,
             if old and not force and (out / old["file"]).exists() and old["url"] == url:
                 print(f"  have    {old['file']}")
                 entries.append({**old, "doc_version": doc.get("doc_version", "unknown"),
-                                "superseded": bool(doc.get("superseded", False))})
+                                "superseded": bool(doc.get("superseded", False)),
+                                **_identity(doc)})
                 continue
             print(f"  fetch   {name}")
             try:
@@ -138,6 +144,7 @@ def fetch(force: bool, out: Path | None = None, strict: bool = False,
                     "fetched_at": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
                     "doc_version": doc.get("doc_version", "unknown"),
                     "superseded": bool(doc.get("superseded", False)),
+                    **_identity(doc),
                 })
                 print(f"          {file}, {len(response.content):,} bytes")
             except Exception as exc:  # report every failure, keep going
