@@ -1,0 +1,209 @@
+{
+  "chunking": {
+    "overlap": 64,
+    "size": 480,
+    "strategy": "structure"
+  },
+  "collection": "rahbar-v20261127-121819",
+  "collection_prefix": "rahbar",
+  "created_at": "2026-11-27T12:18:23.005022+00:00",
+  "documents": [
+    {
+      "change": "new",
+      "checks": {
+        "completeness": {
+          "passed": true,
+          "reason": "source, title, version 2026-01 and 19 page(s) present; text complete"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "usable text (77448 characters, 90% alphanumeric)"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of ragops-paper"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near duplicate; closest other document student-handbook-jun-2026.pdf at 0.630"
+        }
+      },
+      "disposition": "accept",
+      "doc_id": "ragops-paper",
+      "doc_version": "2026-01",
+      "lake_status": "current",
+      "moved_to": "/pipeline-data/lake/docs/ragops-paper.pdf",
+      "origin": "demo-unseen",
+      "passed": true,
+      "sha256": "ad5f8bcbcdcdef8e39ff760fa9796a519171e5a18bfd4be69d7293f46bdc3ec1",
+      "source": "ragops-paper.pdf",
+      "title": "RAGOps: Operating and Managing Retrieval-Augmented Generation Pipelines"
+    },
+    {
+      "change": "new",
+      "checks": {
+        "completeness": {
+          "passed": false,
+          "reason": "missing title; missing date/version"
+        },
+        "quality": {
+          "passed": true,
+          "reason": "usable text (25076 characters, 66% alphanumeric)"
+        },
+        "recency": {
+          "passed": true,
+          "reason": "no newer version of ai-course-assignment-brief"
+        },
+        "uniqueness": {
+          "passed": true,
+          "reason": "no exact or near duplicate; closest other document ragops-paper.pdf at 0.652"
+        }
+      },
+      "disposition": "quarantine",
+      "doc_id": "ai-course-assignment-brief",
+      "doc_version": "unknown",
+      "moved_to": "/pipeline-data/quarantine/20261127T121640Z-15c1453a/ai-course-assignment-brief.pdf",
+      "origin": "demo-unseen",
+      "passed": false,
+      "sha256": "e6dbc0ce1614c979501dd3872ac3b0dca9644e51da76dbe9dd5ff186bc359f1b",
+      "source": "ai-course-assignment-brief.pdf",
+      "title": ""
+    }
+  ],
+  "embed_model": "BAAI/bge-small-en-v1.5",
+  "incremental": {
+    "added": [
+      "ragops-paper.pdf"
+    ],
+    "changed": [],
+    "deleted": [],
+    "document_chunk_counts_after": {
+      "academic-rules-handbook-jun-2026.pdf": 201,
+      "accessibility-policy.md": 3,
+      "annual-report-2019-20.pdf": 59,
+      "annual-report-2023-24.pdf": 192,
+      "examination-conduct-guidelines.md": 3,
+      "faculty-entrepreneurship-and-technical-start-ups-policy.pdf": 18,
+      "faculty-entrepreneurship-policy-revision-2026.md": 3,
+      "fee-structure-page.html": 9,
+      "grading-page.html": 7,
+      "it-acceptable-use-policy.md": 3,
+      "library-policy.md": 3,
+      "prospectus-2026-academic-rules-and-regulations.pdf": 21,
+      "ragops-paper.pdf": 67,
+      "scholarship-policy.md": 3,
+      "student-handbook-jun-2026.pdf": 135,
+      "undergraduate-academic-rules-aug-2023.pdf": 122
+    },
+    "document_chunk_counts_before": {
+      "academic-rules-handbook-jun-2026.pdf": 201,
+      "accessibility-policy.md": 3,
+      "annual-report-2019-20.pdf": 59,
+      "annual-report-2023-24.pdf": 192,
+      "examination-conduct-guidelines.md": 3,
+      "faculty-entrepreneurship-and-technical-start-ups-policy.pdf": 18,
+      "faculty-entrepreneurship-policy-revision-2026.md": 3,
+      "fee-structure-page.html": 9,
+      "grading-page.html": 7,
+      "it-acceptable-use-policy.md": 3,
+      "library-policy.md": 3,
+      "prospectus-2026-academic-rules-and-regulations.pdf": 21,
+      "scholarship-policy.md": 3,
+      "student-handbook-jun-2026.pdf": 135,
+      "undergraduate-academic-rules-aug-2023.pdf": 122
+    },
+    "embedded_chunks": 67,
+    "embedded_documents": [
+      "ragops-paper.pdf"
+    ],
+    "model_or_chunk_config_changed": false,
+    "published": true,
+    "reused_chunks": 782,
+    "reused_documents": [
+      "academic-rules-handbook-jun-2026.pdf",
+      "accessibility-policy.md",
+      "annual-report-2019-20.pdf",
+      "annual-report-2023-24.pdf",
+      "examination-conduct-guidelines.md",
+      "faculty-entrepreneurship-and-technical-start-ups-policy.pdf",
+      "faculty-entrepreneurship-policy-revision-2026.md",
+      "fee-structure-page.html",
+      "grading-page.html",
+      "it-acceptable-use-policy.md",
+      "library-policy.md",
+      "prospectus-2026-academic-rules-and-regulations.pdf",
+      "scholarship-policy.md",
+      "student-handbook-jun-2026.pdf",
+      "undergraduate-academic-rules-aug-2023.pdf"
+    ],
+    "superseded_flag_changes": [],
+    "unchanged": [
+      "academic-rules-handbook-jun-2026.pdf",
+      "accessibility-policy.md",
+      "annual-report-2019-20.pdf",
+      "annual-report-2023-24.pdf",
+      "examination-conduct-guidelines.md",
+      "faculty-entrepreneurship-and-technical-start-ups-policy.pdf",
+      "faculty-entrepreneurship-policy-revision-2026.md",
+      "fee-structure-page.html",
+      "grading-page.html",
+      "it-acceptable-use-policy.md",
+      "library-policy.md",
+      "prospectus-2026-academic-rules-and-regulations.pdf",
+      "scholarship-policy.md",
+      "student-handbook-jun-2026.pdf",
+      "undergraduate-academic-rules-aug-2023.pdf"
+    ]
+  },
+  "inputs": {
+    "batch_dir": "/batch",
+    "batches": [
+      "/batch",
+      "/pipeline-data/incoming/demo-unseen"
+    ],
+    "corpus_dir": "/corpus"
+  },
+  "lake_actions": [
+    "moved ragops-paper.pdf into the lake"
+  ],
+  "run_id": "20261127T121640Z-15c1453a",
+  "still_quarantined_documents": [
+    "examination-conduct-guidelines_draft.md",
+    "examination-timetable-fall-2026.pdf",
+    "scholarship-policy_mirror.md",
+    "student-clubs-guide.md",
+    "transport-route-notice.md"
+  ],
+  "summary": {
+    "archived_superseded_on_arrival": 0,
+    "documents_seen": 23,
+    "embedded_chunks": 67,
+    "lake_current": 13,
+    "lake_deleted": 1,
+    "lake_superseded": 3,
+    "passed": 1,
+    "quarantined": 1,
+    "reused_chunks": 782,
+    "still_quarantined": 5,
+    "unchanged": 16,
+    "verified": 2
+  },
+  "unchanged_documents": [
+    "undergraduate-academic-rules-aug-2023.pdf",
+    "academic-rules-handbook-jun-2026.pdf",
+    "prospectus-2026-academic-rules-and-regulations.pdf",
+    "student-handbook-jun-2026.pdf",
+    "annual-report-2019-20.pdf",
+    "annual-report-2023-24.pdf",
+    "fee-structure-page.html",
+    "grading-page.html",
+    "faculty-entrepreneurship-and-technical-start-ups-policy.pdf",
+    "accessibility-policy.md",
+    "examination-conduct-guidelines.md",
+    "faculty-entrepreneurship-policy-revision-2026.md",
+    "it-acceptable-use-policy.md",
+    "library-policy.md",
+    "library-policy_copy.md",
+    "scholarship-policy.md"
+  ]
+}
