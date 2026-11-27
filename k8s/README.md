@@ -54,6 +54,34 @@ kubectl -n rahbar run counts --rm -i --restart=Never --image=rahbar-indexer:dev 
   --command -- python -m pipeline.counts --source fees-2026.md        # orphan check
 ```
 
+### Unseen documents larger than a ConfigMap (the usual case for PDFs)
+
+A ConfigMap holds at most 1 MiB, about 750 KB of PDF after base64, and real FAST PDFs are 1-15 MB.
+`kubectl create configmap` then fails with `Too long: may not be more than 1048576 bytes`. Copy
+the folder onto the `pipeline-data` PVC instead. The indexer Job and CronJob read every folder
+under `/pipeline-data/incoming/` as one batch:
+
+```bash
+mkdir demo-batch && cp ~/Downloads/*.pdf demo-batch/
+# Give each PDF its title and version; a file without them is quarantined (completeness check).
+cat > demo-batch/_index.json <<'EOF'
+[{"file": "exam-notice.pdf", "title": "Final exam notice", "doc_version": "2026-11"}]
+EOF
+scripts/upload_batch.sh demo-batch                  # short-lived pod + kubectl cp, no rebuild
+kubectl -n rahbar delete job indexer --ignore-not-found
+kubectl apply -k k8s/overlays/dev
+kubectl -n rahbar wait --for=condition=complete --timeout=30m job/indexer
+kubectl -n rahbar logs job/indexer -c indexer      # pass/fail per check for each new file
+scripts/trace_probe.sh "a question about the new document"   # trace shows the new collection
+scripts/upload_batch.sh --remove demo-batch         # optional: stop later runs re-reading it
+```
+
+A file that `_index.json` does not list is still verified, and is quarantined with "missing
+title; missing date/version". If you fix its metadata (add it to `_index.json`) and upload again,
+the next run verifies it again. The same bytes with the same metadata stay quarantined. A
+rehearsal with two real PDFs (2.6 MB) is in
+`docs/evidence/a03/A-unseen-batch-pvc-rehearsal.txt`.
+
 Restore an archived version, or delete a batch document, with the same image:
 `python -m pipeline.run --restore-version <file>` / `--delete <file>` (see the README).
 
