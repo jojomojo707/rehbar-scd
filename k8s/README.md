@@ -85,6 +85,22 @@ rehearsal with two real PDFs (2.6 MB) is in
 Restore an archived version, or delete a batch document, with the same image:
 `python -m pipeline.run --restore-version <file>` / `--delete <file>` (see the README).
 
+## Demo: run the evaluation as a Job
+
+`kubectl apply -k k8s/overlays/dev` (used for every ingestion above) resets ConfigMap `eval-target`
+to its committed values: 2 runs against `api-candidate`, and the gate thresholds to theirs. So
+patch it right before the eval Job. Use 1 run: 47 questions x 2 runs need about 260k tokens, over
+the free tier's 200k per day. Do not use the label `baseline` at the demo: that label overwrites
+the stored baseline the gate compares against.
+
+```bash
+kubectl -n rahbar patch configmap eval-target --type merge \
+  -p '{"data":{"EVAL_API_URL":"http://api:8000","EVAL_LABEL":"demo","EVAL_RUNS":"1"}}'
+kubectl -n rahbar delete job eval --ignore-not-found && kubectl apply -f k8s/eval-job.yaml
+kubectl -n rahbar wait --for=condition=complete --timeout=60m job/eval   # about 18 minutes
+kubectl -n rahbar logs job/eval | sed -n '/^# Part B suite/,$p'          # 3 levels + gate result
+```
+
 ## Parts B, C, F3: baseline, candidate, gate, release, undo
 
 ```bash
