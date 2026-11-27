@@ -78,6 +78,36 @@ batch_a, rerun, batch_b, changed = (verif[vkeys[0]], verif[vkeys[1]], verif[vkey
                                     verif[vkeys[4]])
 cov_before, cov_after = load(RES / "coverage-before.json"), load(RES / "coverage-after.json")
 d3 = load(RES / "D3-trace-summary-baseline-window.json")
+
+
+def answerable_outcomes() -> list[dict[str, int]]:
+    """Per baseline run: why answerable questions were not answered, read from their traces."""
+    traces = {}
+    for path in glob.glob(str(ROOT / "traces" / "a03" / "*.jsonl")):
+        for line in open(path, encoding="utf-8"):
+            try:
+                t = json.loads(line)
+            except ValueError:
+                continue
+            t = t.get("trace", t)
+            traces[t.get("trace_id")] = t
+    out = []
+    for run in (1, 2):
+        rows = load(base_dir / f"e2e-run-{run}.json")
+        rows = rows["rows"] if isinstance(rows, dict) else rows
+        counts = {"answered": 0, "relevance_floor": 0, "validation": 0, "provider": 0, "model": 0}
+        for row in rows:
+            if row.get("must_abstain"):
+                continue
+            t = traces[row["request_id"]]
+            key = ("answered" if t["outcome"] == "answered"
+                   else t.get("abstain_reason") or t.get("fallback_reason"))
+            counts[key] = counts.get(key, 0) + 1
+        out.append(counts)
+    return out
+
+
+outcomes = answerable_outcomes()
 d3c = load(RES / "D3-trace-summary-cache-window.json")   # normal traffic, cache enabled
 cmp_e3 = (RES / "E3-drift-comparison.md").read_text()
 peaks = (ROOT / "docs" / "evidence" / "a03" / "F5-resource-peaks.md").read_text()
@@ -262,7 +292,7 @@ figure img {{ width: 100%; max-height: 250mm; object-fit: contain; border: 1px s
 
 <h2>1. Figure 3 stages in our pipeline</h2>
 {table(["Stage", "What our pipeline does", "File / object", "What is missing"], [
- ["1 Ingest", "Indexer Job reads the corpus PVC (Batch A, 9 PDFs/HTML fetched by an init container) and an optional batch ConfigMap <code>ingest-batch</code>; new or changed files (sha256) are staged in <code>inbox/&lt;run&gt;</code>.", "<code>indexer/pipeline/run.py</code>, <code>k8s/base/indexer-job.yaml</code>, CronJob <code>reindex</code>", "No push/webhook ingestion; batches travel in a ConfigMap (1 MiB limit)."],
+ ["1 Ingest", "Indexer Job reads the corpus PVC (Batch A, 9 PDFs/HTML fetched by an init container) an optional batch ConfigMap <code>ingest-batch</code> and, for files of any size, batch folders under <code>/pipeline-data/incoming/</code> copied by <code>scripts/upload_batch.sh</code>; new or changed files (sha256) are staged in <code>inbox/&lt;run&gt;</code>.", "<code>indexer/pipeline/run.py</code>, <code>k8s/base/indexer-job.yaml</code>, CronJob <code>reindex</code>", "No push/webhook ingestion: an operator uploads a batch; titles and versions of new PDFs come from an <code>_index.json</code> written by hand."],
  ["2 Verify", "Four checks per document with pass/fail and a reason: quality, completeness (title, version, pages, truncation), recency (doc_id versions), uniqueness (text hash, window-embedding similarity &ge; 0.95). Report per run.", "<code>indexer/pipeline/verify.py</code>", "No consistency (contradiction) check; injected text is not detected at ingest (the API rail catches it)."],
  ["3 Update data lake", "Failures are moved to <code>quarantine/&lt;run&gt;</code> (+ reason file, registry); accepted files move to <code>lake/docs</code>; older, replaced and deleted versions move to <code>archive/&lt;doc_id&gt;/&lt;version&gt;</code>; manifest records status; restore and delete commands.", "<code>indexer/pipeline/lake.py</code>, PVC <code>pipeline-data</code>, <code>scripts/lake_admin.sh</code>", "No access-control metadata; single ReadWriteOnce volume, so ingestion Jobs run one at a time."],
  ["4 Update retrieval sources", "Re-chunk/re-embed only new or changed documents, reuse vectors of the rest, write a new collection version and switch the <code>-active</code> alias; unchanged runs keep the collection.", "<code>run.py::update_retrieval_sources</code>, <code>store.py</code>", "A full collection copy per change (blue/green) instead of in-place updates."],
@@ -276,7 +306,7 @@ figure img {{ width: 100%; max-height: 250mm; object-fit: contain; border: 1px s
  ["Adaptability", "Chunks re-embedded per update; whether a new batch can be adopted without rebuilding", "unchanged rerun = 0 embedded; a changed document re-embeds only its own chunks", f"rerun {rerun['summary']['embedded_chunks']} embedded / {rerun['summary']['reused_chunks']} reused; changed doc {changed['summary']['embedded_chunks']} embedded / {changed['summary']['reused_chunks']} reused; Batch B {batch_b['summary']['embedded_chunks']} new chunks"],
  ["Monitorability", "recall@5, judged faithfulness, p95 latency, abstention vs baseline; coverage share", "drop &le; 0.02; &ge; 0.85; &le; 12 s; not lower; &ge; 85 %", "gate PASS (chunk 384), REJECT (TOP_K=1); coverage 47.5 % &rarr; 92.5 %"],
  ["Observability", "Every query traced (stdout + PVC); top-1 similarity, abstention, cache, stage p95, injections flagged", "100 % of queries traced; no injected instruction reaches the prompt", f"{d3['window']['requests']} traced requests in the baseline window; D4 trace with <code>context_injection_sentence_removed</code>"],
- ["Traceability", "Collection version, embedding version (ONNX digest), document versions, filters, prompt + hash in each trace", "prompt rebuilt from a trace id matches its stored hash", "D2 hash MATCHES; post-undo trace shows <code>rahbar-v20261125-120258</code>"],
+ ["Traceability", "Collection version, embedding version (ONNX digest), document versions, filters, prompt + hash in each trace", "prompt rebuilt from a trace id matches its stored hash", "D2 hash MATCHES; post-undo traces show the previous collection: <code>rahbar-v20261125-120258</code> (25 Nov) and <code>rahbar-v20261125-130024</code> (27 Nov repeat)"],
  ["Reliability", "Measured CPU/memory per workload; rollout without unavailable pods; data on PVCs", "requests = measured peak, memory limit &asymp; peak + 35-40 %", "F5 table; rolling update 3/3 with <code>maxUnavailable: 0</code>; Chroma restart kept data (rerun: 0 embedded)"],
 ])}
 
@@ -284,7 +314,7 @@ figure img {{ width: 100%; max-height: 250mm; object-fit: contain; border: 1px s
 <h3>A. Data management</h3>
 <p><b>Batch A</b> (real corpus, 9 documents): {batch_a['summary']['verified']} verified, 0 quarantined, the Aug-2023 rules and the 2019-20 annual report detected as older versions (recency) and archived as superseded; {batch_a['summary']['embedded_chunks']} chunks embedded into <code>{batch_a['collection']}</code>. <b>Unchanged rerun:</b> {rerun['summary']['embedded_chunks']} embedded, {rerun['summary']['reused_chunks']} reused, collection kept. <b>Batch B</b> (12 planted documents):</p>
 {table(["Document", "Q", "C", "R", "U", "Disposition", "Reason"], disp(batch_b), "small")}
-<p>The 2022 entrepreneurship PDF was archived as superseded by the newer revision (same doc_id). <b>A2:</b> changing one line of <code>library-policy.md</code> re-embedded {changed['summary']['embedded_chunks']} chunks (its own) and reused {changed['summary']['reused_chunks']}; the old file went to the archive. <code>--delete library-policy.md</code> left <b>0</b> chunks with <code>source == library-policy.md</code> (count by document id); <code>--restore-version</code> brought it back (3 chunks) and restoring the 2022 policy flipped the superseded flags without re-embedding. During the delete demo a quarantined exact copy was accepted once its original was gone; we fixed this with a quarantine registry (unchanged quarantined bytes stay quarantined).</p>
+<p>The 2022 entrepreneurship PDF was archived as superseded by the newer revision (same doc_id). <b>A2:</b> changing one line of <code>library-policy.md</code> re-embedded {changed['summary']['embedded_chunks']} chunks (its own) and reused {changed['summary']['reused_chunks']}; the old file went to the archive. <code>--delete library-policy.md</code> left <b>0</b> chunks with <code>source == library-policy.md</code> (count by document id); <code>--restore-version</code> brought it back (3 chunks) and restoring the 2022 policy flipped the superseded flags without re-embedding. During the delete demo a quarantined exact copy was accepted once its original was gone; we fixed this with a quarantine registry (unchanged quarantined bytes stay quarantined; corrected metadata lets a file be verified again). <b>Unseen batch rehearsal</b> (27 Nov): two real PDFs (2.6 MB) are too large for a ConfigMap (the API server rejects objects over 1 MiB), so <code>scripts/upload_batch.sh</code> copied them to the PVC and the ingestion Job read them. The paper listed in <code>_index.json</code> passed all four checks and its chunks were retrieved at ranks 1-5 on the new collection; the unlisted PDF was quarantined for missing title and version (<code>docs/evidence/a03/A-unseen-batch-pvc-rehearsal.txt</code>).</p>
 
 <h3>B. Offline tests (baseline, live API, 2 runs, seed 20261125)</h3>
 <p>Golden set for Parts B/C: {len(golden_before)} questions ({sum(g['bucket']=='answerable' for g in golden_before)} answerable with document and page, {sum(g['bucket']=='unanswerable' for g in golden_before)} unanswerable, {sum(g['bucket']=='hard' for g in golden_before)} hard of which 6 come from Batch B); {sum(g['origin']=='human' for g in golden_before)} written by the group (<code>human</code>), {sum(g['origin']=='synthetic' for g in golden_before)} <code>synthetic</code>; {review_line}.</p>
@@ -300,7 +330,7 @@ figure img {{ width: 100%; max-height: 250mm; object-fit: contain; border: 1px s
  ["End-to-end", "latency p50 / p95 (s)", f"{f(r1['end_to_end']['latency_p50_seconds'],2)} / {f(r1['end_to_end']['latency_p95_seconds'],2)}", f"{f(r2['end_to_end']['latency_p50_seconds'],2)} / {f(r2['end_to_end']['latency_p95_seconds'],2)}", f"{f(abs(r1['end_to_end']['latency_p50_seconds']-r2['end_to_end']['latency_p50_seconds']),2)} / {f(abs(r1['end_to_end']['latency_p95_seconds']-r2['end_to_end']['latency_p95_seconds']),2)}"],
  ["End-to-end", "answer rate on answerable / fallbacks", f"{f(r1['end_to_end']['answer_rate_answerable'])} / {r1['end_to_end']['fallbacks']}", f"{f(r2['end_to_end']['answer_rate_answerable'])} / {r2['end_to_end']['fallbacks']}", f(abs(r1['end_to_end']['answer_rate_answerable']-r2['end_to_end']['answer_rate_answerable']))],
 ])}
-<p><b>LLM judge vs hand labels:</b> {judge_line}. <b>Stochasticity:</b> retrieval and the embedding model are deterministic (difference 0); remaining variation is in the hosted LLM (temperature 0.2, no provider seed in these runs) and in provider rate limiting: the free tier allows 8,000 tokens per minute, so some answers became fallbacks after retries. Every question bypassed the semantic cache (<code>Cache-Control: no-cache</code>), so run 2 is a real repeat.</p>
+<p><b>Why answerable questions went unanswered</b> (from their traces, run 1 / run 2): answered {outcomes[0]["answered"]} / {outcomes[1]["answered"]}; relevance floor abstained {outcomes[0]["relevance_floor"]} / {outcomes[1]["relevance_floor"]} (best score under 0.73, see D5); answer failed citation validation {outcomes[0]["validation"]} / {outcomes[1]["validation"]}; provider error or rate limit {outcomes[0]["provider"]} / {outcomes[1]["provider"]}; model abstained {outcomes[0]["model"]} / {outcomes[1]["model"]}. The floor, not the free tier, is the main cause, and abstention correctness scores only unanswerable questions, so the gate does not see it (we propose adding answer rate to the gate). <b>LLM judge vs hand labels:</b> {judge_line}. <b>Stochasticity:</b> retrieval and the embedding model are deterministic (difference 0); remaining variation is in the hosted LLM (temperature 0.2, no provider seed in these runs) and in provider rate limiting: the free tier allows 8,000 tokens per minute, so some answers became fallbacks after retries. Every question bypassed the semantic cache (<code>Cache-Control: no-cache</code>), so run 2 is a real repeat.</p>
 
 <h3>C. Change experiment and release gate (chunk size 480 &rarr; 384, own collection <code>rahbar-candidate</code>)</h3>
 {table(["Metric (mean of 2 runs)", "Baseline 480", "Candidate 384", "Bad candidate TOP_K=1"], metric_rows([
