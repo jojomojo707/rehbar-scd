@@ -10,7 +10,7 @@ echo "trace id: $ID"
 kubectl -n rahbar logs -l app.kubernetes.io/name=api --since=5m --tail=-1 --prefix \
   | grep "\"trace_id\": \"$ID\"" | grep '"query trace"' | sed 's/^\[\([^]]*\)\] /\1\t/' \
   | python3 -c '
-import json, sys
+import json, sys, textwrap
 for line in sys.stdin:
     source, _, payload = line.partition("\t")
     t = json.loads(payload)["trace"]
@@ -20,6 +20,11 @@ for line in sys.stdin:
                 "guardrail_actions", "cache_status", "stage_ms"):
         print(f"  {key:19} {t.get(key)}")
     print("  model_parameters   ", t["model_parameters"])
-    print("  retrieved          ", [(p["chunk_id"], round(p["score"], 3)) for p in t["retrieved"]][:3], "...")
-    print("  answer             ", t["response"]["answer"][:150])
+    print("  retrieved (chunk id, document version, score):")
+    for p in t["retrieved"]:
+        chunk, version, score = p["chunk_id"], str(p.get("version")), p["score"]
+        print(f"    {chunk:48} {version:10} {score:.3f}")
+    print("  answer:")
+    for line in textwrap.wrap(t["response"]["answer"], 100):
+        print("    " + line)
 '
