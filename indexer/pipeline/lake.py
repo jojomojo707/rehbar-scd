@@ -99,10 +99,16 @@ class DataLake:
         return target
 
     def quarantine(self, staged: Path, run_id: str, reasons: dict[str, str],
-                   digest: str = "") -> Path:
+                   digest: str = "", metadata: dict[str, str] | None = None) -> Path:
+        """Move a failed file to quarantine/<run>/ and remember its bytes and metadata.
+
+        The same bytes with the same metadata stay quarantined on later runs; corrected
+        metadata (e.g. a new _index.json entry) makes the file eligible for verification again.
+        """
         target = self.quarantine_root / run_id / staged.name
         self.quarantined[staged.name] = {"sha256": digest, "run_id": run_id,
-                                         "failed_checks": reasons, "path": str(target)}
+                                         "failed_checks": reasons, "path": str(target),
+                                         "metadata": metadata or {}}
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.move(str(staged), target)
         (target.parent / f"{staged.name}.reason.json").write_text(

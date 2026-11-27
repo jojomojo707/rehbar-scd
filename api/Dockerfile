@@ -8,7 +8,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1
 
 # Debian security fixes newer than the base image (Trivy, section 6: e.g. apt CVE-2026-109518).
-RUN apt-get update \
+# SECURITY_REFRESH: CI restores layers from its build cache, so this upgrade step only re-runs
+# when its text changes. Bump the date to pull in new security fixes (Trivy, section 6).
+ARG SECURITY_REFRESH=2026-11-27
+RUN echo "security refresh ${SECURITY_REFRESH}" \
+ && apt-get update \
  && apt-get upgrade -y --no-install-recommends \
  && rm -rf /var/lib/apt/lists/*
 

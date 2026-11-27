@@ -163,3 +163,71 @@ def test_unchanged_quarantined_file_stays_quarantined(env):
     again = report(run.run_pipeline(settings, batch_dir=str(BATCH_B)))
     assert again["summary"]["still_quarantined"] == 6 and again["summary"]["verified"] == 0
     assert "library-policy_copy.md" not in chunks_by_source(client)
+
+
+def _plain_batch(folder: Path, name: str = "unseen.md") -> Path:
+    """A document with no front matter, as a grader's file would arrive."""
+    folder.mkdir(parents=True)
+    path = folder / name
+    path.write_text("Students may borrow up to five library books at a time. Books are due "
+                    "back within fourteen days, and renewals are allowed once online. "
+                    "Reference books and theses cannot leave the reading hall. A borrower "
+                    "who loses a book pays its replacement cost plus a processing charge.\n",
+                    encoding="utf-8")
+    return path
+
+
+def test_pvc_incoming_batch_is_ingested(env):
+    """scripts/upload_batch.sh copies large batches to <pipeline-data>/incoming/<batch>/."""
+    settings, _corpus, client = env
+    run.run_pipeline(settings)
+    folder = Path(settings.pipeline_data_dir) / "incoming" / "demo-batch"
+    _plain_batch(folder)
+    (folder / "_index.json").write_text(json.dumps([{
+        "file": "unseen.md", "title": "Library borrowing rules", "doc_version": "2026-11",
+        "doc_id": "library-borrowing"}]), encoding="utf-8")
+    result = report(run.run_pipeline(settings))
+    record = next(r for r in result["documents"] if r["source"] == "unseen.md")
+    assert record["disposition"] == "accept" and record["origin"] == "demo-batch"
+    assert chunks_by_source(client)["unseen.md"] >= 1
+    assert str(folder) in result["inputs"]["batches"]
+
+
+def test_quarantined_file_is_reverified_after_its_metadata_is_fixed(env):
+    """Same bytes, corrected metadata: verify again instead of holding it forever."""
+    settings, _corpus, client = env
+    run.run_pipeline(settings)
+    folder = Path(settings.pipeline_data_dir) / "incoming" / "demo-batch"
+    _plain_batch(folder)
+    first = report(run.run_pipeline(settings))
+    record = next(r for r in first["documents"] if r["source"] == "unseen.md")
+    assert record["disposition"] == "quarantine"
+    assert "missing title" in record["checks"]["completeness"]["reason"]
+    held = report(run.run_pipeline(settings))
+    assert held["summary"]["still_quarantined"] == 1
+    (folder / "_index.json").write_text(json.dumps([{
+        "file": "unseen.md", "title": "Library borrowing rules", "doc_version": "2026-11"}]),
+        encoding="utf-8")
+    fixed = report(run.run_pipeline(settings))
+    record = next(r for r in fixed["documents"] if r["source"] == "unseen.md")
+    assert record["disposition"] == "accept"
+    assert chunks_by_source(client)["unseen.md"] >= 1
+
+
+def test_batch_file_missing_from_index_is_quarantined_not_skipped(env):
+    settings, _corpus, _client = env
+    folder = Path(settings.pipeline_data_dir) / "incoming" / "demo-batch"
+    _plain_batch(folder)
+    _plain_batch(folder / "x", "listed.md")
+    shutil.move(str(folder / "x" / "listed.md"), folder / "listed.md")
+    (folder / "x").rmdir()
+    (folder / "listed.md").write_text((folder / "listed.md").read_text().replace(
+        "five", "six"), encoding="utf-8")
+    (folder / "_index.json").write_text(json.dumps([{
+        "file": "listed.md", "title": "Library rules", "doc_version": "2026-11"}]),
+        encoding="utf-8")
+    result = report(run.run_pipeline(settings))
+    by_source = {r["source"]: r for r in result["documents"]}
+    assert by_source["listed.md"]["disposition"] == "accept"
+    assert by_source["unseen.md"]["disposition"] == "quarantine"
+    assert "missing title" in by_source["unseen.md"]["checks"]["completeness"]["reason"]

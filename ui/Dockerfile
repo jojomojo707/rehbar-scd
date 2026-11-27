@@ -5,7 +5,10 @@ FROM nginxinc/nginx-unprivileged:1.31.7-alpine3.24
 # Alpine security fixes newer than the base image (Trivy, section 6: brotli, curl, expat).
 # apk needs root; the image switches back to the nginx user below.
 USER root
-RUN apk upgrade --no-cache
+# SECURITY_REFRESH: CI restores layers from its build cache, so this upgrade step only re-runs
+# when its text changes. Bump the date to pull in new security fixes (Trivy, section 6).
+ARG SECURITY_REFRESH=2026-11-27
+RUN echo "security refresh ${SECURITY_REFRESH}" && apk upgrade --no-cache
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY index.html /usr/share/nginx/html/index.html

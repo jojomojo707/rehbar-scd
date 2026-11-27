@@ -11,7 +11,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 # OCR for scanned pages (corpus property 3): Tesseract and the poppler PDF tools.
 # `apt-get upgrade` takes Debian security fixes newer than the base image (Trivy, section 6).
-RUN apt-get update \
+# SECURITY_REFRESH: CI restores layers from its build cache, so this upgrade step only re-runs
+# when its text changes. Bump the date to pull in new security fixes (Trivy, section 6).
+ARG SECURITY_REFRESH=2026-11-27
+RUN echo "security refresh ${SECURITY_REFRESH}" \
+ && apt-get update \
  && apt-get upgrade -y --no-install-recommends \
  && apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-eng poppler-utils \
  && rm -rf /var/lib/apt/lists/*

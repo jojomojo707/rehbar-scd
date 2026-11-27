@@ -1,6 +1,7 @@
 """The indexer Job's entry point. It runs once and exits (section 4.2).
 
-    python -m pipeline.run                         # ingest CORPUS_DIR (+ BATCH_DIR) and index
+    python -m pipeline.run                         # ingest CORPUS_DIR (+ BATCH_DIR and
+                                                   # PIPELINE_DATA_DIR/incoming/<batch>/) and index
     python -m pipeline.run --batch-dir DIR         # also ingest an extra batch of documents
     python -m pipeline.run --restore-version SRC   # make an archived version current again
     python -m pipeline.run --delete SRC            # archive a document and drop its chunks
@@ -83,16 +84,21 @@ def discover(directory: str, origin: str = "corpus") -> list[SourceDoc]:
     """
     root = Path(directory)
     index = root / "_index.json"
+    found = []
     if index.exists():
         entries = json.loads(index.read_text(encoding="utf-8"))
-        return [SourceDoc(root / e["file"], e["file"], str(e.get("doc_version", "unknown")),
-                          str(e.get("doc_id") or default_doc_id(e["file"])),
-                          str(e.get("title") or e.get("name") or ""),
-                          _int_or_none(e.get("pages")), origin)
-                for e in entries]
-    found = []
+        found = [SourceDoc(root / e["file"], e["file"], str(e.get("doc_version", "unknown")),
+                           str(e.get("doc_id") or default_doc_id(e["file"])),
+                           str(e.get("title") or e.get("name") or ""),
+                           _int_or_none(e.get("pages")), origin)
+                 for e in entries]
+        if origin == "corpus":
+            return found          # fetch.py's index is the complete list for the corpus
+    listed = {doc.source for doc in found}
+    # In a batch, files that _index.json does not list are still verified (not silently
+    # skipped): with no title or version they fail completeness and are quarantined.
     for path in sorted(root.glob("*")):
-        if not path.is_file() or path.suffix.lower() not in SUPPORTED:
+        if not path.is_file() or path.suffix.lower() not in SUPPORTED or path.name in listed:
             continue
         if path.name.lower().startswith("readme") or path.name.startswith("_"):
             continue
@@ -115,6 +121,11 @@ def _file_type(path: Path) -> str:
     return {"markdown": "md", "htm": "html"}.get(suffix, suffix)
 
 
+def _metadata(doc: SourceDoc) -> dict[str, str]:
+    """The operator-supplied metadata the completeness and recency checks read."""
+    return {"doc_id": doc.doc_id, "doc_version": doc.doc_version, "title": doc.title}
+
+
 def ingest_and_verify(
     settings: IndexerSettings, lake: DataLake, run_id: str, sources: list[SourceDoc],
     corpus_sources: set[str] | None,
@@ -128,8 +139,10 @@ def ingest_and_verify(
     for doc in sources:
         digest = sha256_file(doc.path)
         entry = lake.entries.get(doc.source)
-        if lake.quarantined.get(doc.source, {}).get("sha256") == digest:
-            held.append(doc.source)          # same bytes that failed before: still quarantined
+        failed_before = lake.quarantined.get(doc.source, {})
+        if (failed_before.get("sha256") == digest
+                and failed_before.get("metadata", _metadata(doc)) == _metadata(doc)):
+            held.append(doc.source)   # same bytes and metadata that failed before: still held
         elif entry is not None and entry.sha256 == digest:
             # unchanged; a deleted document stays deleted until its file changes or an
             # operator restores it with --restore-version
@@ -178,7 +191,7 @@ def ingest_and_verify(
         if disposition == "quarantine":
             failed = {n: c.reason for n, c in result.checks.items() if not c.passed}
             record["moved_to"] = str(lake.quarantine(staged[doc.source], run_id, failed,
-                                                     digest))
+                                                     digest, _metadata(doc)))
         else:
             entry = LakeEntry(doc.source, doc.doc_id, doc.doc_version, doc.title, digest,
                               result.text_sha256, doc.origin, "current", "",
@@ -326,11 +339,19 @@ def run_pipeline(settings: IndexerSettings, *, batch_dir: str | None = None,
             raise SystemExit(f"no documents found in {settings.corpus_dir}")
         corpus_sources = {doc.source for doc in corpus}
         sources.update({doc.source: doc for doc in corpus})
+    batches: list[tuple[Path, str]] = []
     if batch_dir and Path(batch_dir).is_dir():
         # The Job mounts the optional ConfigMap `ingest-batch` here; empty means no batch.
-        name = batch_name or Path(batch_dir).name
-        batch = discover(batch_dir, name)
-        log("batch input", batch_dir=batch_dir, batch_name=name, documents=len(batch))
+        batches.append((Path(batch_dir), batch_name or Path(batch_dir).name))
+    # Batches too large for a ConfigMap (about 750 KB of PDF) are copied to the PVC with
+    # scripts/upload_batch.sh, one folder per batch: <pipeline-data>/incoming/<batch>/.
+    incoming = Path(settings.pipeline_data_dir) / "incoming"
+    if incoming.is_dir():
+        batches += [(folder, folder.name) for folder in sorted(incoming.iterdir())
+                    if folder.is_dir()]
+    for folder, name in batches:
+        batch = discover(str(folder), name)
+        log("batch input", batch_dir=str(folder), batch_name=name, documents=len(batch))
         sources.update({doc.source: doc for doc in batch})
     if not sources and not lake.entries:
         raise SystemExit("no corpus, batch or data-lake documents to index")
@@ -358,7 +379,8 @@ def run_pipeline(settings: IndexerSettings, *, batch_dir: str | None = None,
     report = {
         "run_id": run_id,
         "created_at": datetime.now(UTC).isoformat(),
-        "inputs": {"corpus_dir": settings.corpus_dir, "batch_dir": batch_dir},
+        "inputs": {"corpus_dir": settings.corpus_dir, "batch_dir": batch_dir,
+                   "batches": [str(folder) for folder, _name in batches]},
         "collection_prefix": settings.collection,
         "collection": index["collection"],
         "embed_model": settings.embed_model,
